@@ -117,7 +117,6 @@ class HeapsortView extends HTMLElement {
         this._binaryTreeVis = this.shadowRoot.querySelector("binary-tree");
         this._arrayVis = this.shadowRoot.querySelector("array-display");
         this._header = this.shadowRoot.querySelector("header-element");
-        this._pseudocodePopup = this.shadowRoot.querySelector("pop-up");
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
@@ -128,7 +127,6 @@ class HeapsortView extends HTMLElement {
         const progressBar = this.shadowRoot.querySelector("progress-bar");
         progressBar.addEventListener("update-step", this._updateStep.bind(this));
 
-        this._pseudocodePopup.show();
         this._sort();
     }
 
@@ -173,7 +171,8 @@ class HeapsortView extends HTMLElement {
 
         if (stepCounter != this._stepCounter) return;
         if (this._steps[stepIndex + 1].sortCount > step.sortCount) {
-            this._updateVis(step, index_A, index_B);
+            console.log("here");
+            // this._updateVis(step, index_A, index_B);
         }
     }
 
@@ -364,17 +363,15 @@ class HeapsortView extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 .content {
-                    display: flex;
                     width: 100%;
+                    --split-layout-height: calc(100% - 160px);
                 }
-                .content__array-display {
-                    width: 50%;
-                    height: 100%;
+                .content__pseudocode {
+                    width: 100%;
                 }
                 .content__binary-tree {
                     display: inline-block;
                     position: relative;
-                    width: 50%;
                     vertical-align: top;
                     overflow: hidden;
                 }
@@ -395,11 +392,11 @@ class HeapsortView extends HTMLElement {
                 }
             </style>
             <header-element title="Heapsort" start-btn-name="Sort" array-input></header-element>
-            <div class="content">
-                <array-display class="content__array-display"></array-display>
-                <binary-tree class="content__binary-tree"></binary-tree>
-            </div>
-            <pop-up class="popup"><pseudocode-display></pseudocode-display></pop-up>
+            <split-layout class="content" top-bottom-left>
+                <array-display slot="top-left" class="content__array-display"></array-display>
+                <pseudocode-display slot="bottom-left" class="content__pseudocode"></pseudocode-display>
+                <binary-tree slot="right" class="content__binary-tree"></binary-tree>
+            </split-layout>
             <progress-bar class="progress"></progress-bar>
         `;
     }

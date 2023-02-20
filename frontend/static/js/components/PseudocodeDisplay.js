@@ -27,6 +27,7 @@ class PseudocodeDisplay extends HTMLElement {
                 .code {
                 }
                 .code__line {
+                    padding-left: 1em;
                     display: flex;
                     align-items: baseline;
                 }

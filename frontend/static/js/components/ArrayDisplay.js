@@ -62,7 +62,7 @@ class ArrayDisplay extends HTMLElement {
                     display: inline-block;
                 }
                 .array {
-                    margin: 130px 30px 30px 30px;
+                    margin: 30px 30px 30px 30px;
                     text-align: center;
                     font-size: 2em;
                 }
