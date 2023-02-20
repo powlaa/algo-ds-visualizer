@@ -159,6 +159,7 @@ class HeapsortView extends HTMLElement {
         this._binaryTreeVis.data = dataWithModifiers;
         this._arrayVis.data = dataWithModifiers;
         if (step.codeLabel) this._pseudocodeDisplay.highlightLine(...step.codeLabel);
+        else this._pseudocodeDisplay.highlightLine();
     }
 
     async _swapNodes(step, index_A, index_B, stepIndex) {
@@ -189,12 +190,15 @@ class HeapsortView extends HTMLElement {
         if (left < step.data.length - sortCount) {
             this._arrayVis.highlight(index);
             this._binaryTreeVis.highlight(index);
+            this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-l", "heapify-r"]);
 
             await this._wait(this._ANIMATION_DURATION);
             if (stepCounter != this._stepCounter) return;
 
             this._binaryTreeVis.highlight(left);
             this._arrayVis.highlight(left);
+            if (step.data[left] > step.data[index]) this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-if-l", "heapify-max-l"]);
+            else this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-if-l", "heapify-else-i", "heapify-max-i"]);
         }
         if (right < step.data.length - sortCount) {
             await this._wait(this._ANIMATION_DURATION);
@@ -202,15 +206,17 @@ class HeapsortView extends HTMLElement {
 
             this._binaryTreeVis.highlight(right);
             this._arrayVis.highlight(right);
+            if (right === maxChildIndex) this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-if-r", "heapify-max-r"]);
+            else this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-if-r"]);
         }
+        await this._wait(this._ANIMATION_DURATION);
+        if (stepCounter != this._stepCounter) return;
         //if the parent is smaller than the biggest child, turn them red to indicate a swap
         if (step.data[index] < step.data[maxChildIndex]) {
-            await this._wait(this._ANIMATION_DURATION);
-            if (stepCounter != this._stepCounter) return;
-
             this._binaryTreeVis.mark(index, maxChildIndex);
             this._arrayVis.mark(index, maxChildIndex);
-        }
+            this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-if-max"]);
+        } else this._pseudocodeDisplay.highlightLine(...step.codeLabel);
     }
 
     _sort(data) {
