@@ -61,6 +61,7 @@ class PopUp extends HTMLElement {
                     top: var(--popup-top, 10%);
                     bottom: var(--popup-bottom);
                     left: var(--popup-left, 20%);
+                    right: var(--popup-right);
                     height: var(--popup-height, 80%);
                     width: var(--popup-width, 60%);
                     min-width: var(--popup-min-width, 60%);
@@ -80,6 +81,7 @@ class PopUp extends HTMLElement {
                     right: 5px;
                     border: none;
                     font-size: 1.5em;
+                    background-color: rgba(0, 0, 0, 0);
                 }
                 .popup__content {
                     display: var(--popup-display, block);
@@ -89,7 +91,7 @@ class PopUp extends HTMLElement {
             <div id="overlay" class="overlay"></div>
             <div id="popup" class="popup popup--hidden">
                 <button id="close-btn" class="popup__button">x</button>
-                <div id="popup-content" class="popup__content"></div>
+                <div id="popup-content" class="popup__content"><slot></slot></div>
             </div>
         `;
     }
