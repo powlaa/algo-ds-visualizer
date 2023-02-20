@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Algorithm Visualizer</title>
+
+        <script src="/static/js/mixins/wait-mixin.js"></script>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <link rel="stylesheet" href="/static/css/index.css" />
+
+        <script src="/static/js/views/HeapsortView.js"></script>
+        <script src="/static/js/views/DijkstraView.js"></script>
+        <script src="/static/js/views/LinkedListView.js"></script>
+        <script src="/static/js/views/HomeView.js"></script>
+        <script src="/static/js/components/Header.js"></script>
+        <script src="/static/js/components/ProgressBar.js"></script>
+        <script src="/static/js/components/ArrayDisplay.js"></script>
+        <script src="/static/js/components/BinaryTree.js"></script>
+        <script src="/static/js/components/PopUp.js"></script>
+        <script src="/static/js/components/TableDisplay.js"></script>
+        <script src="/static/js/components/GraphCreator.js"></script>
+    </head>
+    <body>
+        <div id="app"></div>
+        <template id="home-view">
+            <home-view></home-view>
+        </template>
+        <template id="heapsort-view">
+            <heapsort-view popup-template-id="heapsort-popup-content"></heapsort-view>
+        </template>
+        <template id="dijkstra-view">
+            <dijkstra-view popup-template-id="dijkstra-popup-content" control-template-id="graph-control-explanations"></dijkstra-view>
+        </template>
+        <template id="linked-list-view">
+            <linked-list-view></linked-list-view>
+        </template>
+        <template id="heapsort-popup-content">
+            <h2>Heapsort Visualization</h2>
+            <h3>General</h3>
+            <p>
+                This is an interactive visualization of the Heapsort Algorithm. On the left side is the representation of the array. It can be changed
+                by entering new data in the input field at the top left (e.g. 5,3,7,11,9,4,2). On the right side the data is shown in binary tree form
+                where the root element is the first element of the array, the first child is the second element of the array, the second child is the
+                third element of the array and so on. The slider and the buttons at the bottom as well as the arrow keys can be used to step through
+                the algorithm.
+            </p>
+            <h3>The Heapsort Algorithm</h3>
+            <p>
+                Heapsort is a comparison-based sorting technique based on Binary Heap data structure. It is similar to the selection sort where we
+                first find the minimum element and place the minimum element at the beginning. Repeat the same process for the remaining elements.
+                <br />
+                Time Complexity: O(N log N)
+            </p>
+            <h4>Steps</h4>
+            <ul>
+                <li>Build a max heap from the input data.</li>
+                <li>
+                    At this point, the maximum element is stored at the root of the heap. Replace it with the last item of the heap followed by
+                    reducing the size of the heap by1. Finally, heapify the root of the tree.
+                </li>
+                <li>Repeat step 2 while the size of the heap is greater than 1.</li>
+            </ul>
+            <h4>What is meant by Heapify?</h4>
+            <p>
+                Heapify is the process of creating a heap data structure from a binary tree represented using an array. It is used to create Min-Heap
+                or Max-heap. Start from the first index of the non-leaf node whose index is given by n/2 – 1. Heapify uses recursion.
+            </p>
+            <h4>Advantages of heapsort</h4>
+            <ul>
+                <li>
+                    <b>Efficiency</b> – The time required to perform Heap sort increases logarithmically while other algorithms may grow exponentially
+                    slower as the number of items to sort increases. This sorting algorithm is very efficient.
+                </li>
+                <li>
+                    <b>Memory Usage</b> - Memory usage is minimal because apart from what is necessary to hold the initial list of items to be sorted,
+                    it needs no additional space to work
+                </li>
+                <li>
+                    <b>Simplicity</b> – It is simpler to understand than other equally efficient sorting algorithms because it does not use advanced
+                    computer science concepts such as recursion
+                </li>
+            </ul>
+            <p></p>
+            <p>
+                Explanations taken from: GeeksforGeeks. (2013, März 16). Heap Sort. GeeksforGeeks.
+                <a href="https://www.geeksforgeeks.org/heap-sort/">https://www.geeksforgeeks.org/heap-sort/</a>
+            </p>
+        </template>
+
+        <template id="dijkstra-popup-content">
+            <h2>Dijkstra Visualization</h2>
+            <h3>General</h3>
+            <p>
+                This is an interactive visualization of the Dijkstra Algorithm. On the left side is the graph which can be altered by adding and
+                deleting nodes and edges. To start the algorithm, select a node as the starting node and press the start button. The algorithm will
+                then run and the table on the right side will be updated with the current shortest path to each node. The slider and the buttons at
+                the bottom as well as the arrow keys can be used to step through the algorithm.
+            </p>
+            <h3>The Dijkstra Algorithm</h3>
+            <h4>Purpose and Use Cases</h4>
+            <p>
+                With Dijkstra's Algorithm, you can find the shortest path between nodes in a graph. Particularly, you can find the shortest path from
+                a node (called the "source node") to all other nodes in the graph, producing a shortest-path tree. This algorithm is used in GPS
+                devices to find the shortest path between the current location and the destination. It has broad applications in industry, specially
+                in domains that require modeling networks.
+            </p>
+            <h4>Basics</h4>
+            <ul>
+                <li>
+                    Dijkstra's Algorithm basically starts at the node that you choose (the source node) and it analyzes the graph to find the shortest
+                    path between that node and all the other nodes in the graph.
+                </li>
+                <li>
+                    The algorithm keeps track of the currently known shortest distance from each node to the source node and it updates these values
+                    if it finds a shorter path.
+                </li>
+                <li>
+                    Once the algorithm has found the shortest path between the source node and another node, that node is marked as "visited" and
+                    added to the path.
+                </li>
+                <li>
+                    The process continues until all the nodes in the graph have been added to the path. This way, we have a path that connects the
+                    source node to all other nodes following the shortest path possible to reach each node.
+                </li>
+            </ul>
+            <h4>Requirements</h4>
+            <p>
+                Dijkstra's Algorithm can only work with graphs that have positive weights. This is because, during the process, the weights of the
+                edges have to be added to find the shortest path. If there is a negative weight in the graph, then the algorithm will not work
+                properly. Once a node has been marked as "visited", the current path to that node is marked as the shortest path to reach that node.
+                And negative weights can alter this if the total weight can be decremented after this step has occurred.
+            </p>
+            <p></p>
+            <p>
+                Explanations taken from: Navone, E. C. (2020, September 28). Dijkstra’s Shortest Path Algorithm—A Detailed and Visual Introduction.
+                FreeCodeCamp.Org.
+                <a href="https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/"
+                    >https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/</a
+                >
+            </p>
+        </template>
+
+        <template id="graph-control-explanations">
+            <style>
+                p {
+                    margin: 0 0 5px 0;
+                }
+                b {
+                    margin: 0 8px 5px 0;
+                }
+                kbd {
+                    background-color: #eee;
+                    border-radius: 3px;
+                    border: 1px solid #b4b4b4;
+                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+                    color: #333;
+                    display: inline-block;
+                    font-size: 0.85em;
+                    font-weight: 700;
+                    line-height: 1;
+                    padding: 2px 4px;
+                    white-space: nowrap;
+                }
+            </style>
+            <b>Select a Node:</b>
+            <p>Click on a node until the color changes</p>
+            <b>Add a Node:</b>
+            <p>Hold <kbd>Shift</kbd> and click on the canvas</p>
+            <b>Delete a Node:</b>
+            <p>Select a node and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
+            <b>Add an Edge:</b>
+            <p>
+                Hold <kbd>Shift</kbd> and drag from one node to another node, to add an undirected edge add a second edge in the other direction
+                between the nodes
+            </p>
+            <b>Change Edge Weight:</b>
+            <p>Hold <kbd>Shift</kbd> and click on an edge</p>
+            <b>Delete an Edge:</b>
+            <p>Select an edge and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
+        </template>
+
+        <!-- js entrypoint -->
+        <script type="module" src="/static/js/index.js"></script>
+    </body>
+</html>
