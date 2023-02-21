@@ -92,12 +92,14 @@ class SplitLayout extends HTMLElement {
                 }
                 .container__left {
                     width: 50%;
+                    min-width: 20%;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
                 }
                 .container__right {
+                    min-width: 20%;
                     flex: 1;
                     display: flex;
                     flex-direction: column;

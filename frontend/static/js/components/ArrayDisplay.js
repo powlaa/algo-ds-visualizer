@@ -65,10 +65,14 @@ class ArrayDisplay extends HTMLElement {
                     margin: 30px 30px 30px 30px;
                     text-align: center;
                     font-size: 2em;
+                    width: calc(100% - 60px);
+                    display: flex;
+                    justify-content: stretch;
                 }
                 .array__element {
                     border: 1px solid black;
-                    padding: 2px 15px;
+                    padding: 2px 5px;
+                    flex: 1;
                 }
                 .array__element--mark {
                     background-color: rgba(166, 20, 28, 0.5);

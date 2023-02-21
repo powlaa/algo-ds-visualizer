@@ -285,6 +285,9 @@ class HeapsortView extends HTMLElement {
                     width: 100%;
                     --split-layout-height: calc(100% - 160px);
                 }
+                .content__array-display {
+                    width: 100%;
+                }
                 .content__pseudocode {
                     width: 100%;
                     --pseudocode-highlight-background-color: #b0e2d9;
