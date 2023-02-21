@@ -49,6 +49,7 @@ class DijkstraView extends HTMLElement {
             this._edges = e.detail.edges;
             this._resetDijkstra();
         });
+        this._graphVis.addEventListener("error", (e) => alert(e.detail.message));
 
         this._header.addEventListener("start", () => {
             if (this._selectedNode) this._runDijkstra(this._selectedNode.id);
@@ -267,6 +268,7 @@ class DijkstraView extends HTMLElement {
         this._progressBar.reset();
         this._tableVis.reset();
         this._graphVis.reset();
+        this._highlightPseudocode();
     }
 
     _dijkstra(start) {
@@ -475,7 +477,7 @@ class DijkstraView extends HTMLElement {
 
             <header-element title="Dijkstra"></header-element>
             <split-layout class="content" top-bottom-right>
-                <graph-creator class="content__graph-creator" slot="left"></graph-creator>
+                <graph-creator class="content__graph-creator" slot="left" no-negative-edge-weights></graph-creator>
                 <table-display class="content__table-display" slot="top-right"></table-display>
                 <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
             </split-layout>

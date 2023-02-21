@@ -1,17 +1,12 @@
-//TODO: maybe make adjustable from parent ?
-const NODE_RADIUS = 15;
-
-// set the dimensions and margins of the diagram
-//TODO: maybe make responsive or adjustable from parent ?
-const MARGIN = { top: 50, right: 90, bottom: 30, left: 90 };
-const WIDTH = 660 - MARGIN.left - MARGIN.right;
-const HEIGHT = 300 - MARGIN.top - MARGIN.bottom;
-
 class BinaryTree extends HTMLElement {
-    _treeData = [];
+    _MARGIN = { top: 50, right: 20, bottom: 30, left: 20 };
+    _WIDTH = window.innerWidth - this._MARGIN.left - this._MARGIN.right;
+    _HEIGHT = window.innerHeight - this._MARGIN.top - this._MARGIN.bottom;
 
     // declares a tree layout and assigns the size
-    _treemap = d3.tree().size([WIDTH, HEIGHT]);
+    _treemap = d3.tree().size([this._WIDTH / 2, this._HEIGHT / 2]);
+    _treeData = [];
+    _node_radius = 15;
 
     constructor() {
         super();
@@ -20,9 +15,12 @@ class BinaryTree extends HTMLElement {
         this._svg = d3
             .select(this.shadowRoot.querySelector("#container"))
             .append("svg")
-            .attr("width", WIDTH + MARGIN.left + MARGIN.right)
-            .attr("height", HEIGHT + MARGIN.top + MARGIN.bottom);
-        this._g = this._svg.append("g").attr("transform", "translate(" + MARGIN.left + "," + MARGIN.top + ")");
+            // Responsive SVG needs these 2 attributes and no width and height attr.
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", `0 0 ${this._WIDTH / 2} ${this._HEIGHT - 160}`)
+            // Class to make it responsive.
+            .classed("svg-content-responsive", true);
+        this._g = this._svg.append("g").attr("transform", "translate(" + this._MARGIN.left + "," + this._MARGIN.top + ")");
     }
 
     get data() {
@@ -32,6 +30,18 @@ class BinaryTree extends HTMLElement {
     set data(d) {
         this._data = d;
         this._update();
+    }
+
+    static get observedAttributes() {
+        return ["node-radius"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        switch (name) {
+            case "node-radius":
+                this._node_radius = newValue;
+                break;
+        }
     }
 
     highlight(...indices) {
@@ -59,7 +69,6 @@ class BinaryTree extends HTMLElement {
         await this._wait(duration / 2);
 
         // no need to stop animation if the data has changed because update() will be called which will reset all the nodes
-        //wait for the end of the transition
         await this._node
             .transition()
             .duration(duration / 2)
@@ -107,7 +116,7 @@ class BinaryTree extends HTMLElement {
         this._node
             .append("circle")
             .attr("id", (d) => "node" + d.data.index)
-            .attr("r", NODE_RADIUS)
+            .attr("r", this._node_radius)
             .attr("class", (d) => (d.data.modifier ? "node__circle node__circle--" + d.data.modifier : "node__circle"));
 
         // adds the text to the node
@@ -138,8 +147,15 @@ class BinaryTree extends HTMLElement {
                 :host {
                     display: inline-block;
                 }
+                .svg-content-responsive {
+                    display: inline-block;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
                 .node {
                     cursor: pointer;
+                    user-select: none;
                 }
                 .node__circle {
                     fill: #fff;
@@ -147,10 +163,10 @@ class BinaryTree extends HTMLElement {
                     stroke-width: 3px;
                 }
                 .node__circle--mark {
-                    stroke: #A6141C;
+                    stroke: #a6141c;
                 }
                 .node__circle--highlight {
-                    stroke: #0CA632;
+                    stroke: #0ca632;
                 }
                 .node__circle--lock {
                     fill: rgb(185, 185, 185);

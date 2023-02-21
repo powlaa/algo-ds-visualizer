@@ -288,12 +288,15 @@ class HeapsortView extends HTMLElement {
                 .content__pseudocode {
                     width: 100%;
                     --pseudocode-highlight-background-color: #b0e2d9;
+                    --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
                 }
                 .content__binary-tree {
                     display: inline-block;
                     position: relative;
                     vertical-align: top;
                     overflow: hidden;
+                    height: 100%;
+                    width: 100%;
                 }
                 .progress {
                     --progress-bar-slider-z-index: 2;
@@ -303,7 +306,7 @@ class HeapsortView extends HTMLElement {
             <split-layout class="content" top-bottom-left>
                 <array-display slot="top-left" class="content__array-display"></array-display>
                 <pseudocode-display slot="bottom-left" class="content__pseudocode"></pseudocode-display>
-                <binary-tree slot="right" class="content__binary-tree"></binary-tree>
+                <binary-tree slot="right" class="content__binary-tree" node-radius="20"></binary-tree>
             </split-layout>
             <progress-bar class="progress"></progress-bar>
         `;

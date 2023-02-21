@@ -33,13 +33,12 @@ class Header extends HTMLElement {
     }
 
     _start() {
-        //TODO: add validation
-        //TODO: make clear that it's numbers only
         let array = [];
         array = this.shadowRoot
             .querySelector("#array-input")
             .value.split(",")
-            .map((e) => parseInt(e));
+            .map((e) => parseInt(e))
+            .filter((e) => !isNaN(e));
         this.dispatchEvent(new CustomEvent("start", { detail: { array } }));
     }
 

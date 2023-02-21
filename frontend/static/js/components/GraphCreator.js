@@ -16,6 +16,7 @@ class GraphCreator extends HTMLElement {
     _nodeDeselected = new CustomEvent("node-deselected");
     _updateNodes = (nodes) => new CustomEvent("update-nodes", { detail: { nodes } });
     _updateEdges = (edges) => new CustomEvent("update-edges", { detail: { edges } });
+    _error = (message) => new CustomEvent("error", { detail: { message } });
 
     _state = {
         selectedNode: null,
@@ -318,7 +319,7 @@ class GraphCreator extends HTMLElement {
             const transform = d3.zoomTransform(this._svg.node());
             const xyZoomPan = transform.invert(xy);
             // clicked not dragged from svg
-            var d = { id: this._idct++, title: "new node", x: xyZoomPan[0], y: xyZoomPan[1] };
+            var d = { id: this._idct++, title: "new", x: xyZoomPan[0], y: xyZoomPan[1] };
             this._nodes.push(d);
             this.dispatchEvent(this._updateNodes(this._nodes));
 
@@ -570,7 +571,7 @@ class GraphCreator extends HTMLElement {
             .attr("id", this._CONSTS.activeEditId)
             .attr("contentEditable", "true")
             .text(d.title)
-            .on("mousedown", () => {
+            .on("mousedown", (e) => {
                 e.stopPropagation();
             })
             .on("keydown", (e, d) => {
@@ -580,7 +581,7 @@ class GraphCreator extends HTMLElement {
                 }
             })
             .on("blur", (e, d) => {
-                d.title = e.currentTarget.textContent;
+                d.title = e.currentTarget.textContent.slice(0, 4);
                 this.dispatchEvent(this._updateNodes(this._nodes));
                 this._insertTitleLinebreaks(d3node, d.title);
                 d3.select(e.currentTarget.parentElement).remove();
@@ -622,11 +623,23 @@ class GraphCreator extends HTMLElement {
                 }
             })
             .on("blur", (e, d) => {
-                d.weight = parseInt(e.currentTarget.textContent);
+                const newWeight = parseInt(e.currentTarget.textContent);
+                if (isNaN(newWeight) || (this.hasAttribute("no-negative-edge-weights") && newWeight < 0)) {
+                    d3.select(e.currentTarget.parentElement).remove();
+                    this.dispatchEvent(
+                        this._error(
+                            `Invalid edge weight value, make sure it is a number${
+                                this.hasAttribute("no-negative-edge-weights") ? " and not negative" : ""
+                            }`
+                        )
+                    );
+                    return;
+                }
+                d.weight = newWeight;
                 var edgeBack = this._edges.find((e) => e.source.id == target && e.target.id == source);
-                if (edgeBack) edgeBack.weight = d.weight;
-                weight.text(d.weight);
-                if (weightBack) weightBack.text(d.weight);
+                if (edgeBack) edgeBack.weight = newWeight;
+                weight.text(newWeight);
+                if (weightBack) weightBack.text(newWeight);
 
                 this.dispatchEvent(this._updateEdges(this._edges));
 
