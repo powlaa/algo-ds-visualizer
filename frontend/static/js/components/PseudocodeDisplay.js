@@ -25,20 +25,24 @@ class PseudocodeDisplay extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 .code {
+                    user-select: none;
                 }
                 .code__line {
                     padding-left: 1em;
                     display: flex;
                     align-items: baseline;
                 }
-                .code__line:hover {
-                    background-color: #80808036;
-                }
                 .code__line:nth-child(even) {
                     background-color: #80808029;
                 }
+                .code__line:hover {
+                    background-color: #80808036;
+                }
                 .code__line--highlighted {
-                    background-color: greenyellow !important;
+                    background-color: var(--pseudocode-highlight-background-color, greenyellow) !important;
+                }
+                .code__line--highlighted:nth-child(even) {
+                    background-color: var(--pseudocode-highlight-background-color-alternate, green) !important;
                 }
                 .code__number {
                     margin-right: 1em;

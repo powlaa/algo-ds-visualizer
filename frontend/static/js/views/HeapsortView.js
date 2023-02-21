@@ -2,108 +2,28 @@ class HeapsortView extends HTMLElement {
     _ANIMATION_DURATION = 1000;
     _EXAMPLE_DATA = [5, 3, 7, 11, 9, 4, 2];
     _PSEUDOCODE = [
-        {
-            code: "<b>Heapsort</b>(A as array)",
-            indent: 0,
-            label: "heapsort",
-        },
-        {
-            code: "<b>BuildMaxHeap</b>(A)",
-            indent: 1,
-            label: "heapsort-build-max-heap",
-        },
-        {
-            code: "for i = A.length - 1 to 0",
-            indent: 1,
-            label: "heapsort-for-loop",
-        },
-        {
-            code: "swap A[0] and A[i]",
-            indent: 2,
-            label: "heapsort-swap",
-        },
-        {
-            code: "<b>Heapify</b>(A, 0)",
-            indent: 2,
-            label: "heapsort-heapify",
-        },
+        { code: "<b>Heapsort</b>(A as array)", indent: 0, label: "heapsort" },
+        { code: "<b>BuildMaxHeap</b>(A)", indent: 1, label: "heapsort-build-max-heap" },
+        { code: "<b>for</b> i = A.length - 1 to 0", indent: 1, label: "heapsort-for-loop" },
+        { code: "swap A[0] and A[i]", indent: 2, label: "heapsort-swap" },
+        { code: "<b>Heapify</b>(A, 0)", indent: 2, label: "heapsort-heapify" },
         { code: "", indent: 0, label: "empty" },
-        {
-            code: "<b>BuildMaxHeap</b>(A as array)",
-            indent: 0,
-            label: "build-max-heap",
-        },
-        {
-            code: "for i = floor(A.length / 2) to 0",
-            indent: 1,
-            label: "build-max-heap-for-loop",
-        },
-        {
-            code: "<b>Heapify</b>(A, i)",
-            indent: 2,
-            label: "build-max-heap-heapify",
-        },
+        { code: "<b>BuildMaxHeap</b>(A as array)", indent: 0, label: "build-max-heap" },
+        { code: "<b>for</b> i = floor(A.length / 2) to 0", indent: 1, label: "build-max-heap-for-loop" },
+        { code: "<b>Heapify</b>(A, i)", indent: 2, label: "build-max-heap-heapify" },
         { code: "", indent: 0, label: "empty" },
-        {
-            code: "<b>Heapify</b>(A as array, i as int)",
-            indent: 0,
-            label: "heapify",
-        },
-        {
-            code: "l = 2 * i + 1",
-            indent: 1,
-            label: "heapify-l",
-        },
-        {
-            code: "r = 2 * i + 2",
-            indent: 1,
-            label: "heapify-r",
-        },
-        {
-            code: "if l < A.length and A[l] > A[i]",
-            indent: 1,
-            label: "heapify-if-l",
-        },
-        {
-            code: "max = l",
-            indent: 2,
-            label: "heapify-max-l",
-        },
-        {
-            code: "else",
-            indent: 1,
-            label: "heapify-else-i",
-        },
-        {
-            code: "max = i",
-            indent: 2,
-            label: "heapify-max-i",
-        },
-        {
-            code: "if r < A.length and A[r] > A[max]",
-            indent: 1,
-            label: "heapify-if-r",
-        },
-        {
-            code: "max = r",
-            indent: 2,
-            label: "heapify-max-r",
-        },
-        {
-            code: "if max != i",
-            indent: 1,
-            label: "heapify-if-max",
-        },
-        {
-            code: "swap A[i] and A[max]",
-            indent: 2,
-            label: "heapify-swap",
-        },
-        {
-            code: "<b>Heapify</b>(A, max)",
-            indent: 2,
-            label: "heapify-heapify",
-        },
+        { code: "<b>Heapify</b>(A as array, i as int)", indent: 0, label: "heapify" },
+        { code: "l = 2 * i + 1", indent: 1, label: "heapify-l" },
+        { code: "r = 2 * i + 2", indent: 1, label: "heapify-r" },
+        { code: "<b>if</b> l < A.length and A[l] > A[i]", indent: 1, label: "heapify-if-l" },
+        { code: "max = l", indent: 2, label: "heapify-max-l" },
+        { code: "<b>else</b>", indent: 1, label: "heapify-else-i" },
+        { code: "max = i", indent: 2, label: "heapify-max-i" },
+        { code: "<b>if</b> r < A.length and A[r] > A[max]", indent: 1, label: "heapify-if-r" },
+        { code: "max = r", indent: 2, label: "heapify-max-r" },
+        { code: "<b>if</b> max != i", indent: 1, label: "heapify-if-max" },
+        { code: "swap A[i] and A[max]", indent: 2, label: "heapify-swap" },
+        { code: "<b>Heapify</b>(A, max)", indent: 2, label: "heapify-heapify" },
     ];
 
     _stepCounter = 0;
@@ -171,8 +91,7 @@ class HeapsortView extends HTMLElement {
 
         if (stepCounter != this._stepCounter) return;
         if (this._steps[stepIndex + 1].sortCount > step.sortCount) {
-            console.log("here");
-            // this._updateVis(step, index_A, index_B);
+            this._updateVis({ ...this._steps[stepIndex + 1], codeLabel: step.codeLabel, sortCount: step.sortCount + 1 }, index_A, index_B);
         }
     }
 
@@ -301,7 +220,7 @@ class HeapsortView extends HTMLElement {
             data: [...data],
             sortCount,
             heading: "All sorted!",
-            description: " ",
+            description: "Only the root element is left in the heap, so it is sorted",
             animation: (step) => this._updateVis(step),
         });
         return stepOrder;
@@ -368,24 +287,13 @@ class HeapsortView extends HTMLElement {
                 }
                 .content__pseudocode {
                     width: 100%;
+                    --pseudocode-highlight-background-color: #b0e2d9;
                 }
                 .content__binary-tree {
                     display: inline-block;
                     position: relative;
                     vertical-align: top;
                     overflow: hidden;
-                }
-                .popup {
-                    --popup-top: none;
-                    --popup-bottom: 1.5em;
-                    --popup-left: none;
-                    --popup-right: 0px;
-                    --popup-height: 200px;
-                    --popup-width: 35%;
-                    --popup-min-width: 350px;
-                    --popup-border-radius: 10px 0 0 0;
-                    --popup-grid-template-columns: auto auto;
-                    --popup-z-index: 2;
                 }
                 .progress {
                     --progress-bar-slider-z-index: 2;

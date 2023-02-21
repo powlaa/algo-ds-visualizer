@@ -81,18 +81,6 @@ class GraphCreator extends HTMLElement {
         return this._yLoc;
     }
 
-    static get observedAttributes() {
-        return ["popup-template-id"];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case "popup-template-id":
-                this._header.setAttribute("popup-template-id", newValue);
-                break;
-        }
-    }
-
     showGraph(nodes, edges) {
         this.nodes = nodes;
         this.edges = edges;

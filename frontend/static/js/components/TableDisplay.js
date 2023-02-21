@@ -7,18 +7,6 @@ class TableDisplay extends HTMLElement {
         this._render();
     }
 
-    static get observedAttributes() {
-        return ["popup-template-id"];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case "popup-template-id":
-                this._header.setAttribute("popup-template-id", newValue);
-                break;
-        }
-    }
-
     reset() {
         d3.select(this.shadowRoot.querySelector("#container > table")).remove();
     }
@@ -71,11 +59,10 @@ class TableDisplay extends HTMLElement {
                     margin: 40px;
                 }
                 table {
-                    width: calc(100% - 80px);
+                    width: 100%;
                     border-collapse: collapse;
                     margin: 0 !important;
                 }
-
                 table td,
                 table th {
                     border: 1px solid #ddd;
