@@ -2,6 +2,11 @@ body,
 html {
     font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
     margin: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 h1,
 h2 {
@@ -13,6 +18,10 @@ h2 {
 }
 h4 {
     margin: 5px 0;
+}
+
+#app {
+    height: 100%;
 }
 
 /*generated with Input range slider CSS style generator (version 20211225)

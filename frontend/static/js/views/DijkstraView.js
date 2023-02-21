@@ -1,4 +1,21 @@
 class DijkstraView extends HTMLElement {
+    _PSEUDOCODE = [
+        { code: "<b>Dijkstra</b>(Graph, source)", indent: 0, label: "dijkstra" },
+        { code: "<b>for each</b> node v in Graph", indent: 1, label: "for-each-node" },
+        { code: "dist[v] = infinity", indent: 2, label: "dist-infinity" },
+        { code: "prev[v] = undefined", indent: 2, label: "prev-undefined" },
+        { code: "dist[source] = 0", indent: 1, label: "dist-source" },
+        { code: "S = the set of all nodes in Graph", indent: 1, label: "s-graph" },
+        { code: "<b>while</b> S is not empty", indent: 1, label: "while-s" },
+        { code: "u = node in S with min dist[u]", indent: 2, label: "u-min-dist" },
+        { code: "remove u from S", indent: 2, label: "remove-u" },
+        { code: "<b>for each</b> neighbor v of u", indent: 2, label: "for-each-neighbor" },
+        { code: "cost = dist[u] + dist_between(u, v)", indent: 3, label: "cost" },
+        { code: "<b>if</b> cost < dist[v]", indent: 3, label: "if-cost" },
+        { code: "dist[v] = cost", indent: 4, label: "dist-cost" },
+        { code: "prev[v] = u", indent: 4, label: "prev-u" },
+        { code: "<b>return</b> prev[]", indent: 1, label: "return" },
+    ];
     _stepCounter = 0;
     _currentStepIndex = 0;
 
@@ -19,6 +36,8 @@ class DijkstraView extends HTMLElement {
         this._header = this.shadowRoot.querySelector("header-element");
         this._progressBar = this.shadowRoot.querySelector("progress-bar");
         this._controlPopup = this.shadowRoot.querySelector("#control-popup");
+        this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
+        this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
         this._graphVis.addEventListener("node-selected", this._nodeSelected.bind(this));
         this._graphVis.addEventListener("node-deselected", () => (this._selectedNode = null));
@@ -147,7 +166,10 @@ class DijkstraView extends HTMLElement {
         this._tableVis.showTable(columns, rows);
     }
 
-    _updateVis() {}
+    _highlightPseudocode(codeLabel) {
+        if (codeLabel) this._pseudocodeDisplay.highlightLine(...codeLabel);
+        else this._pseudocodeDisplay.highlightLine();
+    }
 
     _updateTable(steps, currentStepIndex, highlights) {
         var columns = [...this._nodes];
@@ -177,11 +199,13 @@ class DijkstraView extends HTMLElement {
                         value = !index ? "INIT" : index;
                         break;
                     case "visited":
-                        value = row.visited
-                            ? row.visited.length > 0
-                                ? `{${row.visited.map((n) => this._getNodeTitle(n) ?? n)},${this._getNodeTitle(row.currentNode) ?? row.currentNode}}`
-                                : `{${this._getNodeTitle(row.currentNode) ?? row.currentNode}}`
-                            : "{}";
+                        if (row.visited && row.currentNode !== "INIT") {
+                            if (row.visited.length > 0)
+                                value = `{${row.visited.map((n) => this._getNodeTitle(n) ?? n)},${
+                                    this._getNodeTitle(row.currentNode) ?? row.currentNode
+                                }}`;
+                            else value = `{${this._getNodeTitle(row.currentNode) ?? row.currentNode}}`;
+                        } else value = "{}";
                         break;
                     case "unvisited":
                         value = `{${
@@ -258,9 +282,16 @@ class DijkstraView extends HTMLElement {
         steps.push({
             shortestDistances: { ...shortestDistances },
             currentNode: "INIT",
+            visited: [],
             heading: "Init Dijkstra Algorithm at start node " + this._getNodeTitle(start),
             description: `Calculate the shortest distance from the start node to all other nodes in the graph`,
-            animation: (steps, currentStepIndex) => this._updateTable(steps, currentStepIndex),
+            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "dist-source", "s-graph", "while-s", "u-min-dist", "remove-u"],
+            animation: (steps, currentStepIndex) => {
+                this._updateTable(steps, currentStepIndex);
+                this._highlightPseudocode(steps[currentStepIndex].codeLabel);
+                this._graphVis.highlightNodes();
+                this._graphVis.highlightEdges();
+            },
         });
 
         while (
@@ -286,15 +317,17 @@ class DijkstraView extends HTMLElement {
                 steps.push({
                     shortestDistances: { ...shortestDistances },
                     currentNode: vertex,
+                    visited: [...visited],
                     heading: "Choose next node: " + vertexName,
                     description: `The next node is the one with the smallest cost, which is ${vertexName} with a cost of ${costToVertex}`,
-                    visited: [...visited],
+                    codeLabel: ["while-s", "u-min-dist", "remove-u"],
                     animation: (steps, currentStepIndex) => {
                         this._updateTable(steps, currentStepIndex, [
                             { row: steps[currentStepIndex - 1].currentNode, column: steps[currentStepIndex].currentNode },
                         ]);
                         this._graphVis.highlightEdges();
                         this._graphVis.highlightNodes(steps[currentStepIndex].currentNode);
+                        this._highlightPseudocode(steps[currentStepIndex].codeLabel);
                     },
                 });
 
@@ -307,36 +340,38 @@ class DijkstraView extends HTMLElement {
                     steps.push({
                         shortestDistances: { ...shortestDistances },
                         currentNode: vertex,
+                        visited: [...visited],
                         heading: "Explore neighbors of " + (vertex === start ? "start node " : "node ") + vertexName,
                         description: `The path from ${this._getNodeTitle(start)} to ${this._getNodeTitle(to)} via ${vertexName} has a cost of ${
                             costToVertex + cost
                         } which is the shortest path so far`,
-                        visited: [...visited],
+                        codeLabel: ["for-each-neighbor", "cost", "if-cost", "dist-cost", "prev-u"],
                         animation: (steps, currentStepIndex) => {
-                            //TODO: only show path in graph
                             this._graphVis.highlightEdges(
                                 ...this._tracePath({ ...shortestDistances }, start, steps[currentStepIndex].currentNode, to)
                             );
                             this._updateTable(steps, currentStepIndex, [{ row: steps[currentStepIndex].currentNode, column: to }]);
+                            this._highlightPseudocode(steps[currentStepIndex].codeLabel);
                         },
                     });
                 } else {
                     steps.push({
                         shortestDistances: { ...shortestDistances },
                         currentNode: vertex,
+                        visited: [...visited],
                         heading: "Explore neighbors of " + (vertex === start ? "start node " : "node ") + vertexName,
                         description: `The path from ${this._getNodeTitle(start)} to ${this._getNodeTitle(to)} via ${vertexName} has a cost of ${
                             costToVertex + cost
                         } which is bigger than the current shortest path with a cost of ${currCostToNeighbor} via ${this._getNodeTitle(
                             shortestDistances[to].vertex
                         )}`,
-                        visited: [...visited],
+                        codeLabel: ["for-each-neighbor", "cost", "if-cost"],
                         animation: (steps, currentStepIndex) => {
-                            //TODO: only show path in graph
                             this._graphVis.highlightEdges(
                                 ...this._tracePath({ ...shortestDistances }, start, steps[currentStepIndex].currentNode, to)
                             );
                             this._updateTable(steps, currentStepIndex);
+                            this._highlightPseudocode(steps[currentStepIndex].codeLabel);
                         },
                     });
                 }
@@ -347,13 +382,15 @@ class DijkstraView extends HTMLElement {
         steps.push({
             shortestDistances: { ...shortestDistances },
             currentNode: steps[steps.length - 1].currentNode,
+            visited: [...visited],
             heading: "Dijkstra is done",
             description: "Select a node to show the shortest path from the start node",
-            visited: [...visited],
+            codeLabel: ["return"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
                 this._graphVis.highlightNodes();
                 this._graphVis.highlightEdges();
+                this._highlightPseudocode(steps[currentStepIndex].codeLabel);
             },
         });
 
@@ -383,22 +420,27 @@ class DijkstraView extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 .content {
-                    display: flex;
                     width: 100%;
                     height: calc(100vh - 160px);
+                    --split-layout-height: calc(100% - 160px);
                 }
 
                 .content__graph-creator {
                     display: inline-block;
                     position: relative;
-                    width: 50%;
                     vertical-align: top;
                     overflow: hidden;
-                    border-right: 2px solid #80808036;
+                    width: 100%;
+                    height: 100%;
                 }
                 .content__table-display {
-                    width: 50%;
+                    width: 100%;
                     height: 100%;
+                }
+                .content__pseudocode {
+                    width: 100%;
+                    --pseudocode-highlight-background-color: #b0e2d9;
+                    --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
                 }
                 .popup {
                     --popup-display: grid;
@@ -432,10 +474,11 @@ class DijkstraView extends HTMLElement {
             </style>
 
             <header-element title="Dijkstra"></header-element>
-            <div class="content">
-                <graph-creator class="content__graph-creator"></graph-creator>
-                <table-display class="content__table-display"></table-display>
-            </div>
+            <split-layout class="content" top-bottom-right>
+                <graph-creator class="content__graph-creator" slot="left"></graph-creator>
+                <table-display class="content__table-display" slot="top-right"></table-display>
+                <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
+            </split-layout>
             <pop-up id="control-popup" class="popup"></pop-up>
             <button id="control-btn" class="button">?</button>
             <progress-bar class="progress" locked></progress-bar>

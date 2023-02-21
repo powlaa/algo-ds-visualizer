@@ -78,11 +78,6 @@ class BinaryTree extends HTMLElement {
 
         // maps the node data to the tree layout
         this._nodes = this._treemap(this._nodes);
-        //  assigns the data to a hierarchy using parent-child relationships
-        this._nodes = d3.hierarchy(this._treeData, (d) => d.children);
-
-        // maps the node data to the tree layout
-        this._nodes = this._treemap(this._nodes);
 
         this._g.selectAll(".link").remove();
 

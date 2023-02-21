@@ -1,16 +1,15 @@
-const CONSTS = {
-    selectedClass: "selected",
-    connectClass: "connect-node",
-    circleGClass: "conceptG",
-    graphClass: "graph",
-    activeEditId: "active-editing",
-    BACKSPACE_KEY: 8,
-    DELETE_KEY: 46,
-    ENTER_KEY: 13,
-    nodeRadius: 25,
-};
-
 class GraphCreator extends HTMLElement {
+    _CONSTS = {
+        selectedClass: "selected",
+        connectClass: "connect-node",
+        circleGClass: "conceptG",
+        graphClass: "graph",
+        activeEditId: "active-editing",
+        BACKSPACE_KEY: 8,
+        DELETE_KEY: 46,
+        ENTER_KEY: 13,
+        nodeRadius: 25,
+    };
     _idct = 0;
 
     _nodeSelected = (node) => new CustomEvent("node-selected", { detail: { node } });
@@ -80,18 +79,6 @@ class GraphCreator extends HTMLElement {
 
     get yLoc() {
         return this._yLoc;
-    }
-
-    static get observedAttributes() {
-        return ["popup-template-id"];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case "popup-template-id":
-                this._header.setAttribute("popup-template-id", newValue);
-                break;
-        }
     }
 
     showGraph(nodes, edges) {
@@ -167,7 +154,7 @@ class GraphCreator extends HTMLElement {
             .append("svg:path")
             .attr("d", "M0,-5L10,0L0,5");
 
-        this._g = this._svg.append("g").classed(CONSTS.graphClass, true);
+        this._g = this._svg.append("g").classed(this._CONSTS.graphClass, true);
 
         // displayed when dragging between nodes
         this._dragLine = this._g
@@ -208,7 +195,7 @@ class GraphCreator extends HTMLElement {
             .zoom()
             .on("zoom", this._zoomed.bind(this))
             .on("start", (e) => {
-                var ael = d3.select("#" + CONSTS.activeEditId).node();
+                var ael = d3.select("#" + this._CONSTS.activeEditId).node();
                 if (ael) {
                     ael.blur();
                 }
@@ -276,14 +263,14 @@ class GraphCreator extends HTMLElement {
         this._circles = newGs
             .enter()
             .append("g")
-            .classed(CONSTS.circleGClass, true)
+            .classed(this._CONSTS.circleGClass, true)
             .on("mouseover", (e) => {
-                if (this._state.shiftNodeDrag) d3.select(e.currentTarget).classed(CONSTS.connectClass, true);
+                if (this._state.shiftNodeDrag) d3.select(e.currentTarget).classed(this._CONSTS.connectClass, true);
                 this._state.mouseOverNode = e.currentTarget;
             })
             .on("mouseout", (e) => {
                 this._state.mouseOverNode = null;
-                d3.select(e.currentTarget).classed(CONSTS.connectClass, false);
+                d3.select(e.currentTarget).classed(this._CONSTS.connectClass, false);
             })
             .on("mousedown", (e, d) => {
                 this._circleMouseDown(e, d);
@@ -292,7 +279,7 @@ class GraphCreator extends HTMLElement {
                 this._circleMouseUp(d3.select(e.currentTarget), e, d);
             })
             .call(this._drag);
-        this._circles.append("circle").attr("r", String(CONSTS.nodeRadius));
+        this._circles.append("circle").attr("r", String(this._CONSTS.nodeRadius));
         this._circles.each((d, i, nodes) => {
             this._insertTitleLinebreaks(d3.select(nodes[i]), d.title);
         });
@@ -362,8 +349,8 @@ class GraphCreator extends HTMLElement {
             selectedEdge = this._state.selectedEdge;
 
         switch (e.keyCode) {
-            case CONSTS.BACKSPACE_KEY:
-            case CONSTS.DELETE_KEY:
+            case this._CONSTS.BACKSPACE_KEY:
+            case this._CONSTS.DELETE_KEY:
                 e.preventDefault();
                 if (selectedNode) {
                     this.nodes.splice(this.nodes.indexOf(selectedNode), 1);
@@ -401,7 +388,7 @@ class GraphCreator extends HTMLElement {
     _circleMouseUp(d3node, e, d) {
         // reset the states
         this._state.shiftNodeDrag = false;
-        d3node.classed(CONSTS.connectClass, false);
+        d3node.classed(this._CONSTS.connectClass, false);
 
         var mouseDownNode = this._state.mouseDownNode;
 
@@ -481,7 +468,7 @@ class GraphCreator extends HTMLElement {
     // call to propagate changes to graph
     _zoomed(e) {
         this._state.justScaleTransGraph = true;
-        d3.select(this.shadowRoot.querySelector("." + CONSTS.graphClass)).attr("transform", e.transform);
+        d3.select(this.shadowRoot.querySelector("." + this._CONSTS.graphClass)).attr("transform", e.transform);
     }
 
     _updateWindow(svg) {
@@ -535,7 +522,7 @@ class GraphCreator extends HTMLElement {
         });
     }
     _replaceSelectEdge(d3Path, edgeData) {
-        d3Path.classed(CONSTS.selectedClass, true);
+        d3Path.classed(this._CONSTS.selectedClass, true);
         if (this._state.selectedEdge) {
             this._removeSelectFromEdge();
         }
@@ -543,7 +530,7 @@ class GraphCreator extends HTMLElement {
     }
 
     _replaceSelectNode(d3Node, nodeData) {
-        d3Node.classed(CONSTS.selectedClass, true);
+        d3Node.classed(this._CONSTS.selectedClass, true);
         if (this._state.selectedNode) {
             this._removeSelectFromNode(false);
         }
@@ -552,13 +539,13 @@ class GraphCreator extends HTMLElement {
     }
 
     _removeSelectFromNode(notify) {
-        this._circles.filter((cd) => cd.id === this._state.selectedNode.id).classed(CONSTS.selectedClass, false);
+        this._circles.filter((cd) => cd.id === this._state.selectedNode.id).classed(this._CONSTS.selectedClass, false);
         this._state.selectedNode = null;
         if (notify) this.dispatchEvent(this._nodeDeselected);
     }
 
     _removeSelectFromEdge() {
-        this._paths.filter((cd) => cd === this._state.selectedEdge).classed(CONSTS.selectedClass, false);
+        this._paths.filter((cd) => cd === this._state.selectedEdge).classed(this._CONSTS.selectedClass, false);
         this._state.selectedEdge = null;
     }
 
@@ -566,9 +553,9 @@ class GraphCreator extends HTMLElement {
     _changeTextOfNode(d3node, d) {
         d3node.selectAll("text").remove();
         var nodeBCR = d3node.node().getBoundingClientRect(),
-            curScale = nodeBCR.width / CONSTS.nodeRadius,
+            curScale = nodeBCR.width / this._CONSTS.nodeRadius,
             placePad = 5 * curScale,
-            useHW = curScale > 1 ? nodeBCR.width * 0.71 : CONSTS.nodeRadius * 1.42;
+            useHW = curScale > 1 ? nodeBCR.width * 0.71 : this._CONSTS.nodeRadius * 1.42;
         // replace with editableconent text
         var d3txt = this._svg
             .selectAll("foreignObject")
@@ -580,7 +567,7 @@ class GraphCreator extends HTMLElement {
             .attr("height", 2 * useHW)
             .attr("width", useHW)
             .append("xhtml:p")
-            .attr("id", CONSTS.activeEditId)
+            .attr("id", this._CONSTS.activeEditId)
             .attr("contentEditable", "true")
             .text(d.title)
             .on("mousedown", () => {
@@ -588,7 +575,7 @@ class GraphCreator extends HTMLElement {
             })
             .on("keydown", (e, d) => {
                 e.stopPropagation();
-                if (e.keyCode == CONSTS.ENTER_KEY && !e.shiftKey) {
+                if (e.keyCode == this._CONSTS.ENTER_KEY && !e.shiftKey) {
                     e.currentTarget.blur();
                 }
             })
@@ -621,7 +608,7 @@ class GraphCreator extends HTMLElement {
             .attr("height", 50)
             .attr("width", 40)
             .append("xhtml:p")
-            .attr("id", CONSTS.activeEditId)
+            .attr("id", this._CONSTS.activeEditId)
             .attr("contentEditable", "true")
             .text(d.weight)
             .style("background", "white")
@@ -630,7 +617,7 @@ class GraphCreator extends HTMLElement {
             })
             .on("keydown", (e) => {
                 e.stopPropagation();
-                if (e.keyCode == CONSTS.ENTER_KEY && !e.shiftKey) {
+                if (e.keyCode == this._CONSTS.ENTER_KEY && !e.shiftKey) {
                     e.currentTarget.blur();
                 }
             })
