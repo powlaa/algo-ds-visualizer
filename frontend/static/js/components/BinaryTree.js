@@ -6,7 +6,7 @@ class BinaryTree extends HTMLElement {
     // declares a tree layout and assigns the size
     _treemap = d3.tree().size([this._WIDTH / 2, this._HEIGHT / 2]);
     _treeData = [];
-    _node_radius = 15;
+    _node_radius = 25;
 
     constructor() {
         super();
@@ -21,6 +21,14 @@ class BinaryTree extends HTMLElement {
             // Class to make it responsive.
             .classed("svg-content-responsive", true);
         this._g = this._svg.append("g").attr("transform", "translate(" + this._MARGIN.left + "," + this._MARGIN.top + ")");
+        // listen for dragging
+        var dragSvg = d3
+            .zoom()
+            .on("zoom", (e) => this._g.attr("transform", e.transform))
+            .on("start", () => d3.select("body").style("cursor", "move"))
+            .on("end", () => d3.select("body").style("cursor", "auto"));
+
+        this._svg.call(dragSvg).on("dblclick.zoom", null);
     }
 
     get data() {

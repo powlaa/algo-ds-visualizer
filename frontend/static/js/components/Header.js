@@ -8,7 +8,7 @@ class Header extends HTMLElement {
         this._description = this.shadowRoot.querySelector("#description");
         this._informationPopup = this.shadowRoot.querySelector("#information-popup");
 
-        this.shadowRoot.querySelector("#start-btn").addEventListener("click", this._start.bind(this));
+        if (!this.hasAttribute("no-start-btn")) this.shadowRoot.querySelector("#start-btn").addEventListener("click", this._start.bind(this));
         this.shadowRoot.querySelector("#information-btn").addEventListener("click", () => {
             this._informationPopup.show();
         });
@@ -59,10 +59,12 @@ class Header extends HTMLElement {
                 .panel__title {
                     display: flex;
                     align-items: center;
+                    white-space: nowrap;
                 }
                 .panel__button {
                     font-size: 1em;
                     text-align: center;
+                    cursor: pointer;
                 }
                 .panel__button--information {
                     background-color: rgba(0, 0, 0, 0);
@@ -109,7 +111,13 @@ class Header extends HTMLElement {
                             style="display: ${this.getAttribute("array-input") ?? "none"}"
                             placeholder="e.g. 5,3,7,11,9,4,2"
                         />
-                        <button id="start-btn" class="panel__button panel__button--start">${this.getAttribute("start-btn-name") ?? "Start"}</button>
+                        ${
+                            this.hasAttribute("no-start-btn")
+                                ? ""
+                                : `<button id="start-btn" class="panel__button panel__button--start">${
+                                      this.getAttribute("start-btn-name") ?? "Start"
+                                  }</button>`
+                        }
                     </div>
                 </div>
                 <div class="explanations">

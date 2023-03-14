@@ -50,7 +50,7 @@ class ProgressBar extends HTMLElement {
             case "total-steps":
                 this._slider.max = newValue;
                 this._slider.style.setProperty("--max", this.totalSteps);
-                this.setCurrentStep(0);
+                this._updateStepDisplay();
                 break;
             case "locked":
                 this._slider.disabled = this.locked;
@@ -63,6 +63,7 @@ class ProgressBar extends HTMLElement {
 
     reset() {
         this.removeAttribute("total-steps");
+        this.setCurrentStep(0);
         this._updateStepDisplay(0);
     }
 

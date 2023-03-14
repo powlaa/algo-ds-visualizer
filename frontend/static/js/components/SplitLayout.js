@@ -91,12 +91,12 @@ class SplitLayout extends HTMLElement {
                     height: var(--split-layout-height, 100%);
                 }
                 .container__left {
-                    width: 50%;
+                    width: var(--split-layout-initial-width-left, 50%);
                     min-width: 20%;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: center;
+                    justify-content: var(--split-layout-justify-content-left, center);
                 }
                 .container__right {
                     min-width: 20%;
@@ -104,14 +104,14 @@ class SplitLayout extends HTMLElement {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: center;
+                    justify-content: var(--split-layout-justify-content-right, center);
                 }
                 .container__top-left {
                     min-height: 20%;
                     height: 50%;
                     display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    align-items: var(--split-layout-align-items-top-left, center);
+                    justify-content: var(--split-layout-justify-content-top-left, center);
                     width: 100%;
                 }
                 .container__bottom-left {
@@ -134,11 +134,11 @@ class SplitLayout extends HTMLElement {
                     width: 100%;
                 }
                 .resizer--horizontal {
-                    border-left: 2px solid #80808036;
+                    border-left: var(--split-layout-resizer-border, 2px solid #80808036);
                     cursor: col-resize;
                 }
                 .resizer--vertical {
-                    border-bottom: 2px solid #80808036;
+                    border-bottom:  var(--split-layout-resizer-border, 2px solid #80808036);
                     cursor: row-resize;
                     width: 100%;
                 }

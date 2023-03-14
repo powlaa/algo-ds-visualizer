@@ -292,11 +292,7 @@ class GraphCreator extends HTMLElement {
 
     _dragmove(e, d) {
         if (this._state.shiftNodeDrag) {
-            //TODO: fix for responsive size
-            const xy = d3.pointer(e);
-            const transform = d3.zoomTransform(this._svg.node());
-            const xyZoomPan = transform.invert(xy);
-            this._dragLine.attr("d", "M" + d.x + "," + d.y + "L" + xyZoomPan[0] + "," + xyZoomPan[1]);
+            this._dragLine.attr("d", "M" + d.x + "," + d.y + "L" + e.x + "," + e.y);
         } else {
             d.x += e.dx;
             d.y += e.dy;

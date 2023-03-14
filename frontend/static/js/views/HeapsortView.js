@@ -44,8 +44,8 @@ class HeapsortView extends HTMLElement {
             this._sort(e.detail.array);
         });
 
-        const progressBar = this.shadowRoot.querySelector("progress-bar");
-        progressBar.addEventListener("update-step", this._updateStep.bind(this));
+        this._progressBar = this.shadowRoot.querySelector("progress-bar");
+        this._progressBar.addEventListener("update-step", this._updateStep.bind(this));
 
         this._sort();
     }
@@ -143,7 +143,8 @@ class HeapsortView extends HTMLElement {
 
         this._steps = this._heapSort(data);
         console.log(this._steps);
-        this.shadowRoot.querySelector("progress-bar").setAttribute("total-steps", this._steps.length - 1);
+        this._progressBar.setAttribute("total-steps", this._steps.length - 1);
+        this._progressBar.setCurrentStep(0);
     }
 
     _heapSort(data) {
@@ -309,7 +310,7 @@ class HeapsortView extends HTMLElement {
             <split-layout class="content" top-bottom-left>
                 <array-display slot="top-left" class="content__array-display"></array-display>
                 <pseudocode-display slot="bottom-left" class="content__pseudocode"></pseudocode-display>
-                <binary-tree slot="right" class="content__binary-tree" node-radius="20"></binary-tree>
+                <binary-tree slot="right" class="content__binary-tree" node-radius="30"></binary-tree>
             </split-layout>
             <progress-bar class="progress"></progress-bar>
         `;
