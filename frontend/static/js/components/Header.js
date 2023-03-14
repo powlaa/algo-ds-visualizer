@@ -1,4 +1,6 @@
 class Header extends HTMLElement {
+    _startEvent = (array) => new CustomEvent("start", { bubbles: true, composed: true, detail: { array } });
+
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -39,7 +41,7 @@ class Header extends HTMLElement {
             .value.split(",")
             .map((e) => parseInt(e))
             .filter((e) => !isNaN(e));
-        this.dispatchEvent(new CustomEvent("start", { detail: { array } }));
+        this.dispatchEvent(this._startEvent(array));
     }
 
     _render() {
