@@ -26,48 +26,28 @@ class HeapsortView extends HTMLElement {
         { code: "<b>Heapify</b>(A, max)", indent: 2, label: "heapify-heapify" },
     ];
 
-    _stepCounter = 0;
-
     constructor() {
         super();
-        document.title = "Heapsort";
         this.attachShadow({ mode: "open" });
         this._render();
 
         this._binaryTreeVis = this.shadowRoot.querySelector("binary-tree");
         this._arrayVis = this.shadowRoot.querySelector("array-display");
-        this._header = this.shadowRoot.querySelector("header-element");
+        this._visContainer = this.shadowRoot.querySelector("vis-container");
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
-        this._header.addEventListener("start", (e) => {
+        this._visContainer.addEventListener("start", (e) => {
             this._sort(e.detail.array);
         });
 
-        this._progressBar = this.shadowRoot.querySelector("progress-bar");
-        this._progressBar.addEventListener("update-step", this._updateStep.bind(this));
+        this._visContainer.addEventListener("show-step", this._showStep.bind(this));
 
         this._sort();
     }
 
-    static get observedAttributes() {
-        return ["popup-template-id"];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {
-            case "popup-template-id":
-                this._header.setAttribute("popup-template-id", newValue);
-                break;
-        }
-    }
-
-    _updateStep(e) {
-        this._stepCounter++;
-        const step = this._steps[e.detail.step];
-        this._header.setAttribute("heading", step.heading);
-        this._header.setAttribute("description", step.description);
-        step.animation(step);
+    _showStep(e) {
+        e.detail.step.animation(e.detail.step);
     }
 
     _updateVis(step, ...markers) {
@@ -81,7 +61,7 @@ class HeapsortView extends HTMLElement {
     }
 
     async _swapNodes(step, index_A, index_B, stepIndex) {
-        const stepCounter = this._stepCounter;
+        const stepCounter = this._visContainer.stepCounter;
         this._updateVis(step, index_A, index_B);
 
         await Promise.all([
@@ -89,21 +69,25 @@ class HeapsortView extends HTMLElement {
             this._arrayVis.swap(index_A, index_B, this._ANIMATION_DURATION),
         ]);
 
-        if (stepCounter != this._stepCounter) return;
-        if (this._steps[stepIndex + 1].sortCount > step.sortCount) {
-            this._updateVis({ ...this._steps[stepIndex + 1], codeLabel: step.codeLabel, sortCount: step.sortCount + 1 }, index_A, index_B);
+        if (stepCounter != this._visContainer.stepCounter) return;
+        if (this._visContainer.steps[stepIndex + 1].sortCount > step.sortCount) {
+            this._updateVis(
+                { ...this._visContainer.steps[stepIndex + 1], codeLabel: step.codeLabel, sortCount: step.sortCount + 1 },
+                index_A,
+                index_B
+            );
         }
     }
 
     async _compareNodes(step, index, maxChildIndex, sortCount) {
-        const stepCounter = this._stepCounter;
+        const stepCounter = this._visContainer.stepCounter;
         this._updateVis(step);
 
         const left = 2 * index + 1; //left child index
         const right = 2 * index + 2; //right child index
 
         await this._wait(this._ANIMATION_DURATION / 2);
-        if (stepCounter != this._stepCounter) return;
+        if (stepCounter != this._visContainer.stepCounter) return;
 
         if (left < step.data.length - sortCount) {
             this._arrayVis.highlight(index);
@@ -111,7 +95,7 @@ class HeapsortView extends HTMLElement {
             this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-l", "heapify-r"]);
 
             await this._wait(this._ANIMATION_DURATION);
-            if (stepCounter != this._stepCounter) return;
+            if (stepCounter != this._visContainer.stepCounter) return;
 
             this._binaryTreeVis.highlight(left);
             this._arrayVis.highlight(left);
@@ -120,7 +104,7 @@ class HeapsortView extends HTMLElement {
         }
         if (right < step.data.length - sortCount) {
             await this._wait(this._ANIMATION_DURATION);
-            if (stepCounter != this._stepCounter) return;
+            if (stepCounter != this._visContainer.stepCounter) return;
 
             this._binaryTreeVis.highlight(right);
             this._arrayVis.highlight(right);
@@ -128,7 +112,7 @@ class HeapsortView extends HTMLElement {
             else this._pseudocodeDisplay.highlightLine(...[...step.codeLabel, "heapify-if-r"]);
         }
         await this._wait(this._ANIMATION_DURATION);
-        if (stepCounter != this._stepCounter) return;
+        if (stepCounter != this._visContainer.stepCounter) return;
         //if the parent is smaller than the biggest child, turn them red to indicate a swap
         if (step.data[index] < step.data[maxChildIndex]) {
             this._binaryTreeVis.mark(index, maxChildIndex);
@@ -138,13 +122,9 @@ class HeapsortView extends HTMLElement {
     }
 
     _sort(data) {
-        this._stepCounter = 0;
         if (!data) data = this._EXAMPLE_DATA;
 
-        this._steps = this._heapSort(data);
-        console.log(this._steps);
-        this._progressBar.setAttribute("total-steps", this._steps.length - 1);
-        this._progressBar.setCurrentStep(0);
+        this._visContainer.updateSteps(this._heapSort(data), { currentStep: 0 });
     }
 
     _heapSort(data) {
@@ -302,17 +282,14 @@ class HeapsortView extends HTMLElement {
                     height: 100%;
                     width: 100%;
                 }
-                .progress {
-                    --progress-bar-slider-z-index: 2;
-                }
             </style>
-            <header-element title="Heapsort" start-btn-name="Sort" array-input></header-element>
-            <split-layout class="content" top-bottom-left>
-                <array-display slot="top-left" class="content__array-display"></array-display>
-                <pseudocode-display slot="bottom-left" class="content__pseudocode"></pseudocode-display>
-                <binary-tree slot="right" class="content__binary-tree" node-radius="30"></binary-tree>
-            </split-layout>
-            <progress-bar class="progress"></progress-bar>
+            <vis-container title="Heapsort" start-btn-name="Sort" array-input popup-template-id="${this.getAttribute("popup-template-id")}">
+                <split-layout class="content" top-bottom-left>
+                    <array-display slot="top-left" class="content__array-display"></array-display>
+                    <pseudocode-display slot="bottom-left" class="content__pseudocode"></pseudocode-display>
+                    <binary-tree slot="right" class="content__binary-tree" node-radius="30"></binary-tree>
+                </split-layout>
+            </vis-container>
         `;
     }
 }

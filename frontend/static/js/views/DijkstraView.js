@@ -16,25 +16,20 @@ class DijkstraView extends HTMLElement {
         { code: "prev[v] = u", indent: 4, label: "prev-u" },
         { code: "<b>return</b> prev[]", indent: 1, label: "return" },
     ];
-    _stepCounter = 0;
-    _currentStepIndex = 0;
 
     _nodes = [];
     _edges = [];
 
     _selectedNode = null;
-    _steps = [];
 
     constructor() {
         super();
-        document.title = "Dijkstra";
         this.attachShadow({ mode: "open" });
         this._render();
 
+        this._visContainer = this.shadowRoot.querySelector("vis-container");
         this._graphVis = this.shadowRoot.querySelector("graph-creator");
         this._tableVis = this.shadowRoot.querySelector("table-display");
-        this._header = this.shadowRoot.querySelector("header-element");
-        this._progressBar = this.shadowRoot.querySelector("progress-bar");
         this._controlPopup = this.shadowRoot.querySelector("#control-popup");
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
@@ -51,18 +46,13 @@ class DijkstraView extends HTMLElement {
         });
         this._graphVis.addEventListener("error", (e) => alert(e.detail.message));
 
-        this._header.addEventListener("start", () => {
+        this._visContainer.addEventListener("start", () => {
             if (this._selectedNode) this._runDijkstra(this._selectedNode.id);
             else alert("Please select a node to start from in the graph");
         });
 
-        this._progressBar.addEventListener("update-step", (e) => {
-            this._currentStepIndex = e.detail.step;
-            this._stepCounter++;
-            const step = this._steps[this._currentStepIndex];
-            this._header.setAttribute("heading", step.heading);
-            this._header.setAttribute("description", step.description);
-            step.animation(this._steps, this._currentStepIndex);
+        this._visContainer.addEventListener("show-step", (e) => {
+            e.detail.step.animation(this._visContainer.steps, this._visContainer.currentStepIndex);
         });
 
         this.shadowRoot.querySelector("#control-btn").addEventListener("click", () => this._controlPopup.show());
@@ -73,14 +63,11 @@ class DijkstraView extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["popup-template-id", "control-template-id"];
+        return ["control-template-id"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
-            case "popup-template-id":
-                this._header.setAttribute("popup-template-id", newValue);
-                break;
             case "control-template-id":
                 this._controlPopup.setAttribute("template-id", newValue);
                 this._controlPopup.show();
@@ -90,10 +77,14 @@ class DijkstraView extends HTMLElement {
 
     _nodeSelected(e) {
         this._selectedNode = e.detail.node;
-        if (this._currentStepIndex === this._steps.length - 1) {
-            const path = this._tracePath(this._steps[this._currentStepIndex].shortestDistances, this._start, this._selectedNode.id);
+        if (this._visContainer.currentStepIndex === this._visContainer.steps.length - 1) {
+            const path = this._tracePath(
+                this._visContainer.steps[this._visContainer.currentStepIndex].shortestDistances,
+                this._start,
+                this._selectedNode.id
+            );
 
-            this._showPathInTable(path, this._steps, this._currentStepIndex);
+            this._showPathInTable(path, this._visContainer.steps, this._visContainer.currentStepIndex);
             this._graphVis.highlightEdges(...path);
         }
     }
@@ -254,18 +245,13 @@ class DijkstraView extends HTMLElement {
 
     _runDijkstra(start) {
         this._start = start;
-        this._stepCounter = 0;
-
         this._showTable(start);
-        this._steps = this._dijkstra(start);
-        console.log(this._steps);
-        this._progressBar.setAttribute("total-steps", this._steps.length - 1);
-        this._progressBar.removeAttribute("locked");
+        this._visContainer.updateSteps(this._dijkstra(start), { locked: false });
     }
 
     _resetDijkstra() {
-        this._progressBar.setAttribute("locked", "");
-        this._progressBar.reset();
+        this._visContainer.setAttribute("locked", "");
+        this._visContainer.resetProgressBar();
         this._tableVis.reset();
         this._graphVis.reset();
         this._highlightPseudocode();
@@ -470,20 +456,17 @@ class DijkstraView extends HTMLElement {
                     font-weight: bold;
                     cursor: pointer;
                 }
-                .progress {
-                    --progress-bar-slider-z-index: 2;
-                }
             </style>
 
-            <header-element title="Dijkstra"></header-element>
-            <split-layout class="content" top-bottom-right>
-                <graph-creator class="content__graph-creator" slot="left" no-negative-edge-weights></graph-creator>
-                <table-display class="content__table-display" slot="top-right"></table-display>
-                <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
-            </split-layout>
-            <pop-up id="control-popup" class="popup"></pop-up>
-            <button id="control-btn" class="button">?</button>
-            <progress-bar class="progress" locked></progress-bar>
+            <vis-container title="Dijkstra" locked popup-template-id="${this.getAttribute("popup-template-id")}">
+                <split-layout class="content" top-bottom-right>
+                    <graph-creator class="content__graph-creator" slot="left" no-negative-edge-weights></graph-creator>
+                    <table-display class="content__table-display" slot="top-right"></table-display>
+                    <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
+                </split-layout>
+                <pop-up id="control-popup" class="popup"></pop-up>
+                <button id="control-btn" class="button">?</button>
+            </vis-container>
         `;
     }
 }
