@@ -1,6 +1,7 @@
 class VisContainer extends HTMLElement {
     _stepCounter = 0;
     _steps = [];
+    _currentStepIndex = 0;
 
     _showStep = (step) => new CustomEvent("show-step", { detail: { step } });
 
@@ -25,6 +26,10 @@ class VisContainer extends HTMLElement {
 
     get stepCounter() {
         return this._stepCounter;
+    }
+
+    get currentStepIndex() {
+        return this._currentStepIndex;
     }
 
     set stepCounter(stepCounter) {
@@ -61,7 +66,8 @@ class VisContainer extends HTMLElement {
                 document.title = newValue;
                 break;
             case "start-btn-name":
-                this._header.setAttribute("start-btn-name", newValue);
+                if (newValue) this._header.setAttribute("start-btn-name", newValue);
+                else this._header.removeAttribute("start-btn-name");
                 break;
             case "array-input":
                 this.arrayInput ? this._header.setAttribute("array-input", true) : this._header.removeAttribute("array-input");
@@ -73,6 +79,7 @@ class VisContainer extends HTMLElement {
     }
 
     _updateStep(e) {
+        this._currentStepIndex = e.detail.step;
         this._stepCounter++;
         const step = this._steps[e.detail.step];
         this._header.setAttribute("heading", step.heading);
@@ -93,7 +100,7 @@ class VisContainer extends HTMLElement {
             <header-element
                 popup-template-id="${this.getAttribute("popup-template-id")}"
                 title="${this.getAttribute("title")}"
-                start-btn-name="${this.getAttribute("start-btn-name")}"
+                ${this.hasAttribute("start-btn-name") ? "start-btn-name=" + this.getAttribute("start-btn-name") : ""}
                 ${this.hasAttribute("array-input") ? "array-input" : ""}
             ></header-element>
             <slot></slot>
