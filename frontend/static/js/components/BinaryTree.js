@@ -172,12 +172,14 @@ class BinaryTree extends HTMLElement {
                 }
                 .node__circle--mark {
                     stroke: #a6141c;
+                    fill: #D2898D;
                 }
                 .node__circle--highlight {
                     stroke: #0ca632;
+                    fill: #85D298;
                 }
                 .node__circle--lock {
-                    fill: rgb(185, 185, 185);
+                    fill: #B9B9B9;
                     stroke: grey;
                 }
                 .node__text {
