@@ -376,6 +376,7 @@ class LinkedList extends HTMLElement {
                 }
                 .container {
                     height: 100%;
+                    user-select: none;
                 }
                 .svg-content-responsive {
                     display: inline-block;

@@ -46,6 +46,7 @@ class ControlPanel extends HTMLElement {
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-around;
+                    user-select: none;
                 }
                 .method {
                     width: 100%;

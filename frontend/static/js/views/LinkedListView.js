@@ -19,6 +19,31 @@ class LinkedListView extends HTMLElement {
         ],
     };
 
+    _PSEUDOCODE_METHODS = {
+        singly: {
+            delete: [
+                { code: "<b>function</b> <b>delete</b>(data)", indent: 1, label: "delete" },
+                { code: "<b>if</b> head.data == data", indent: 2, label: "delete-if-head-data" },
+                { code: "head = head.next", indent: 3, label: "delete-set-head" },
+                { code: "return", indent: 3, label: "delete-return" },
+                { code: "current = head", indent: 2, label: "delete-current-head" },
+                { code: "<b>while</b> current.next.data != data", indent: 2, label: "delete-while" },
+                { code: "current = current.next", indent: 3, label: "delete-current-next" },
+                { code: "current.next = current.next.next", indent: 2, label: "delete-set-current" },
+            ],
+            add: [
+                { code: "<b>function</b> <b>add</b>(data)", indent: 1, label: "add" },
+                { code: "newNode = new Node(data)", indent: 2, label: "add-new-node" },
+                { code: "<b>if</b> head == null", indent: 2, label: "add-if-head" },
+                { code: "head = newNode", indent: 3, label: "add-new-head" },
+                { code: "<b>else</b>", indent: 2, label: "add-else" },
+                { code: "newNode.next = head", indent: 3, label: "add-set-next" },
+                { code: "head = newNode", indent: 3, label: "add-set-head" },
+            ],
+        },
+        empty: [{ code: "", indent: 0, label: "empty" }],
+    };
+
     _CONTROL_PANEL_METHODS = [
         {
             name: "add",
@@ -40,23 +65,29 @@ class LinkedListView extends HTMLElement {
 
         this._visContainer = this.shadowRoot.querySelector("vis-container");
         this._linkedListVis = this.shadowRoot.querySelector("linked-list");
-        this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
-        this._pseudocodeDisplay.code = this._PSEUDOCODE_CLASSES.singly;
+        this._pseudocodeClasses = this.shadowRoot.querySelector("#pseudocode-classes");
+        this._pseudocodeClasses.code = this._PSEUDOCODE_CLASSES.singly;
+        this._pseudocodeMethods = this.shadowRoot.querySelector("#pseudocode-methods");
         this._controlPanel = this.shadowRoot.querySelector("control-panel");
         this._controlPanel.data = this._CONTROL_PANEL_METHODS;
 
         this._visContainer.addEventListener("show-step", this._showStep.bind(this));
 
-        this._controlPanel.addEventListener("add", (e) => this._addSteps(this._linkedList.add(e.detail.params.data)));
+        this._controlPanel.addEventListener("add", this._addNode.bind(this));
 
-        this._controlPanel.addEventListener("delete", (e) => this._addSteps(this._linkedList.delete(e.detail.params.data)));
+        this._controlPanel.addEventListener("delete", this._deleteNode.bind(this));
+
         this._initVis();
     }
 
     async _showStep(e) {
-        this._linkedListVis.data = e.detail.step.array;
+        const step = e.detail.step;
+        this._linkedListVis.data = step.array;
+        this._pseudocodeMethods.code = this._PSEUDOCODE_METHODS.singly[step.method];
         await this._linkedListVis.updateLinkedList();
-        await e.detail.step.animation(this._linkedListVis, this._ANIMATION_DURATION, e.detail.step);
+        if (step.codeLabel) this._pseudocodeMethods.highlightLine(...step.codeLabel);
+        else this._pseudocodeMethods.highlightLine();
+        await step.animation(this._linkedListVis, this._ANIMATION_DURATION, step);
     }
 
     _addSteps(steps) {
@@ -79,6 +110,7 @@ class LinkedListView extends HTMLElement {
                     heading: "Singly Linked List",
                     description: "",
                     array: this._linkedList.toArray(),
+                    method: "delete",
                     animation: () => {},
                 },
             ],
@@ -87,6 +119,18 @@ class LinkedListView extends HTMLElement {
         this._linkedListVis.data = this._linkedList.toArray();
         this._linkedListVis.updateLinkedList();
         this._linkedListVis.center();
+    }
+
+    _addNode(e) {
+        const newSteps = this._linkedList.add(e.detail.params.data);
+        newSteps.forEach((n) => (n.method = "add"));
+        this._addSteps(newSteps);
+    }
+
+    _deleteNode(e) {
+        const newSteps = this._linkedList.delete(e.detail.params.data);
+        newSteps.forEach((n) => (n.method = "delete"));
+        this._addSteps(newSteps);
     }
 
     _render() {
@@ -116,10 +160,11 @@ class LinkedListView extends HTMLElement {
                 }
             </style>
             <vis-container title="Linked List" no-start-btn locked popup-template-id="${this.getAttribute("popup-template-id")}">
-                <split-layout class="content" top-bottom-left>
+                <split-layout class="content" top-bottom-left top-bottom-right>
                     <control-panel slot="top-left" class="content__control-panel"></control-panel>
-                    <pseudocode-display slot="bottom-left" class="content__pseudocode"></pseudocode-display>
-                    <linked-list slot="right" class="content__linked-list"></linked-list>
+                    <pseudocode-display id="pseudocode-classes" slot="bottom-left" class="content__pseudocode"></pseudocode-display>
+                    <linked-list slot="top-right" class="content__linked-list"></linked-list>
+                    <pseudocode-display id="pseudocode-methods" slot="bottom-right" class="content__pseudocode"></pseudocode-display>
                 </split-layout>
             </vis-container>
         `;
@@ -184,6 +229,7 @@ class SinglyLinkedList {
                 array: this.toArray(),
                 heading: "Delete element " + data,
                 description: `${data} is in head, move head to head.next`,
+                codeLabel: ["delete-if-head-data", "delete-set-head"],
                 animation: async (linkedListVis, duration) => {
                     linkedListVis.highlightElements(0);
                     await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 }, duration);
@@ -194,6 +240,7 @@ class SinglyLinkedList {
                 array: this.toArray(),
                 heading: `Element ${data} is deleted`,
                 description: `${data} is removed because no element is pointing to it anymore`,
+                codeLabel: ["delete-return"],
                 animation: async (linkedListVis, duration, step) => {
                     await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 });
                     linkedListVis.reset();
@@ -212,6 +259,7 @@ class SinglyLinkedList {
             heading: "Delete element " + data,
             description: `Data is not in head, so go through list until ${data} is found in the next element`,
             _index: index,
+            codeLabel: ["delete-current-head"],
             animation: async (linkedListVis, duration, step) => {
                 linkedListVis.highlightLinks({ source: "head", target: step._index });
                 linkedListVis.setCurrentPointer(step._index, duration);
@@ -225,6 +273,7 @@ class SinglyLinkedList {
                     heading: "Delete element " + data,
                     description: `${data} is found in the next element of the current one`,
                     _index: index,
+                    codeLabel: ["delete-while"],
                     animation: async (linkedListVis, duration, step) => {
                         if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
                         else {
@@ -240,6 +289,7 @@ class SinglyLinkedList {
                     heading: "Delete element " + data,
                     description: `Set next pointer of current to the next of ${data}`,
                     _index: index,
+                    codeLabel: ["delete-set-current"],
                     animation: async (linkedListVis, duration, step) => {
                         await linkedListVis.setCurrentPointer(step._index);
                         linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
@@ -253,6 +303,7 @@ class SinglyLinkedList {
                     heading: `Element ${data} is deleted`,
                     description: `${data} is removed because no element is pointing to it anymore`,
                     _index: index,
+                    codeLabel: [],
                     animation: async (linkedListVis, duration, step) => {
                         await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, 1);
                         linkedListVis.reset();
@@ -268,6 +319,7 @@ class SinglyLinkedList {
                 heading: "Delete element " + data,
                 description: `Go through list until current.next.data equals ${data}`,
                 _index: index,
+                codeLabel: ["delete-while", "delete-current-next"],
                 animation: async (linkedListVis, duration, step) => {
                     if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
                     else {
