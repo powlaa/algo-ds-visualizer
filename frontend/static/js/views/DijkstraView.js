@@ -410,7 +410,7 @@ class DijkstraView extends HTMLElement {
                 .content {
                     width: 100%;
                     height: calc(100vh - 160px);
-                    --split-layout-height: calc(100% - 160px);
+                    --split-layout-height: calc(100% - 190px);
                 }
 
                 .content__graph-creator {

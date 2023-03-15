@@ -264,7 +264,7 @@ class HeapsortView extends HTMLElement {
             <style>
                 .content {
                     width: 100%;
-                    --split-layout-height: calc(100% - 160px);
+                    --split-layout-height: calc(100% - 190px);
                 }
                 .content__array-display {
                     width: 100%;

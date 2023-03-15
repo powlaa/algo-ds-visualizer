@@ -50,7 +50,7 @@ class Header extends HTMLElement {
             <style>
                 .container {
                     width: 100%;
-                    height: 100px;
+                    height: 130px;
                     background-color: #ced0c1;
                     display: flex;
                     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
@@ -62,6 +62,7 @@ class Header extends HTMLElement {
                     display: flex;
                     align-items: center;
                     white-space: nowrap;
+                    margin: 5px 0 10px 0;
                 }
                 .panel__button {
                     font-size: 1em;
@@ -90,12 +91,18 @@ class Header extends HTMLElement {
                     display: flex;
                 }
                 .explanations {
-                    margin: 0 20px;
+                    margin: 0 0 0 5%;
                     width: 100%;
-                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+                .explanations__heading{
+                    font-size: 2.2em;
+                    margin: 0 0 6px 0;
                 }
                 .explanations__description {
-                    font-size: 1.2em;
+                    font-size: 1.4em;
                     font-style: italic;
                 }
             </style>
