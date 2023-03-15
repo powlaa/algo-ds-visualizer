@@ -60,7 +60,12 @@ class LinkedListView extends HTMLElement {
     }
 
     _addSteps(steps) {
-        if (steps) this._visContainer.updateSteps([...this._visContainer.steps, ...steps], { nextStep: true, locked: false });
+        if (!steps) return;
+        this._visContainer.updateSteps([...this._visContainer.steps, ...steps], {
+            nextStep: true,
+            locked: false,
+            currentStep: this._visContainer.steps.length - 1,
+        });
     }
 
     _initVis() {
