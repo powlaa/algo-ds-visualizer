@@ -70,14 +70,13 @@ class Header extends HTMLElement {
                     cursor: pointer;
                 }
                 .panel__button--information {
-                    background-color: rgba(0, 0, 0, 0);
+                    background-color: rgb(255 255 255);
                     border: 1px solid black;
                     border-radius: 100%;
-                    height: 1.4em;
-                    width: 1.4em;
-                    font-weight: bold;
+                    height: 30px;
+                    width: 30px;
                     margin-left: 5px;
-                    padding-top: 2px;
+                    padding: 2px 0 0 2px;
                 }
                 .panel__button--start {
                     background-color: #03a688; /* Green */
@@ -86,6 +85,9 @@ class Header extends HTMLElement {
                     padding: 8px 18px;
                     text-decoration: none;
                     display: inline-block;
+                }
+                .button__image {
+                    height: 18px;
                 }
                 .panel__input {
                     display: flex;
@@ -97,7 +99,7 @@ class Header extends HTMLElement {
                     flex-direction: column;
                     justify-content: center;
                 }
-                .explanations__heading{
+                .explanations__heading {
                     font-size: 2.2em;
                     margin: 0 0 6px 0;
                 }
@@ -110,7 +112,9 @@ class Header extends HTMLElement {
                 <div class="panel">
                     <div class="panel__title">
                         <h2>${this.getAttribute("title")}</h2>
-                        <button id="information-btn" class="panel__button panel__button--information">i</button>
+                        <button id="information-btn" class="panel__button panel__button--information">
+                            <img class="button__image" src="/static/img/information-mark.png" />
+                        </button>
                         <pop-up id="information-popup" overlay></pop-up>
                     </div>
                     <div class="panel__input">

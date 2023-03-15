@@ -455,6 +455,10 @@ class DijkstraView extends HTMLElement {
                     font-size: 20px;
                     font-weight: bold;
                     cursor: pointer;
+                    padding: 3px 0 0 0;
+                }
+                .button__image {
+                    height: 19px
                 }
             </style>
 
@@ -465,7 +469,9 @@ class DijkstraView extends HTMLElement {
                     <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
                 </split-layout>
                 <pop-up id="control-popup" class="popup"></pop-up>
-                <button id="control-btn" class="button">?</button>
+                <button id="control-btn" class="button">
+                    <img class="button__image" class="button__image" src="/static/img/question-mark.png" />
+                </button>
             </vis-container>
         `;
     }
