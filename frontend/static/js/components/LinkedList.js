@@ -58,6 +58,8 @@ class LinkedList extends HTMLElement {
     }
 
     async updateLinkedList(duration) {
+        this.highlightLinks();
+        this.highlightElements();
         this._updateElements(this._linkedList, duration);
 
         this._updateLinks(this._linkedList, duration);
@@ -90,18 +92,18 @@ class LinkedList extends HTMLElement {
             d = d.substr(0, d.indexOf("L"));
             await this._currentLink
                 .transition()
-                .duration(duration)
+                .duration(duration / 3)
                 .attr("d", `${d}L${this._linkedList[index].x},${this._linkedList[index].y + this._E_HEIGHT / 2}`)
                 .end();
 
             this._currentElement
                 .transition()
-                .duration(duration)
+                .duration(duration / 3)
                 .attr("x", this._linkedList[index].x)
                 .attr("y", this._linkedList[index].y + this._Y_OFFSET);
             await this._currentLink
                 .transition()
-                .duration(duration)
+                .duration(duration / 3)
                 .attr(
                     "d",
                     `M${this._linkedList[index].x},${this._linkedList[index].y + this._Y_OFFSET - 13}L${this._linkedList[index].x},${
@@ -381,11 +383,8 @@ class LinkedList extends HTMLElement {
                     top: 0;
                     left: 0;
                 }
-                .element--highlight {
-                    fill: red;
-                }
                 .element--highlight > .element__rect:first-of-type {
-                    stroke: red !important;
+                    fill: #D2898D;
                 }
                 .element__null {
                     font-size: 2em;

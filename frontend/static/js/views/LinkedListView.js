@@ -185,6 +185,7 @@ class SinglyLinkedList {
                 heading: "Delete element " + data,
                 description: `${data} is in head, move head to head.next`,
                 animation: async (linkedListVis, duration) => {
+                    linkedListVis.highlightElements(0);
                     await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 }, duration);
                 },
             });
