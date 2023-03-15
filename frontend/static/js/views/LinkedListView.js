@@ -56,7 +56,7 @@ class LinkedListView extends HTMLElement {
     async _showStep(e) {
         this._linkedListVis.data = e.detail.step.array;
         await this._linkedListVis.updateLinkedList();
-        e.detail.step.animation(this._linkedListVis, this._ANIMATION_DURATION, e.detail.step);
+        await e.detail.step.animation(this._linkedListVis, this._ANIMATION_DURATION, e.detail.step);
     }
 
     _addSteps(steps) {
@@ -221,7 +221,10 @@ class SinglyLinkedList {
                     _index: index,
                     animation: async (linkedListVis, duration, step) => {
                         if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
-                        else await linkedListVis.setCurrentPointer(step._index, duration);
+                        else {
+                            await linkedListVis.setCurrentPointer(step._index - 1);
+                            await linkedListVis.setCurrentPointer(step._index, duration);
+                        }
                         linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
                         linkedListVis.highlightElements(step._index + 1);
                     },
@@ -261,7 +264,10 @@ class SinglyLinkedList {
                 _index: index,
                 animation: async (linkedListVis, duration, step) => {
                     if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
-                    else await linkedListVis.setCurrentPointer(step._index, duration);
+                    else {
+                        await linkedListVis.setCurrentPointer(step._index - 1);
+                        await linkedListVis.setCurrentPointer(step._index, duration);
+                    }
                     linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
                 },
             });

@@ -68,7 +68,6 @@ class LinkedList extends HTMLElement {
     async setCurrentPointer(index, duration) {
         if (index >= this._linkedList.length) return;
 
-        await this._wait(duration);
         if (this._currentElement.node().style.display === "none") {
             //if current Element and link are not visible, make them visible
             this._currentElement
