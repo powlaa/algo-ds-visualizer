@@ -18,7 +18,7 @@ class PseudocodeDisplay extends HTMLElement {
 
     highlightLine(...labels) {
         this.shadowRoot.querySelectorAll(`.code__line--highlighted`).forEach((e) => e.classList.remove("code__line--highlighted"));
-        labels.forEach((label) => this.shadowRoot.querySelector(`#${label}`).classList.add("code__line--highlighted"));
+        labels.forEach((label) => this.shadowRoot.querySelector(`#${label}`)?.classList.add("code__line--highlighted"));
     }
 
     _render() {

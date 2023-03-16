@@ -27,19 +27,34 @@ class LinkedListView extends HTMLElement {
                 { code: "head = head.next", indent: 3, label: "delete-set-head" },
                 { code: "return", indent: 3, label: "delete-return" },
                 { code: "current = head", indent: 2, label: "delete-current-head" },
-                { code: "<b>while</b> current.next.data != data", indent: 2, label: "delete-while" },
+                { code: "<b>while</b> current.next != null", indent: 2, label: "delete-while" },
+                { code: "<b>if</b> current.next.data == data", indent: 3, label: "delete-current-data" },
+                { code: "current.next = current.next.next", indent: 4, label: "delete-set-current" },
                 { code: "current = current.next", indent: 3, label: "delete-current-next" },
-                { code: "current.next = current.next.next", indent: 2, label: "delete-set-current" },
             ],
             contains: [
                 { code: "<b>function</b> <b>contains</b>(data)", indent: 1, label: "contains" },
                 { code: "<b>if</b> head.data == data", indent: 2, label: "contains-if-head-data" },
-                { code: "head = head.next", indent: 3, label: "contains-set-head" },
-                { code: "return", indent: 3, label: "contains-return" },
+                { code: "return true", indent: 3, label: "contains-return" },
                 { code: "current = head", indent: 2, label: "contains-current-head" },
-                { code: "<b>while</b> current.next.data != data", indent: 2, label: "contains-while" },
+                { code: "<b>while</b> current.next != null", indent: 2, label: "contains-while" },
+                { code: "<b>if</b> current.next.data == data", indent: 3, label: "contains-current-data" },
+                { code: "return true", indent: 4, label: "contains-found" },
                 { code: "current = current.next", indent: 3, label: "contains-current-next" },
-                { code: "current.next = current.next.next", indent: 2, label: "contains-set-current" },
+                { code: "return false", indent: 2, label: "contains-not-found" },
+            ],
+            get: [
+                { code: "<b>function</b> <b>get</b>(index)", indent: 1, label: "get" },
+                { code: "<b>if</b> index == 0", indent: 2, label: "get-if-head-index" },
+                { code: "return head", indent: 3, label: "get-return" },
+                { code: "currentIndex = 0", indent: 2, label: "get-set-current-index" },
+                { code: "current = head", indent: 2, label: "get-current-head" },
+                { code: "<b>while</b> current.next != null", indent: 2, label: "get-while" },
+                { code: "<b>if</b> currentIndex + 1 == index", indent: 3, label: "get-if-index" },
+                { code: "return current.next", indent: 4, label: "get-found" },
+                { code: "currentIndex ++", indent: 3, label: "get-increment-current-index" },
+                { code: "current = current.next", indent: 3, label: "get-current-next" },
+                { code: "return null", indent: 2, label: "get-not-found" },
             ],
             add: [
                 { code: "<b>function</b> <b>add</b>(data)", indent: 1, label: "add" },
@@ -59,7 +74,7 @@ class LinkedListView extends HTMLElement {
             name: "add",
             parameters: [
                 { name: "data", type: "text" },
-                { name: "index", type: "number" },
+                { name: "index", type: "number", min: 0 },
             ],
         },
         {
@@ -69,6 +84,10 @@ class LinkedListView extends HTMLElement {
         {
             name: "contains",
             parameters: [{ name: "data", type: "text" }],
+        },
+        {
+            name: "get",
+            parameters: [{ name: "index", type: "number", min: 0 }],
         },
     ];
 
@@ -90,6 +109,7 @@ class LinkedListView extends HTMLElement {
         this._controlPanel.addEventListener("add", this._addNode.bind(this));
         this._controlPanel.addEventListener("delete", this._deleteNode.bind(this));
         this._controlPanel.addEventListener("contains", this._containsNode.bind(this));
+        this._controlPanel.addEventListener("get", this._getIndex.bind(this));
 
         this._initVis();
     }
@@ -151,6 +171,12 @@ class LinkedListView extends HTMLElement {
     _containsNode(e) {
         const newSteps = this._linkedList.contains(e.detail.params.data);
         newSteps.forEach((n) => (n.method = "contains"));
+        this._addSteps(newSteps);
+    }
+
+    _getIndex(e) {
+        const newSteps = this._linkedList.get(parseInt(e.detail.params.index));
+        newSteps.forEach((n) => (n.method = "get"));
         this._addSteps(newSteps);
     }
 
@@ -316,7 +342,26 @@ class SinglyLinkedList {
                 array: this.toArray(),
                 heading: "Contains " + data,
                 description: `${data} is in head`,
-                codeLabel: [],
+                codeLabel: ["contains-if-head-data", "contains-return"],
+                animation: async (linkedListVis) => {
+                    linkedListVis.highlightElements(0);
+                    linkedListVis.highlightLinks({ source: "head", target: 0 });
+                },
+            });
+        }
+        return steps;
+    }
+
+    get(index) {
+        if (this.head === null || index < 0) return [];
+        var { node, steps } = this.getNodeBeforeIndex(index, `Get Node with index ${index}`, "get");
+
+        if ((node === this.head) & (index === 0)) {
+            steps.push({
+                array: this.toArray(),
+                heading: "Get Node with index " + index,
+                description: `Index ${index} is the head Node`,
+                codeLabel: ["get-if-head-index", "get-return"],
                 animation: async (linkedListVis) => {
                     linkedListVis.highlightElements(0);
                     linkedListVis.highlightLinks({ source: "head", target: 0 });
@@ -354,7 +399,7 @@ class SinglyLinkedList {
                     heading: heading,
                     description: `${data} is found in the next Node of the current one`,
                     _index: index,
-                    codeLabel: [`${codeLabelPrefix}-while`],
+                    codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-current-data`, `${codeLabelPrefix}-found`],
                     animation: async (linkedListVis, duration, step, visContainer) => {
                         const stepCounter = visContainer.stepCounter;
                         if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
@@ -395,13 +440,98 @@ class SinglyLinkedList {
             heading: heading,
             description: `current.next is null, therefore ${data} is not in the list`,
             _index: index,
-            codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-current-next`],
+            codeLabel: [`${codeLabelPrefix}-not-found`],
             animation: async (linkedListVis, duration, step, visContainer) => {
                 const stepCounter = visContainer.stepCounter;
                 if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
                 else {
                     await linkedListVis.setCurrentPointer(step._index - 1);
                     await linkedListVis.setCurrentPointer(step._index, duration);
+                }
+                if (stepCounter != visContainer.stepCounter) return;
+                linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+            },
+        });
+        return { node: null, index: null, steps };
+    }
+
+    getNodeBeforeIndex(index, heading, codeLabelPrefix) {
+        var steps = [];
+        if (this.head == null) return { node: null, index: null, steps };
+
+        if (index === 0) return { node: this.head, index: null, steps };
+
+        let current = this.head;
+        let currentIndex = 0;
+
+        //current pointer head
+        steps.push({
+            array: this.toArray(),
+            heading: heading,
+            description: `Index is not 0, so it is not the head Node`,
+            _index: currentIndex,
+            codeLabel: [`${codeLabelPrefix}-set-current-index`, `${codeLabelPrefix}-current-head`],
+            animation: async (linkedListVis, duration, step) => {
+                linkedListVis.highlightLinks({ source: "head", target: step._index });
+                linkedListVis.setCurrentPointer(step._index, duration, true);
+            },
+        });
+
+        while (current.next != null) {
+            if (currentIndex + 1 === index) {
+                steps.push({
+                    array: this.toArray(),
+                    heading: heading,
+                    description: `Index ${index} is the index of current.next`,
+                    _index: currentIndex,
+                    codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-if-index`, `${codeLabelPrefix}-found`],
+                    animation: async (linkedListVis, duration, step, visContainer) => {
+                        const stepCounter = visContainer.stepCounter;
+                        if (step._index === 0) await linkedListVis.setCurrentPointer(step._index, 0, true);
+                        else {
+                            await linkedListVis.setCurrentPointer(step._index - 1, 0, true);
+                            await linkedListVis.setCurrentPointer(step._index, duration, true);
+                        }
+                        if (stepCounter != visContainer.stepCounter) return;
+                        linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                        linkedListVis.highlightElements(step._index + 1);
+                    },
+                });
+                return { node: current, index: currentIndex, steps };
+            }
+            steps.push({
+                array: this.toArray(),
+                heading: heading,
+                description: `Go through list until the index of current.next is equal to ${index}`,
+                _index: currentIndex,
+                codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-increment-current-index`, `${codeLabelPrefix}-current-next`],
+                animation: async (linkedListVis, duration, step, visContainer) => {
+                    const stepCounter = visContainer.stepCounter;
+                    if (step._index === 0) await linkedListVis.setCurrentPointer(step._index, 0, true);
+                    else {
+                        await linkedListVis.setCurrentPointer(step._index - 1, 0, true);
+                        await linkedListVis.setCurrentPointer(step._index, duration, true);
+                    }
+                    if (stepCounter != visContainer.stepCounter) return;
+                    linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                },
+            });
+            currentIndex++;
+            //current pointer weiterschieben
+            current = current.next;
+        }
+        steps.push({
+            array: this.toArray(),
+            heading: heading,
+            description: `current.next is null, therefore there is no Node with index ${index} in the list`,
+            _index: currentIndex,
+            codeLabel: [`${codeLabelPrefix}-not-found`],
+            animation: async (linkedListVis, duration, step, visContainer) => {
+                const stepCounter = visContainer.stepCounter;
+                if (step._index === 0) await linkedListVis.setCurrentPointer(step._index, 0, true);
+                else {
+                    await linkedListVis.setCurrentPointer(step._index - 1, 0, true);
+                    await linkedListVis.setCurrentPointer(step._index, duration, true);
                 }
                 if (stepCounter != visContainer.stepCounter) return;
                 linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });

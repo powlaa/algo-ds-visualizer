@@ -65,8 +65,11 @@ class LinkedList extends HTMLElement {
         this._updateHead(this._linkedList, duration);
     }
 
-    async setCurrentPointer(index, duration) {
+    async setCurrentPointer(index, duration, showIndex) {
         if (index >= this._linkedList.length) return;
+
+        this._currentElement.interrupt();
+        this._currentLink.interrupt();
 
         if (this._currentElement.node().style.display === "none") {
             //if current Element and link are not visible, make them visible
@@ -75,7 +78,7 @@ class LinkedList extends HTMLElement {
                 .attr("y", this._linkedList[index].y + this._Y_OFFSET)
                 .style("text-anchor", "middle")
                 .style("display", "block")
-                .text("current");
+                .text(showIndex ? `current (i: ${index})` : "current");
             this._currentLink
                 .style("display", "block")
                 .attr(
@@ -95,6 +98,7 @@ class LinkedList extends HTMLElement {
                 .end();
 
             this._currentElement
+                .text(showIndex ? `current (i: ${index})` : "current")
                 .transition()
                 .duration(duration / 3)
                 .attr("x", this._linkedList[index].x)
@@ -381,6 +385,7 @@ class LinkedList extends HTMLElement {
                     position: absolute;
                     top: 0;
                     left: 0;
+                    height: 100%;
                 }
                 .element--highlight > .element__rect:first-of-type {
                     fill: #D2898D;
