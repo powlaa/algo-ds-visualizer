@@ -58,8 +58,6 @@ class LinkedList extends HTMLElement {
     }
 
     async updateLinkedList(duration) {
-        this.highlightLinks();
-        this.highlightElements();
         this._updateElements(this._linkedList, duration);
 
         this._updateLinks(this._linkedList, duration);

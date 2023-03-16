@@ -31,6 +31,16 @@ class LinkedListView extends HTMLElement {
                 { code: "current = current.next", indent: 3, label: "delete-current-next" },
                 { code: "current.next = current.next.next", indent: 2, label: "delete-set-current" },
             ],
+            contains: [
+                { code: "<b>function</b> <b>contains</b>(data)", indent: 1, label: "contains" },
+                { code: "<b>if</b> head.data == data", indent: 2, label: "contains-if-head-data" },
+                { code: "head = head.next", indent: 3, label: "contains-set-head" },
+                { code: "return", indent: 3, label: "contains-return" },
+                { code: "current = head", indent: 2, label: "contains-current-head" },
+                { code: "<b>while</b> current.next.data != data", indent: 2, label: "contains-while" },
+                { code: "current = current.next", indent: 3, label: "contains-current-next" },
+                { code: "current.next = current.next.next", indent: 2, label: "contains-set-current" },
+            ],
             add: [
                 { code: "<b>function</b> <b>add</b>(data)", indent: 1, label: "add" },
                 { code: "newNode = new Node(data)", indent: 2, label: "add-new-node" },
@@ -56,6 +66,10 @@ class LinkedListView extends HTMLElement {
             name: "delete",
             parameters: [{ name: "data", type: "text" }],
         },
+        {
+            name: "contains",
+            parameters: [{ name: "data", type: "text" }],
+        },
     ];
 
     constructor() {
@@ -74,8 +88,8 @@ class LinkedListView extends HTMLElement {
         this._visContainer.addEventListener("show-step", this._showStep.bind(this));
 
         this._controlPanel.addEventListener("add", this._addNode.bind(this));
-
         this._controlPanel.addEventListener("delete", this._deleteNode.bind(this));
+        this._controlPanel.addEventListener("contains", this._containsNode.bind(this));
 
         this._initVis();
     }
@@ -84,10 +98,11 @@ class LinkedListView extends HTMLElement {
         const step = e.detail.step;
         this._linkedListVis.data = step.array;
         this._pseudocodeMethods.code = this._PSEUDOCODE_METHODS.singly[step.method];
+        this._linkedListVis.reset();
         await this._linkedListVis.updateLinkedList();
         if (step.codeLabel) this._pseudocodeMethods.highlightLine(...step.codeLabel);
         else this._pseudocodeMethods.highlightLine();
-        await step.animation(this._linkedListVis, this._ANIMATION_DURATION, step);
+        await step.animation(this._linkedListVis, this._ANIMATION_DURATION, step, this._visContainer);
     }
 
     _addSteps(steps) {
@@ -118,7 +133,7 @@ class LinkedListView extends HTMLElement {
         );
         this._linkedListVis.data = this._linkedList.toArray();
         this._linkedListVis.updateLinkedList();
-        this._linkedListVis.center();
+        // this._linkedListVis.center();
     }
 
     _addNode(e) {
@@ -130,6 +145,12 @@ class LinkedListView extends HTMLElement {
     _deleteNode(e) {
         const newSteps = this._linkedList.delete(e.detail.params.data);
         newSteps.forEach((n) => (n.method = "delete"));
+        this._addSteps(newSteps);
+    }
+
+    _containsNode(e) {
+        const newSteps = this._linkedList.contains(e.detail.params.data);
+        newSteps.forEach((n) => (n.method = "contains"));
         this._addSteps(newSteps);
     }
 
@@ -198,8 +219,8 @@ class SinglyLinkedList {
             //show new node, set next to head
             steps.push({
                 array: this.toArray(),
-                heading: "Add new element " + data,
-                description: "Set next of new element to head",
+                heading: "Add new Node " + data,
+                description: "Set next of new Node to head",
                 animation: (linkedListVis, duration) => {
                     linkedListVis.addElement(data, duration);
                 },
@@ -208,8 +229,8 @@ class SinglyLinkedList {
             //set head to new node
             steps.push({
                 array: this.toArray(),
-                heading: "Add new element " + data,
-                description: "Set head to new element",
+                heading: "Add new Node " + data,
+                description: "Set head to new Node",
                 animation: async (linkedListVis, duration) => {
                     await linkedListVis.addElement(data);
                     linkedListVis.updateLinkedList(duration);
@@ -220,14 +241,14 @@ class SinglyLinkedList {
         return steps;
     }
     delete(data) {
-        var steps = [];
-        if (this.head == null) return steps;
+        if (this.head === null) return [];
+        var { node, steps, index } = this.getNodeBefore(data, `Delete Node ${data}`, "delete");
 
-        if (this.head.data == data) {
-            //delete first element
+        if ((node === this.head) & (index === null)) {
+            //data is in the head
             steps.push({
                 array: this.toArray(),
-                heading: "Delete element " + data,
+                heading: "Delete Node " + data,
                 description: `${data} is in head, move head to head.next`,
                 codeLabel: ["delete-if-head-data", "delete-set-head"],
                 animation: async (linkedListVis, duration) => {
@@ -238,10 +259,10 @@ class SinglyLinkedList {
 
             steps.push({
                 array: this.toArray(),
-                heading: `Element ${data} is deleted`,
-                description: `${data} is removed because no element is pointing to it anymore`,
+                heading: `Node ${data} is deleted`,
+                description: `${data} is removed because no Node is pointing to it anymore`,
                 codeLabel: ["delete-return"],
-                animation: async (linkedListVis, duration, step) => {
+                animation: async (linkedListVis, duration) => {
                     await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 });
                     linkedListVis.reset();
                     linkedListVis.data = linkedListVis.data.filter((el, index) => index !== 0);
@@ -250,16 +271,76 @@ class SinglyLinkedList {
             });
             this.head = this.head.next;
             return steps;
+        } else if (node && index !== null) {
+            //data is found
+            steps.push({
+                array: this.toArray(),
+                heading: "Delete Node " + data,
+                description: `Set next pointer of current Node to the next of ${data}`,
+                _index: index,
+                codeLabel: ["delete-set-current"],
+                animation: async (linkedListVis, duration, step) => {
+                    await linkedListVis.setCurrentPointer(step._index);
+                    linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                    linkedListVis.highlightElements(step._index + 1);
+                    await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, duration);
+                },
+            });
+
+            steps.push({
+                array: this.toArray(),
+                heading: `Node ${data} is deleted`,
+                description: `${data} is removed because no Node is pointing to it anymore`,
+                _index: index,
+                codeLabel: [],
+                animation: async (linkedListVis, duration, step) => {
+                    await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, 1);
+                    linkedListVis.reset();
+                    linkedListVis.data = linkedListVis.data.filter((el, index) => index !== step._index + 1);
+                    await linkedListVis.updateLinkedList(duration);
+                },
+            });
+            node.next = node.next.next;
+            return steps;
         }
+
+        return steps;
+    }
+
+    contains(data) {
+        if (this.head === null) return [];
+        var { node, steps, index } = this.getNodeBefore(data, `Contains ${data}`, "contains");
+
+        if ((node === this.head) & (index === null)) {
+            steps.push({
+                array: this.toArray(),
+                heading: "Contains " + data,
+                description: `${data} is in head`,
+                codeLabel: [],
+                animation: async (linkedListVis) => {
+                    linkedListVis.highlightElements(0);
+                    linkedListVis.highlightLinks({ source: "head", target: 0 });
+                },
+            });
+        }
+        return steps;
+    }
+
+    getNodeBefore(data, heading, codeLabelPrefix) {
+        var steps = [];
+        if (this.head == null) return { node: null, index: null, steps };
+
+        if (this.head.data == data) return { node: this.head, index: null, steps };
+
         let current = this.head;
         let index = 0;
         //current pointer head
         steps.push({
             array: this.toArray(),
-            heading: "Delete element " + data,
-            description: `Data is not in head, so go through list until ${data} is found in the next element`,
+            heading: heading,
+            description: `${data} is not in head, so go through list until ${data} is found in the next Node`,
             _index: index,
-            codeLabel: ["delete-current-head"],
+            codeLabel: [`${codeLabelPrefix}-current-head`],
             animation: async (linkedListVis, duration, step) => {
                 linkedListVis.highlightLinks({ source: "head", target: step._index });
                 linkedListVis.setCurrentPointer(step._index, duration);
@@ -270,62 +351,38 @@ class SinglyLinkedList {
             if (current.next.data == data) {
                 steps.push({
                     array: this.toArray(),
-                    heading: "Delete element " + data,
-                    description: `${data} is found in the next element of the current one`,
+                    heading: heading,
+                    description: `${data} is found in the next Node of the current one`,
                     _index: index,
-                    codeLabel: ["delete-while"],
-                    animation: async (linkedListVis, duration, step) => {
+                    codeLabel: [`${codeLabelPrefix}-while`],
+                    animation: async (linkedListVis, duration, step, visContainer) => {
+                        const stepCounter = visContainer.stepCounter;
                         if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
                         else {
                             await linkedListVis.setCurrentPointer(step._index - 1);
                             await linkedListVis.setCurrentPointer(step._index, duration);
                         }
+                        if (stepCounter != visContainer.stepCounter) return;
                         linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
                         linkedListVis.highlightElements(step._index + 1);
                     },
                 });
-                steps.push({
-                    array: this.toArray(),
-                    heading: "Delete element " + data,
-                    description: `Set next pointer of current to the next of ${data}`,
-                    _index: index,
-                    codeLabel: ["delete-set-current"],
-                    animation: async (linkedListVis, duration, step) => {
-                        await linkedListVis.setCurrentPointer(step._index);
-                        linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
-                        linkedListVis.highlightElements(step._index + 1);
-                        await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, duration);
-                    },
-                });
-
-                steps.push({
-                    array: this.toArray(),
-                    heading: `Element ${data} is deleted`,
-                    description: `${data} is removed because no element is pointing to it anymore`,
-                    _index: index,
-                    codeLabel: [],
-                    animation: async (linkedListVis, duration, step) => {
-                        await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, 1);
-                        linkedListVis.reset();
-                        linkedListVis.data = linkedListVis.data.filter((el, index) => index !== step._index + 1);
-                        await linkedListVis.updateLinkedList(duration);
-                    },
-                });
-                current.next = current.next.next;
-                return steps;
+                return { node: current, index, steps };
             }
             steps.push({
                 array: this.toArray(),
-                heading: "Delete element " + data,
+                heading: heading,
                 description: `Go through list until current.next.data equals ${data}`,
                 _index: index,
-                codeLabel: ["delete-while", "delete-current-next"],
-                animation: async (linkedListVis, duration, step) => {
+                codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-current-next`],
+                animation: async (linkedListVis, duration, step, visContainer) => {
+                    const stepCounter = visContainer.stepCounter;
                     if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
                     else {
                         await linkedListVis.setCurrentPointer(step._index - 1);
                         await linkedListVis.setCurrentPointer(step._index, duration);
                     }
+                    if (stepCounter != visContainer.stepCounter) return;
                     linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
                 },
             });
@@ -333,6 +390,24 @@ class SinglyLinkedList {
             //current pointer weiterschieben
             current = current.next;
         }
+        steps.push({
+            array: this.toArray(),
+            heading: heading,
+            description: `current.next is null, therefore ${data} is not in the list`,
+            _index: index,
+            codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-current-next`],
+            animation: async (linkedListVis, duration, step, visContainer) => {
+                const stepCounter = visContainer.stepCounter;
+                if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
+                else {
+                    await linkedListVis.setCurrentPointer(step._index - 1);
+                    await linkedListVis.setCurrentPointer(step._index, duration);
+                }
+                if (stepCounter != visContainer.stepCounter) return;
+                linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+            },
+        });
+        return { node: null, index: null, steps };
     }
 
     toArray() {
