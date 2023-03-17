@@ -5,7 +5,6 @@ class LinkedList extends HTMLElement {
     _SPACING = 30;
     _Y_OFFSET = 80;
     _linkedList = [];
-    _idct = 0;
 
     constructor() {
         super();
@@ -31,7 +30,6 @@ class LinkedList extends HTMLElement {
 
     set data(d) {
         this._linkedList = this._addCoordinatesToLinkedList(d);
-        this._idct = Math.max(this._linkedList.map((el) => el.id)) + 1;
     }
 
     highlightLinks(...indices) {
@@ -62,7 +60,7 @@ class LinkedList extends HTMLElement {
 
         this._updateLinks(this._linkedList, duration);
 
-        this._updateHead(this._linkedList, duration);
+        await this._updateHead(this._linkedList, duration);
     }
 
     async setCurrentPointer(index, duration, showIndex) {
@@ -116,36 +114,57 @@ class LinkedList extends HTMLElement {
         }
     }
 
-    async addElement(data, duration) {
-        //move all elements to the right except the head pointer
+    async addElement(data, id, index, duration) {
+        if (index === 0) return this._addNewHead(data, duration);
+        if (index > this._linkedList.length) return;
+
+        //move all elements after index and index to the right
+        const moveAmount = this._SPACING + this._E_WIDTH.singly;
         this._element
             .transition()
-            .duration(duration)
-            .attr("transform", (d) => "translate(" + (d.x + this._SPACING + this._E_WIDTH.singly) + "," + d.y + ")");
+            .duration(duration / 2)
+            .attr("transform", (d, i) => {
+                if (i < index) return `translate(${d.x},${d.y})`;
+                return "translate(" + (d.x + moveAmount) + "," + d.y + ")";
+            });
         this._nullElement
             .transition()
-            .duration(duration)
-            .attr("x", (d) => d.x + this._SPACING + this._E_WIDTH.singly)
+            .duration(duration / 2)
+            .attr("x", (d) => d.x + moveAmount)
             .attr("y", (d) => d.y);
-        this._link
+        await this._link
             .transition()
-            .duration(duration)
-            .attr("transform", `translate(${this._SPACING + this._E_WIDTH.singly},0)`);
-        await this._headLink
-            .transition()
-            .duration(duration)
-            .attr("d", `M${this._SPACING},5L${this._SPACING * 2 + this._E_WIDTH.singly},${this._linkedList[0]?.y - this._E_HEIGHT / 2}`)
+            .duration(duration / 2)
+            .attr("transform", (d, i) => {
+                if (i < index) return "translate(0,0)";
+                return `translate(${moveAmount},0)`;
+            })
+            .attrTween("d", (d, i, paths) => {
+                const previous = d3.select(paths[i]).attr("d");
+                if (i !== index - 1) return d3.interpolatePath(previous, previous);
+                let current = "";
+                if (i + 1 >= this._linkedList.length)
+                    current = d3.line()([
+                        [d.x + this._E_WIDTH.singly / 2, d.y],
+                        [d.x + this._SPACING + (2 * this._E_WIDTH.singly) / 3 + moveAmount, d.y],
+                    ]);
+                else
+                    current = d3.line()([
+                        [d.x + this._E_WIDTH.singly / 2, d.y],
+                        [this._linkedList[i + 1].x - this._E_WIDTH.singly / 3 + moveAmount, this._linkedList[i + 1].y],
+                    ]);
+                return d3.interpolatePath(previous, current);
+            })
             .end();
 
-        this._linkedList.unshift({ data, id: this._idct++ });
+        this._linkedList.splice(index, 0, { data, id });
         this._linkedList = this._addCoordinatesToLinkedList(this._linkedList);
+        this._linkedList[index].y = this._linkedList[index].y - this._E_HEIGHT * 0.75;
         //add new element
         this._updateElements(this._linkedList);
 
-        await this._wait(duration);
-
-        //add new link
-        this._updateLinks(this._linkedList);
+        //update only the new link
+        await this._updateLinks(this._linkedList, duration / 2, [index]);
     }
 
     async moveLink({ source, target, newTarget }, duration) {
@@ -307,7 +326,7 @@ class LinkedList extends HTMLElement {
             .text((d) => d.data);
     }
 
-    async _updateLinks(linkedList, duration) {
+    async _updateLinks(linkedList, duration, indicesToUpdate) {
         var link = this._link.data(linkedList, (d) => d.id);
         link.exit().remove();
 
@@ -322,9 +341,13 @@ class LinkedList extends HTMLElement {
         await this._link
             .transition()
             .duration(duration)
-            .attr("transform", "translate(0,0)")
+            .attr("transform", (d, i, paths) => {
+                if (!indicesToUpdate || (indicesToUpdate && indicesToUpdate.includes(i))) return "translate(0,0)";
+                return paths[i].getAttribute("transform");
+            })
             .attrTween("d", (d, i, paths) => {
                 const previous = d3.select(paths[i]).attr("d");
+                if (indicesToUpdate && !indicesToUpdate.includes(i)) return d3.interpolatePath(previous, previous);
                 let current = "";
                 if (i + 1 >= linkedList.length)
                     current = d3.line()([
@@ -346,7 +369,7 @@ class LinkedList extends HTMLElement {
         this._headElement.transition().duration(duration).attr("x", this._SPACING).attr("y", 0).style("text-anchor", "middle").text("head");
         let target = [this._SPACING, this._Y_OFFSET - 18];
         if (linkedList.length > 0) target = [this._SPACING, linkedList[0].y - this._E_HEIGHT / 2];
-        this._headLink
+        await this._headLink
             .data([{ x: this._SPACING, y: 5 }])
             .transition()
             .duration(duration)
@@ -356,6 +379,38 @@ class LinkedList extends HTMLElement {
                 return d3.interpolatePath(previous, current);
             })
             .end();
+    }
+
+    async _addNewHead(data, id, duration) {
+        //move all elements to the right except the head pointer
+        this._element
+            .transition()
+            .duration(duration / 2)
+            .attr("transform", (d) => "translate(" + (d.x + this._SPACING + this._E_WIDTH.singly) + "," + d.y + ")");
+        this._nullElement
+            .transition()
+            .duration(duration / 2)
+            .attr("x", (d) => d.x + this._SPACING + this._E_WIDTH.singly)
+            .attr("y", (d) => d.y);
+        this._link
+            .transition()
+            .duration(duration / 2)
+            .attr("transform", `translate(${this._SPACING + this._E_WIDTH.singly},0)`);
+        await this._headLink
+            .transition()
+            .duration(duration / 2)
+            .attr("d", `M${this._SPACING},5L${this._SPACING * 2 + this._E_WIDTH.singly},${this._linkedList[0]?.y - this._E_HEIGHT / 2}`)
+            .end();
+
+        this._linkedList.unshift({ data, id });
+        this._linkedList = this._addCoordinatesToLinkedList(this._linkedList);
+        //add new element
+        this._updateElements(this._linkedList);
+
+        await this._wait(duration / 2);
+
+        //add new link
+        this._updateLinks(this._linkedList);
     }
 
     _getCenterTranslate(linkedListLength) {

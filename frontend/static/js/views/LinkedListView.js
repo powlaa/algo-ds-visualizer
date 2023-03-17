@@ -136,9 +136,9 @@ class LinkedListView extends HTMLElement {
 
     _initVis() {
         this._linkedList = new SinglyLinkedList();
-        this._linkedList.add("23");
-        this._linkedList.add("22");
-        this._linkedList.add("15");
+        this._linkedList.add("23", 0);
+        this._linkedList.add("22", 0);
+        this._linkedList.add("15", 0);
         this._visContainer.updateSteps(
             [
                 {
@@ -157,7 +157,9 @@ class LinkedListView extends HTMLElement {
     }
 
     _addNode(e) {
-        const newSteps = this._linkedList.add(e.detail.params.data);
+        let index = parseInt(e.detail.params.index);
+        if (!index) index = 0;
+        const newSteps = this._linkedList.add(e.detail.params.data, index);
         newSteps.forEach((n) => (n.method = "add"));
         this._addSteps(newSteps);
     }
@@ -235,37 +237,75 @@ class SinglyLinkedList {
     constructor() {
         this.head = null;
     }
-    add(data) {
+    add(data, index) {
         var steps = [];
         const newNode = new SinglyNode(data, this.idct++);
         if (this.head == null) {
             //set head to new node
             this.head = newNode;
-        } else {
+            return steps;
+        }
+
+        var { node, steps } = this.getNodeBeforeIndex(index, `Add new Node at Index ${index}`, "add");
+
+        if ((node === this.head) & (index === 0)) {
             //show new node, set next to head
             steps.push({
                 array: this.toArray(),
-                heading: "Add new Node " + data,
+                heading: `Add new Node at Index ${index}`,
                 description: "Set next of new Node to head",
-                animation: (linkedListVis, duration) => {
-                    linkedListVis.addElement(data, duration);
+                _index: index,
+                animation: (linkedListVis, duration, step) => {
+                    linkedListVis.addElement(data, step._index, duration);
                 },
             });
             newNode.next = this.head;
             //set head to new node
             steps.push({
                 array: this.toArray(),
-                heading: "Add new Node " + data,
+                heading: `Add new Node at Index ${index}`,
                 description: "Set head to new Node",
-                animation: async (linkedListVis, duration) => {
-                    await linkedListVis.addElement(data);
+                _index: index,
+                animation: async (linkedListVis, duration, step) => {
+                    await linkedListVis.addElement(data, step._index);
                     linkedListVis.updateLinkedList(duration);
                 },
             });
             this.head = newNode;
+        } else if (node != null) {
+            //show new node, set next to node.next
+            steps.push({
+                array: this.toArray(),
+                heading: `Add new Node at Index ${index}`,
+                description: "Set next of new Node to current.next",
+                _index: index,
+                animation: (linkedListVis, duration, step) => {
+                    linkedListVis.setCurrentPointer(step._index - 1, 0, true);
+                    linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
+                    linkedListVis.addElement(data, newNode.id, step._index, duration);
+                },
+            });
+            //set head to new node
+            steps.push({
+                array: this.toArray(),
+                heading: `Add new Node at Index ${index}`,
+                description: "Set current.next to new Node",
+                _index: index,
+                animation: async (linkedListVis, duration, step) => {
+                    linkedListVis.setCurrentPointer(step._index - 1, 0, true);
+                    linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
+                    await linkedListVis.addElement(data, newNode.id, step._index);
+                    await linkedListVis.updateLinkedList(duration / 2);
+                    linkedListVis.data = linkedListVis.data;
+                    await linkedListVis.updateLinkedList(duration / 2);
+                },
+            });
+            newNode.next = node.next;
+            node.next = newNode;
         }
         return steps;
     }
+
     delete(data) {
         if (this.head === null) return [];
         var { node, steps, index } = this.getNodeBefore(data, `Delete Node ${data}`, "delete");
