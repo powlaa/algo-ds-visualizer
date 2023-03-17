@@ -46,6 +46,7 @@ class ControlPanel extends HTMLElement {
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-around;
+                    user-select: none;
                 }
                 .method {
                     width: 100%;
@@ -98,7 +99,9 @@ class ControlPanel extends HTMLElement {
                                     (param) =>
                                         `<div class="method__input-container">
                                         <label class="method__input-label" for="input-${el.name}-${param.name}">${param.name}</label>
-                                        <input class="method__input" type="${param.type}" id="input-${el.name}-${param.name}" name="input-${el.name}-${param.name}" placeholder="${param.name}">
+                                        <input class="method__input" type="${param.type}" ${
+                                            param.type === "number" ? `min="${param.min}"` : ""
+                                        } id="input-${el.name}-${param.name}" name="input-${el.name}-${param.name}" placeholder="${param.name}">
                                         </div>`
                                 )
                                 .join("")}

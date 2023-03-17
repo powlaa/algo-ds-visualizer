@@ -24,6 +24,10 @@ class VisContainer extends HTMLElement {
         return this.hasAttribute("array-input");
     }
 
+    get noStartBtn() {
+        return this.hasAttribute("no-start-btn");
+    }
+
     get stepCounter() {
         return this._stepCounter;
     }
@@ -40,12 +44,16 @@ class VisContainer extends HTMLElement {
         return this._steps;
     }
 
-    updateSteps(steps, { currentStep, locked }) {
+    async updateSteps(steps, { currentStep, locked, nextStep }) {
         this._steps = steps;
         this._stepCounter = 0;
         this._progressBar.setAttribute("total-steps", this._steps.length - 1);
         if (currentStep !== undefined) this._progressBar.setCurrentStep(currentStep);
         if (locked !== undefined) locked ? this._progressBar.setAttribute("locked", true) : this._progressBar.removeAttribute("locked");
+        if (nextStep !== undefined && nextStep) {
+            await this._wait(50);
+            this._progressBar.nextStep();
+        }
     }
 
     resetProgressBar() {
@@ -53,7 +61,7 @@ class VisContainer extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["popup-template-id", "title", "start-btn-name", "array-input"];
+        return ["popup-template-id", "title", "start-btn-name", "array-input", "no-start-btn"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -72,19 +80,23 @@ class VisContainer extends HTMLElement {
             case "array-input":
                 this.arrayInput ? this._header.setAttribute("array-input", true) : this._header.removeAttribute("array-input");
                 break;
+            case "no-start-btn":
+                this.noStartBtn ? this._header.setAttribute("no-start-btn", true) : this._header.removeAttribute("no-start-btn");
+                break;
             case "locked":
                 this.locked ? this._progressBar.setAttribute("locked", true) : this._progressBar.removeAttribute("locked");
                 break;
         }
     }
 
-    _updateStep(e) {
+    async _updateStep(e) {
         this._currentStepIndex = e.detail.step;
         this._stepCounter++;
         const step = this._steps[e.detail.step];
+        this.dispatchEvent(this._showStep(step));
+        await this._wait(100);
         this._header.setAttribute("heading", step.heading);
         this._header.setAttribute("description", step.description);
-        this.dispatchEvent(this._showStep(step));
     }
 
     _render() {
@@ -102,6 +114,7 @@ class VisContainer extends HTMLElement {
                 title="${this.getAttribute("title")}"
                 ${this.hasAttribute("start-btn-name") ? "start-btn-name=" + this.getAttribute("start-btn-name") : ""}
                 ${this.hasAttribute("array-input") ? "array-input" : ""}
+                ${this.hasAttribute("no-start-btn") ? "no-start-btn" : ""}
             ></header-element>
             <slot></slot>
             <progress-bar class="progress" ${this.hasAttribute("locked") ? "locked" : ""}></progress-bar>

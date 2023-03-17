@@ -75,13 +75,13 @@ class ArrayDisplay extends HTMLElement {
                     flex: 1;
                 }
                 .array__element--mark {
-                    background-color: rgba(166, 20, 28, 0.5);
+                    background-color: #D2898D;
                 }
                 .array__element--highlight {
-                    background-color: rgba(12, 166, 50, 0.5);
+                    background-color: #85D298;
                 }
                 .array__element--lock {
-                    background-color: rgba(185, 185, 185, 0.9);
+                    background-color: #B9B9B9;
                 }
             </style>
             <div id="array" class="array">${

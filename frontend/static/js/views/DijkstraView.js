@@ -410,7 +410,7 @@ class DijkstraView extends HTMLElement {
                 .content {
                     width: 100%;
                     height: calc(100vh - 160px);
-                    --split-layout-height: calc(100% - 160px);
+                    --split-layout-height: calc(100% - 190px);
                 }
 
                 .content__graph-creator {
@@ -455,6 +455,10 @@ class DijkstraView extends HTMLElement {
                     font-size: 20px;
                     font-weight: bold;
                     cursor: pointer;
+                    padding: 3px 0 0 0;
+                }
+                .button__image {
+                    height: 19px
                 }
             </style>
 
@@ -465,7 +469,9 @@ class DijkstraView extends HTMLElement {
                     <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
                 </split-layout>
                 <pop-up id="control-popup" class="popup"></pop-up>
-                <button id="control-btn" class="button">?</button>
+                <button id="control-btn" class="button">
+                    <img class="button__image" class="button__image" src="/static/img/question-mark.png" />
+                </button>
             </vis-container>
         `;
     }

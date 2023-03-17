@@ -50,7 +50,7 @@ class Header extends HTMLElement {
             <style>
                 .container {
                     width: 100%;
-                    height: 100px;
+                    height: 130px;
                     background-color: #ced0c1;
                     display: flex;
                     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
@@ -62,6 +62,7 @@ class Header extends HTMLElement {
                     display: flex;
                     align-items: center;
                     white-space: nowrap;
+                    margin: 5px 0 10px 0;
                 }
                 .panel__button {
                     font-size: 1em;
@@ -69,14 +70,13 @@ class Header extends HTMLElement {
                     cursor: pointer;
                 }
                 .panel__button--information {
-                    background-color: rgba(0, 0, 0, 0);
+                    background-color: rgb(255 255 255);
                     border: 1px solid black;
                     border-radius: 100%;
-                    height: 1.4em;
-                    width: 1.4em;
-                    font-weight: bold;
+                    height: 30px;
+                    width: 30px;
                     margin-left: 5px;
-                    padding-top: 2px;
+                    padding: 2px 0 0 2px;
                 }
                 .panel__button--start {
                     background-color: #03a688; /* Green */
@@ -86,16 +86,25 @@ class Header extends HTMLElement {
                     text-decoration: none;
                     display: inline-block;
                 }
+                .button__image {
+                    height: 18px;
+                }
                 .panel__input {
                     display: flex;
                 }
                 .explanations {
-                    margin: 0 20px;
+                    margin: 0 0 0 5%;
                     width: 100%;
-                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+                .explanations__heading {
+                    font-size: 2.2em;
+                    margin: 0 0 6px 0;
                 }
                 .explanations__description {
-                    font-size: 1.2em;
+                    font-size: 1.4em;
                     font-style: italic;
                 }
             </style>
@@ -103,7 +112,9 @@ class Header extends HTMLElement {
                 <div class="panel">
                     <div class="panel__title">
                         <h2>${this.getAttribute("title")}</h2>
-                        <button id="information-btn" class="panel__button panel__button--information">i</button>
+                        <button id="information-btn" class="panel__button panel__button--information">
+                            <img class="button__image" src="/static/img/information-mark.png" />
+                        </button>
                         <pop-up id="information-popup" overlay></pop-up>
                     </div>
                     <div class="panel__input">
