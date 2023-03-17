@@ -1,16 +1,18 @@
 class LinkedList extends HTMLElement {
-    _MARGIN = { top: 50, right: 20, bottom: 30, left: 20 };
     _E_WIDTH = { singly: 75 };
     _E_HEIGHT = 50;
     _SPACING = 30;
-    _Y_OFFSET = 80;
-    _X_OFFSET = 60;
+    _Y_OFFSET = 130;
+    _X_OFFSET = 80;
     _linkedList = [];
 
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this._render();
+
+        this.shadowRoot.querySelector("vis-control").addEventListener("center", () => this.center(400));
+
         this._container = this.shadowRoot.querySelector("#container");
         this._svg = d3
             .select(this.shadowRoot.querySelector("#container"))
@@ -21,7 +23,7 @@ class LinkedList extends HTMLElement {
             // Class to make it responsive.
             .classed("svg-content-responsive", true);
 
-        this._g = this._svg.append("g").attr("transform", "translate(" + this._MARGIN.left + "," + this._MARGIN.top + ")");
+        this._g = this._svg.append("g");
         this._initLinkedList();
     }
 
@@ -46,7 +48,7 @@ class LinkedList extends HTMLElement {
     }
 
     center(duration) {
-        return this._g.transition().duration(duration).attr("transform", this._getCenterTranslate(this._linkedList.length)).end();
+        return this._svg.transition().duration(duration).call(this._dragSvg.transform, d3.zoomIdentity.scale(1)).end();
     }
 
     reset() {
@@ -74,7 +76,7 @@ class LinkedList extends HTMLElement {
             //if current Element and link are not visible, make them visible
             this._currentElement
                 .attr("x", this._linkedList[index].x)
-                .attr("y", this._linkedList[index].y + this._Y_OFFSET)
+                .attr("y", this._linkedList[index].y + this._E_HEIGHT * 2)
                 .style("text-anchor", "middle")
                 .style("display", "block")
                 .text(showIndex ? `current (i: ${index})` : "current");
@@ -82,7 +84,7 @@ class LinkedList extends HTMLElement {
                 .style("display", "block")
                 .attr(
                     "d",
-                    `M${this._linkedList[index].x},${this._linkedList[index].y + this._Y_OFFSET - 13}L${this._linkedList[index].x},${
+                    `M${this._linkedList[index].x},${this._linkedList[index].y + this._E_HEIGHT * 2 - 13}L${this._linkedList[index].x},${
                         this._linkedList[index].y + this._E_HEIGHT / 2
                     }`
                 );
@@ -101,13 +103,13 @@ class LinkedList extends HTMLElement {
                 .transition()
                 .duration(duration / 3)
                 .attr("x", this._linkedList[index].x)
-                .attr("y", this._linkedList[index].y + this._Y_OFFSET);
+                .attr("y", this._linkedList[index].y + this._E_HEIGHT * 2);
             await this._currentLink
                 .transition()
                 .duration(duration / 3)
                 .attr(
                     "d",
-                    `M${this._linkedList[index].x},${this._linkedList[index].y + this._Y_OFFSET - 13}L${this._linkedList[index].x},${
+                    `M${this._linkedList[index].x},${this._linkedList[index].y + this._E_HEIGHT * 2 - 13}L${this._linkedList[index].x},${
                         this._linkedList[index].y + this._E_HEIGHT / 2
                     }`
                 )
@@ -180,7 +182,7 @@ class LinkedList extends HTMLElement {
                     .attr("d", (d) =>
                         d3.line()([
                             [d.x, d.y],
-                            [this._SPACING * 2 + this._E_WIDTH.singly, this._linkedList[0].y - this._E_HEIGHT / 2],
+                            [this._X_OFFSET + this._SPACING * 2 + this._E_WIDTH.singly, this._linkedList[0].y - this._E_HEIGHT / 2],
                         ])
                     )
                     .end();
@@ -273,13 +275,13 @@ class LinkedList extends HTMLElement {
             .style("display", "none");
 
         // listen for dragging
-        var dragSvg = d3
+        this._dragSvg = d3
             .zoom()
             .on("zoom", (e) => this._g.attr("transform", e.transform))
             .on("start", () => d3.select("body").style("cursor", "move"))
             .on("end", () => d3.select("body").style("cursor", "auto"));
 
-        this._svg.call(dragSvg).on("dblclick.zoom", null);
+        this._svg.call(this._dragSvg).on("dblclick.zoom", null);
     }
 
     async _updateElements(linkedList, duration) {
@@ -369,13 +371,13 @@ class LinkedList extends HTMLElement {
             .transition()
             .duration(duration)
             .attr("x", this._X_OFFSET + this._SPACING)
-            .attr("y", 0)
+            .attr("y", this._E_HEIGHT)
             .style("text-anchor", "middle")
             .text("head");
         let target = [this._X_OFFSET + this._SPACING, this._Y_OFFSET - 18];
         if (linkedList.length > 0) target = [this._X_OFFSET + this._SPACING, linkedList[0].y - this._E_HEIGHT / 2];
         await this._headLink
-            .data([{ x: this._X_OFFSET + this._SPACING, y: 5 }])
+            .data([{ x: this._X_OFFSET + this._SPACING, y: this._E_HEIGHT + 5 }])
             .transition()
             .duration(duration)
             .attrTween("d", (d, i, paths) => {
@@ -405,7 +407,14 @@ class LinkedList extends HTMLElement {
         await this._headLink
             .transition()
             .duration(duration / 2)
-            .attr("d", `M${this._X_OFFSET + this._SPACING},5L${this._X_OFFSET + this._SPACING + moveAmount},${this._Y_OFFSET - this._E_HEIGHT / 2}`)
+            .attrTween("d", (d, i, paths) => {
+                const previous = d3.select(paths[i]).attr("d");
+                const current = d3.line()([
+                    [d.x, d.y],
+                    [this._X_OFFSET + this._SPACING + moveAmount, this._Y_OFFSET - this._E_HEIGHT / 2],
+                ]);
+                return d3.interpolatePath(previous, current);
+            })
             .end();
 
         this._linkedList.unshift({ data, id });
@@ -417,11 +426,6 @@ class LinkedList extends HTMLElement {
 
         //add new link
         this._updateLinks(this._linkedList);
-    }
-
-    _getCenterTranslate(linkedListLength) {
-        const listWidth = linkedListLength * this._E_WIDTH.singly + (linkedListLength + 2) * this._SPACING;
-        return "translate(" + (this._MARGIN.left + (this._container.offsetWidth - listWidth) / 2) + "," + this._MARGIN.top + ")";
     }
 
     _addCoordinatesToLinkedList(linkedList) {
@@ -442,6 +446,12 @@ class LinkedList extends HTMLElement {
             <style>
                 :host {
                     display: inline-block;
+                }
+                vis-control {
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
+                    z-index: 1;
                 }
                 .container {
                     height: 100%;
@@ -485,6 +495,7 @@ class LinkedList extends HTMLElement {
                 }
             </style>
             <div id="container" class="container"></div>
+            <vis-control></vis-control>
         `;
     }
 }

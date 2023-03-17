@@ -3,15 +3,19 @@ class BinaryTree extends HTMLElement {
     _WIDTH = window.innerWidth - this._MARGIN.left - this._MARGIN.right;
     _HEIGHT = window.innerHeight - this._MARGIN.top - this._MARGIN.bottom;
 
+    _node_radius = 25;
+
     // declares a tree layout and assigns the size
     _treemap = d3.tree().size([this._WIDTH / 2, this._HEIGHT / 2]);
     _treeData = [];
-    _node_radius = 25;
 
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this._render();
+
+        this.shadowRoot.querySelector("vis-control").addEventListener("center", () => this.center(400));
+
         this._svg = d3
             .select(this.shadowRoot.querySelector("#container"))
             .append("svg")
@@ -20,15 +24,15 @@ class BinaryTree extends HTMLElement {
             .attr("viewBox", `0 0 ${this._WIDTH / 2} ${this._HEIGHT - 160}`)
             // Class to make it responsive.
             .classed("svg-content-responsive", true);
-        this._g = this._svg.append("g").attr("transform", "translate(" + this._MARGIN.left + "," + this._MARGIN.top + ")");
+        this._g = this._svg.append("g");
         // listen for dragging
-        var dragSvg = d3
+        this._dragSvg = d3
             .zoom()
             .on("zoom", (e) => this._g.attr("transform", e.transform))
             .on("start", () => d3.select("body").style("cursor", "move"))
             .on("end", () => d3.select("body").style("cursor", "auto"));
 
-        this._svg.call(dragSvg).on("dblclick.zoom", null);
+        this._svg.call(this._dragSvg).on("dblclick.zoom", null);
     }
 
     get data() {
@@ -64,6 +68,10 @@ class BinaryTree extends HTMLElement {
         indices.forEach((index) => this._g.select("#node" + index).attr("class", "node__circle node__circle--lock"));
     }
 
+    center(duration) {
+        return this._svg.transition().duration(duration).call(this._dragSvg.transform, d3.zoomIdentity.scale(1)).end();
+    }
+
     async swap(index_A, index_B, duration) {
         const nodeA = this._nodes.descendants().find((node) => node.data.index === index_A);
         const nodeB = this._nodes.descendants().find((node) => node.data.index === index_B);
@@ -95,6 +103,8 @@ class BinaryTree extends HTMLElement {
 
         // maps the node data to the tree layout
         this._nodes = this._treemap(this._nodes);
+
+        this._nodes.descendants().forEach((n) => (n.y += this._MARGIN.top));
 
         this._g.selectAll(".link").remove();
 
@@ -155,11 +165,19 @@ class BinaryTree extends HTMLElement {
                 :host {
                     display: inline-block;
                 }
+                vis-control {
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
+                    z-index: 1;
+                }
                 .svg-content-responsive {
                     display: inline-block;
                     position: absolute;
                     top: 0;
                     left: 0;
+                    height: 100%;
+                    width: 100%;
                 }
                 .node {
                     cursor: pointer;
@@ -192,6 +210,7 @@ class BinaryTree extends HTMLElement {
                 }
             </style>
             <div id="container"></div>
+            <vis-control></vis-control>
         `;
     }
 }

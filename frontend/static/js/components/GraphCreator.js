@@ -48,6 +48,8 @@ class GraphCreator extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this._render();
 
+        this.shadowRoot.querySelector("vis-control").addEventListener("center", () => this.center(400));
+
         this._svg = d3
             .select(this.shadowRoot.querySelector("#container"))
             .append("svg")
@@ -131,6 +133,10 @@ class GraphCreator extends HTMLElement {
         });
     }
 
+    center(duration) {
+        return this._svg.transition().duration(duration).call(this._dragSvg.transform, d3.zoomIdentity.scale(1)).end();
+    }
+
     _initGraph() {
         // define arrow markers for graph links
         var defs = this._svg.append("svg:defs");
@@ -192,7 +198,7 @@ class GraphCreator extends HTMLElement {
         this._svg.on("click", this._svgMouseUp.bind(this));
 
         // listen for dragging
-        var dragSvg = d3
+        this._dragSvg = d3
             .zoom()
             .on("zoom", this._zoomed.bind(this))
             .on("start", (e) => {
@@ -206,7 +212,7 @@ class GraphCreator extends HTMLElement {
                 d3.select("body").style("cursor", "auto");
             });
 
-        this._svg.call(dragSvg).on("dblclick.zoom", null);
+        this._svg.call(this._dragSvg).on("dblclick.zoom", null);
 
         // listen for resize
         window.onresize = this._updateWindow.bind(this, this._svg);
@@ -648,8 +654,15 @@ class GraphCreator extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="/static/css/graph-creator.css" />
             <style>
+                vis-control {
+                    position: absolute;
+                    bottom: 30px;
+                    right: 10px;
+                    z-index: 1;
+                }
             </style>
             <div id="container" class="container"></div>
+            <vis-control></vis-control>
         `;
     }
 }
