@@ -115,7 +115,7 @@ class LinkedList extends HTMLElement {
     }
 
     async addElement(data, id, index, duration) {
-        if (index === 0) return this._addNewHead(data, duration);
+        if (index === 0) return this._addNewHead(data, id, duration);
         if (index > this._linkedList.length) return;
 
         //move all elements after index and index to the right
@@ -285,9 +285,7 @@ class LinkedList extends HTMLElement {
         var element = this._element.data(linkedList, (d) => d.id);
         element.exit().remove();
 
-        const lastIndex = linkedList.length - 1;
-        if (linkedList.length === 0) this._nullElement.data([{ x: this._SPACING, y: this._Y_OFFSET + 9 }]);
-        else this._nullElement.data([{ x: linkedList[lastIndex].x + this._SPACING + this._E_WIDTH.singly - 10, y: linkedList[lastIndex].y + 9 }]);
+        this._nullElement.data([this._getNullElementPosition(linkedList)]);
 
         this._nullElement
             .transition()
@@ -352,7 +350,7 @@ class LinkedList extends HTMLElement {
                 if (i + 1 >= linkedList.length)
                     current = d3.line()([
                         [d.x + this._E_WIDTH.singly / 2, d.y],
-                        [d.x + this._SPACING + (2 * this._E_WIDTH.singly) / 3, d.y],
+                        [this._getNullElementPosition(this._linkedList).x - this._E_WIDTH.singly / 3 + 10, this._Y_OFFSET],
                     ]);
                 else
                     current = d3.line()([
@@ -383,23 +381,24 @@ class LinkedList extends HTMLElement {
 
     async _addNewHead(data, id, duration) {
         //move all elements to the right except the head pointer
+        const moveAmount = this._SPACING + this._E_WIDTH.singly;
         this._element
             .transition()
             .duration(duration / 2)
-            .attr("transform", (d) => "translate(" + (d.x + this._SPACING + this._E_WIDTH.singly) + "," + d.y + ")");
+            .attr("transform", (d) => "translate(" + (d.x + moveAmount) + "," + d.y + ")");
         this._nullElement
             .transition()
             .duration(duration / 2)
-            .attr("x", (d) => d.x + this._SPACING + this._E_WIDTH.singly)
+            .attr("x", (d) => d.x + moveAmount - (this._linkedList.length === 0 ? 10 : 0))
             .attr("y", (d) => d.y);
         this._link
             .transition()
             .duration(duration / 2)
-            .attr("transform", `translate(${this._SPACING + this._E_WIDTH.singly},0)`);
+            .attr("transform", `translate(${moveAmount},0)`);
         await this._headLink
             .transition()
             .duration(duration / 2)
-            .attr("d", `M${this._SPACING},5L${this._SPACING * 2 + this._E_WIDTH.singly},${this._linkedList[0]?.y - this._E_HEIGHT / 2}`)
+            .attr("d", `M${this._SPACING},5L${this._SPACING + moveAmount},${this._Y_OFFSET - this._E_HEIGHT / 2}`)
             .end();
 
         this._linkedList.unshift({ data, id });
@@ -422,6 +421,12 @@ class LinkedList extends HTMLElement {
         return linkedList.map((element, index) => {
             return { ...element, y: this._Y_OFFSET, x: index * this._E_WIDTH.singly + this._SPACING * (index + 1) };
         });
+    }
+
+    _getNullElementPosition(linkedList) {
+        const lastIndex = linkedList.length - 1;
+        if (linkedList.length === 0) return { x: this._SPACING, y: this._Y_OFFSET + 9 };
+        return { x: linkedList[lastIndex].x + this._SPACING + this._E_WIDTH.singly - 10, y: this._Y_OFFSET + 9 };
     }
 
     _render() {

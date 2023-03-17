@@ -136,9 +136,9 @@ class LinkedListView extends HTMLElement {
 
     _initVis() {
         this._linkedList = new SinglyLinkedList();
-        this._linkedList.add("23", 0);
-        this._linkedList.add("22", 0);
-        this._linkedList.add("15", 0);
+        // this._linkedList.add("23", 0);
+        // this._linkedList.add("22", 0);
+        // this._linkedList.add("15", 0);
         this._visContainer.updateSteps(
             [
                 {
@@ -158,7 +158,7 @@ class LinkedListView extends HTMLElement {
 
     _addNode(e) {
         let index = parseInt(e.detail.params.index);
-        if (!index) index = 0;
+        if (!e.detail.params.index) index = 0;
         const newSteps = this._linkedList.add(e.detail.params.data, index);
         newSteps.forEach((n) => (n.method = "add"));
         this._addSteps(newSteps);
@@ -240,15 +240,11 @@ class SinglyLinkedList {
     add(data, index) {
         var steps = [];
         const newNode = new SinglyNode(data, this.idct++);
-        if (this.head == null) {
-            //set head to new node
-            this.head = newNode;
-            return steps;
-        }
+        if (this.head == null) index = 0;
 
-        var { node, steps } = this.getNodeBeforeIndex(index, `Add new Node at Index ${index}`, "add");
+        var { node, steps, index: nodeIndex } = this.getNodeBeforeIndex(index, `Add new Node at Index ${index}`, "add");
 
-        if ((node === this.head) & (index === 0)) {
+        if (index === 0) {
             //show new node, set next to head
             steps.push({
                 array: this.toArray(),
@@ -256,10 +252,10 @@ class SinglyLinkedList {
                 description: "Set next of new Node to head",
                 _index: index,
                 animation: (linkedListVis, duration, step) => {
-                    linkedListVis.addElement(data, step._index, duration);
+                    linkedListVis.addElement(data, newNode.id, step._index, duration);
                 },
             });
-            newNode.next = this.head;
+            if (this.head) newNode.next = this.head;
             //set head to new node
             steps.push({
                 array: this.toArray(),
@@ -267,18 +263,20 @@ class SinglyLinkedList {
                 description: "Set head to new Node",
                 _index: index,
                 animation: async (linkedListVis, duration, step) => {
-                    await linkedListVis.addElement(data, step._index);
+                    await linkedListVis.addElement(data, newNode.id, step._index);
                     linkedListVis.updateLinkedList(duration);
                 },
             });
             this.head = newNode;
-        } else if (node != null) {
+        } else {
             //show new node, set next to node.next
+            let heading = `Add new Node at Index ${index}`;
+            if (nodeIndex !== index) heading = `Add new Node as last node because Index ${index} is too large`;
             steps.push({
                 array: this.toArray(),
-                heading: `Add new Node at Index ${index}`,
+                heading: heading,
                 description: "Set next of new Node to current.next",
-                _index: index,
+                _index: nodeIndex + 1,
                 animation: (linkedListVis, duration, step) => {
                     linkedListVis.setCurrentPointer(step._index - 1, 0, true);
                     linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
@@ -288,9 +286,9 @@ class SinglyLinkedList {
             //set head to new node
             steps.push({
                 array: this.toArray(),
-                heading: `Add new Node at Index ${index}`,
+                heading: heading,
                 description: "Set current.next to new Node",
-                _index: index,
+                _index: nodeIndex + 1,
                 animation: async (linkedListVis, duration, step) => {
                     linkedListVis.setCurrentPointer(step._index - 1, 0, true);
                     linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
@@ -577,7 +575,7 @@ class SinglyLinkedList {
                 linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
             },
         });
-        return { node: null, index: null, steps };
+        return { node: current, index: currentIndex, steps };
     }
 
     toArray() {
