@@ -4,6 +4,7 @@ class LinkedList extends HTMLElement {
     _E_HEIGHT = 50;
     _SPACING = 30;
     _Y_OFFSET = 80;
+    _X_OFFSET = 60;
     _linkedList = [];
 
     constructor() {
@@ -364,11 +365,17 @@ class LinkedList extends HTMLElement {
 
     async _updateHead(linkedList, duration) {
         // if (linkedList.length == 0) return;
-        this._headElement.transition().duration(duration).attr("x", this._SPACING).attr("y", 0).style("text-anchor", "middle").text("head");
-        let target = [this._SPACING, this._Y_OFFSET - 18];
-        if (linkedList.length > 0) target = [this._SPACING, linkedList[0].y - this._E_HEIGHT / 2];
+        this._headElement
+            .transition()
+            .duration(duration)
+            .attr("x", this._X_OFFSET + this._SPACING)
+            .attr("y", 0)
+            .style("text-anchor", "middle")
+            .text("head");
+        let target = [this._X_OFFSET + this._SPACING, this._Y_OFFSET - 18];
+        if (linkedList.length > 0) target = [this._X_OFFSET + this._SPACING, linkedList[0].y - this._E_HEIGHT / 2];
         await this._headLink
-            .data([{ x: this._SPACING, y: 5 }])
+            .data([{ x: this._X_OFFSET + this._SPACING, y: 5 }])
             .transition()
             .duration(duration)
             .attrTween("d", (d, i, paths) => {
@@ -398,7 +405,7 @@ class LinkedList extends HTMLElement {
         await this._headLink
             .transition()
             .duration(duration / 2)
-            .attr("d", `M${this._SPACING},5L${this._SPACING + moveAmount},${this._Y_OFFSET - this._E_HEIGHT / 2}`)
+            .attr("d", `M${this._X_OFFSET + this._SPACING},5L${this._X_OFFSET + this._SPACING + moveAmount},${this._Y_OFFSET - this._E_HEIGHT / 2}`)
             .end();
 
         this._linkedList.unshift({ data, id });
@@ -419,13 +426,13 @@ class LinkedList extends HTMLElement {
 
     _addCoordinatesToLinkedList(linkedList) {
         return linkedList.map((element, index) => {
-            return { ...element, y: this._Y_OFFSET, x: index * this._E_WIDTH.singly + this._SPACING * (index + 1) };
+            return { ...element, y: this._Y_OFFSET, x: this._X_OFFSET + index * this._E_WIDTH.singly + this._SPACING * (index + 1) };
         });
     }
 
     _getNullElementPosition(linkedList) {
         const lastIndex = linkedList.length - 1;
-        if (linkedList.length === 0) return { x: this._SPACING, y: this._Y_OFFSET + 9 };
+        if (linkedList.length === 0) return { x: this._X_OFFSET + this._SPACING, y: this._Y_OFFSET + 9 };
         return { x: linkedList[lastIndex].x + this._SPACING + this._E_WIDTH.singly - 10, y: this._Y_OFFSET + 9 };
     }
 

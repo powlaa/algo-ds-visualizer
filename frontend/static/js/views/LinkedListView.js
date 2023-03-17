@@ -57,13 +57,22 @@ class LinkedListView extends HTMLElement {
                 { code: "return null", indent: 2, label: "get-not-found" },
             ],
             add: [
-                { code: "<b>function</b> <b>add</b>(data)", indent: 1, label: "add" },
+                { code: "<b>function</b> <b>add</b>(data, index)", indent: 1, label: "add" },
                 { code: "newNode = new Node(data)", indent: 2, label: "add-new-node" },
                 { code: "<b>if</b> head == null", indent: 2, label: "add-if-head" },
-                { code: "head = newNode", indent: 3, label: "add-new-head" },
-                { code: "<b>else</b>", indent: 2, label: "add-else" },
-                { code: "newNode.next = head", indent: 3, label: "add-set-next" },
-                { code: "head = newNode", indent: 3, label: "add-set-head" },
+                { code: "head = newNode", indent: 3, label: "add-first" },
+                { code: "return", indent: 3, label: "add-first-return" },
+                { code: "<b>if</b> index === 0", indent: 2, label: "add-if-zero" },
+                { code: "newNode.next = head.next", indent: 3, label: "add-next-head" },
+                { code: "head = newNode", indent: 3, label: "add-head-new" },
+                { code: "return", indent: 3, label: "add-head-return" },
+                { code: "currentIndex = 0", indent: 2, label: "add-set-current-index" },
+                { code: "current = head", indent: 2, label: "add-current-head" },
+                { code: "<b>while</b> current.next != null && currentIndex + 1 != index", indent: 2, label: "add-while" },
+                { code: "currentIndex ++", indent: 3, label: "add-increment-current-index" },
+                { code: "current = current.next", indent: 3, label: "add-current-next" },
+                { code: "newNode.next = current.next", indent: 2, label: "add-next-current" },
+                { code: "current.next = newNode", indent: 2, label: "add-current-new" },
             ],
         },
         empty: [{ code: "", indent: 0, label: "empty" }],
@@ -136,9 +145,9 @@ class LinkedListView extends HTMLElement {
 
     _initVis() {
         this._linkedList = new SinglyLinkedList();
-        // this._linkedList.add("23", 0);
-        // this._linkedList.add("22", 0);
-        // this._linkedList.add("15", 0);
+        this._linkedList.add("23", 0);
+        this._linkedList.add("22", 0);
+        this._linkedList.add("15", 0);
         this._visContainer.updateSteps(
             [
                 {
@@ -153,7 +162,6 @@ class LinkedListView extends HTMLElement {
         );
         this._linkedListVis.data = this._linkedList.toArray();
         this._linkedListVis.updateLinkedList();
-        // this._linkedListVis.center();
     }
 
     _addNode(e) {
@@ -246,22 +254,30 @@ class SinglyLinkedList {
 
         if (index === 0) {
             //show new node, set next to head
+            let codeLabel = ["add-if-head"];
+            if (this.head) codeLabel = ["add-if-zero", "add-next-head"];
             steps.push({
                 array: this.toArray(),
                 heading: `Add new Node at Index ${index}`,
                 description: "Set next of new Node to head",
+                codeLabel: [...codeLabel],
                 _index: index,
                 animation: (linkedListVis, duration, step) => {
                     linkedListVis.addElement(data, newNode.id, step._index, duration);
                 },
             });
-            if (this.head) newNode.next = this.head;
+            codeLabel = ["add-first", "add-first-return"];
+            if (this.head) {
+                newNode.next = this.head;
+                codeLabel = ["add-head-new", "add-head-return"];
+            }
             //set head to new node
             steps.push({
                 array: this.toArray(),
                 heading: `Add new Node at Index ${index}`,
                 description: "Set head to new Node",
                 _index: index,
+                codeLabel: [...codeLabel],
                 animation: async (linkedListVis, duration, step) => {
                     await linkedListVis.addElement(data, newNode.id, step._index);
                     linkedListVis.updateLinkedList(duration);
@@ -277,6 +293,7 @@ class SinglyLinkedList {
                 heading: heading,
                 description: "Set next of new Node to current.next",
                 _index: nodeIndex + 1,
+                codeLabel: ["add-next-current"],
                 animation: (linkedListVis, duration, step) => {
                     linkedListVis.setCurrentPointer(step._index - 1, 0, true);
                     linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
@@ -289,6 +306,7 @@ class SinglyLinkedList {
                 heading: heading,
                 description: "Set current.next to new Node",
                 _index: nodeIndex + 1,
+                codeLabel: ["add-current-new"],
                 animation: async (linkedListVis, duration, step) => {
                     linkedListVis.setCurrentPointer(step._index - 1, 0, true);
                     linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
@@ -478,7 +496,7 @@ class SinglyLinkedList {
             heading: heading,
             description: `current.next is null, therefore ${data} is not in the list`,
             _index: index,
-            codeLabel: [`${codeLabelPrefix}-not-found`],
+            codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-not-found`],
             animation: async (linkedListVis, duration, step, visContainer) => {
                 const stepCounter = visContainer.stepCounter;
                 if (step._index === 0) await linkedListVis.setCurrentPointer(step._index);
@@ -563,7 +581,7 @@ class SinglyLinkedList {
             heading: heading,
             description: `current.next is null, therefore there is no Node with index ${index} in the list`,
             _index: currentIndex,
-            codeLabel: [`${codeLabelPrefix}-not-found`],
+            codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-not-found`],
             animation: async (linkedListVis, duration, step, visContainer) => {
                 const stepCounter = visContainer.stepCounter;
                 if (step._index === 0) await linkedListVis.setCurrentPointer(step._index, 0, true);
