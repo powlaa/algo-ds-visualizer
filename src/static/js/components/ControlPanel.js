@@ -40,39 +40,39 @@ class ControlPanel extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 .container {
-                    height: 100%;
-                    display: flex;
+                    height: calc(100% - 20px);
+                    display: grid;
                     width: 100%;
-                    flex-direction: column;
                     align-items: center;
-                    justify-content: space-around;
                     user-select: none;
+                    padding: 15px 0 5px 0;
                 }
                 .method {
                     width: 100%;
-                    display: flex;
-                    justify-content: center;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr;
+                    direction: rtl;
                 }
                 .method__input-container {
                     position: relative;
+                    margin: 0 5px
                 }
                 .method__input-label {
                     display: block;
-                    font-size: 0.8em;
+                    font-size: 0.95em;
                     position: absolute;
                     top: -1.1em;
                     left: 3px;
                 }
                 .method__input {
-                    min-width: 20px;
-                    max-width: 50px;
+                    width: 100%;
                     height: 100%;
-                    margin-right: 5px;
                     box-sizing: border-box;
                     border: 3px solid #ccc;
                     -webkit-transition: 0.5s;
                     transition: 0.5s;
                     outline: none;
+                    direction: ltr;
                 }
                 .method__input:focus {
                     border: 3px solid #555;
@@ -87,6 +87,7 @@ class ControlPanel extends HTMLElement {
                     text-decoration: none;
                     display: inline-block;
                     cursor: pointer;
+                    margin: 0 5px;
                 }
             </style>
             <div class="container">
@@ -94,6 +95,7 @@ class ControlPanel extends HTMLElement {
                     .map(
                         (el, index) =>
                             `<div class="method">
+                            <button class="method__button" id="method-${el.name}-${index}">${el.name}</button>
                             ${el.parameters
                                 .map(
                                     (param) =>
@@ -101,11 +103,10 @@ class ControlPanel extends HTMLElement {
                                         <label class="method__input-label" for="input-${el.name}-${param.name}">${param.name}</label>
                                         <input class="method__input" type="${param.type}" ${
                                             param.type === "number" ? `min="${param.min}"` : ""
-                                        } id="input-${el.name}-${param.name}" name="input-${el.name}-${param.name}" placeholder="${param.name}">
+                                        } id="input-${el.name}-${param.name}" name="input-${el.name}-${param.name}">
                                         </div>`
                                 )
                                 .join("")}
-                                <button class="method__button" id="method-${el.name}-${index}">${el.name}</button>
                         </div>`
                     )
                     .join("")}

@@ -82,8 +82,8 @@ class LinkedListView extends HTMLElement {
         {
             name: "add",
             parameters: [
-                { name: "data", type: "text" },
                 { name: "index", type: "number", min: 0 },
+                { name: "data", type: "text" },
             ],
         },
         {
@@ -196,14 +196,13 @@ class LinkedListView extends HTMLElement {
     _toggleCode() {
         this._pseudocodeClasses.toggleCode();
         const visible = this._pseudocodeMethods.toggleCode();
-        this._splitLayout.toggleLeftResizerVertical();
         this._splitLayout.toggleRightResizerVertical();
         if (visible) {
             this._splitLayout.setTopLeftHeight(50);
             this._splitLayout.setTopRightHeight(50);
             return;
         }
-        this._splitLayout.setTopLeftHeight(70);
+        this._splitLayout.setTopLeftHeight(50);
         this._splitLayout.setTopRightHeight(95);
     }
 
