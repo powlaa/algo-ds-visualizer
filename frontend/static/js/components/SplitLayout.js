@@ -11,6 +11,7 @@ class SplitLayout extends HTMLElement {
         this.shadowRoot.querySelectorAll(".resizer").forEach((resizer) => this.resizable(resizer));
     }
 
+    // taken and adjusted from a Tutorial by Nguyen Huu Phuoc: https://htmldom.dev/create-resizable-split-views/ (last accessed 18.03.2023)
     resizable(resizer) {
         const direction = resizer.getAttribute("data-direction") || "horizontal";
         const prevSibling = resizer.previousElementSibling;
@@ -80,6 +81,24 @@ class SplitLayout extends HTMLElement {
 
         // Attach the handler
         resizer.addEventListener("mousedown", mouseDown);
+    }
+
+    setTopLeftHeight(percentage) {
+        this.shadowRoot.querySelector(".container__top-left").style.height = `${percentage}%`;
+    }
+
+    setTopRightHeight(percentage) {
+        this.shadowRoot.querySelector(".container__top-right").style.height = `${percentage}%`;
+    }
+
+    toggleLeftResizerVertical() {
+        const resizerLeft = this.shadowRoot.querySelector(".container__left > .resizer--vertical");
+        resizerLeft.style.display = resizerLeft.style.display === "none" ? "block" : "none";
+    }
+
+    toggleRightResizerVertical() {
+        const resizerRight = this.shadowRoot.querySelector(".container__right > .resizer--vertical");
+        resizerRight.style.display = resizerRight.style.display === "none" ? "block" : "none";
     }
 
     _render() {

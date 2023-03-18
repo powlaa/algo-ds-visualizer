@@ -106,6 +106,7 @@ class LinkedListView extends HTMLElement {
         this._render();
 
         this._visContainer = this.shadowRoot.querySelector("vis-container");
+        this._splitLayout = this.shadowRoot.querySelector("split-layout");
         this._linkedListVis = this.shadowRoot.querySelector("linked-list");
         this._pseudocodeClasses = this.shadowRoot.querySelector("#pseudocode-classes");
         this._pseudocodeClasses.code = this._PSEUDOCODE_CLASSES.singly;
@@ -114,6 +115,8 @@ class LinkedListView extends HTMLElement {
         this._controlPanel.data = this._CONTROL_PANEL_METHODS;
 
         this._visContainer.addEventListener("show-step", this._showStep.bind(this));
+
+        this._visContainer.addEventListener("code", this._toggleCode.bind(this));
 
         this._controlPanel.addEventListener("add", this._addNode.bind(this));
         this._controlPanel.addEventListener("delete", this._deleteNode.bind(this));
@@ -188,6 +191,20 @@ class LinkedListView extends HTMLElement {
         const newSteps = this._linkedList.get(parseInt(e.detail.params.index));
         newSteps.forEach((n) => (n.method = "get"));
         this._addSteps(newSteps);
+    }
+
+    _toggleCode() {
+        this._pseudocodeClasses.toggleCode();
+        const visible = this._pseudocodeMethods.toggleCode();
+        this._splitLayout.toggleLeftResizerVertical();
+        this._splitLayout.toggleRightResizerVertical();
+        if (visible) {
+            this._splitLayout.setTopLeftHeight(50);
+            this._splitLayout.setTopRightHeight(50);
+            return;
+        }
+        this._splitLayout.setTopLeftHeight(70);
+        this._splitLayout.setTopRightHeight(95);
     }
 
     _render() {

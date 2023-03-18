@@ -28,6 +28,7 @@ class DijkstraView extends HTMLElement {
         this._render();
 
         this._visContainer = this.shadowRoot.querySelector("vis-container");
+        this._splitLayout = this.shadowRoot.querySelector("split-layout");
         this._graphVis = this.shadowRoot.querySelector("graph-creator");
         this._tableVis = this.shadowRoot.querySelector("table-display");
         this._controlPopup = this.shadowRoot.querySelector("#control-popup");
@@ -54,6 +55,8 @@ class DijkstraView extends HTMLElement {
         this._visContainer.addEventListener("show-step", (e) => {
             e.detail.step.animation(this._visContainer.steps, this._visContainer.currentStepIndex);
         });
+
+        this._visContainer.addEventListener("code", this._toggleCode.bind(this));
 
         this.shadowRoot.querySelector("#control-btn").addEventListener("click", () => this._controlPopup.show());
 
@@ -402,6 +405,13 @@ class DijkstraView extends HTMLElement {
 
     _getNodeTitle(id) {
         return this._nodes.find((c) => c.id === id)?.title;
+    }
+
+    _toggleCode() {
+        const visible = this._pseudocodeDisplay.toggleCode();
+        this._splitLayout.toggleRightResizerVertical();
+        if (visible) this._splitLayout.setTopRightHeight(50);
+        else this._splitLayout.setTopRightHeight(99);
     }
 
     _render() {

@@ -31,6 +31,7 @@ class HeapsortView extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this._render();
 
+        this._splitLayout = this.shadowRoot.querySelector("split-layout");
         this._binaryTreeVis = this.shadowRoot.querySelector("binary-tree");
         this._arrayVis = this.shadowRoot.querySelector("array-display");
         this._visContainer = this.shadowRoot.querySelector("vis-container");
@@ -40,6 +41,8 @@ class HeapsortView extends HTMLElement {
         this._visContainer.addEventListener("start", (e) => {
             this._sort(e.detail.array);
         });
+
+        this._visContainer.addEventListener("code", this._toggleCode.bind(this));
 
         this._visContainer.addEventListener("show-step", this._showStep.bind(this));
 
@@ -257,6 +260,12 @@ class HeapsortView extends HTMLElement {
         const tempValue = data[index_A];
         data[index_A] = data[index_B];
         data[index_B] = tempValue;
+    }
+
+    _toggleCode() {
+        this._pseudocodeDisplay.toggleCode();
+        this._splitLayout.toggleLeftResizerVertical();
+        this._splitLayout.setTopLeftHeight(50);
     }
 
     _render() {

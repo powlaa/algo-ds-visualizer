@@ -1,5 +1,6 @@
 class PseudocodeDisplay extends HTMLElement {
     _code = [];
+    _currentStyle = "block";
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -8,7 +9,6 @@ class PseudocodeDisplay extends HTMLElement {
 
     set code(code) {
         this._code = code;
-        console.log(this._code);
         this._render();
     }
 
@@ -21,9 +21,19 @@ class PseudocodeDisplay extends HTMLElement {
         labels.forEach((label) => this.shadowRoot.querySelector(`#${label}`)?.classList.add("code__line--highlighted"));
     }
 
+    toggleCode() {
+        this._currentStyle = this._currentStyle === "none" ? "block" : "none";
+        this.shadowRoot.querySelector("#code-container").style.display = this._currentStyle;
+        return this._currentStyle === "block";
+    }
+
     _render() {
         this.shadowRoot.innerHTML = `
             <style>
+                :host {
+                    display: block;
+                    position: relative;
+                }
                 .code {
                     user-select: none;
                 }
@@ -75,7 +85,7 @@ class PseudocodeDisplay extends HTMLElement {
                     margin-left: 6em;
                 }
             </style>
-            <div class="code">
+            <div id="code-container" class="code" style="display:${this._currentStyle}">
                 ${this._code
                     .map(({ indent, code, label }, index) => {
                         return `<div id="${label}" class="code__line"><code class="code__number">${

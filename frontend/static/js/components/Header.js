@@ -1,5 +1,6 @@
 class Header extends HTMLElement {
     _startEvent = (array) => new CustomEvent("start", { bubbles: true, composed: true, detail: { array } });
+    _codeEvent = () => new CustomEvent("code", { bubbles: true, composed: true });
 
     constructor() {
         super();
@@ -14,6 +15,7 @@ class Header extends HTMLElement {
         this.shadowRoot.querySelector("#information-btn").addEventListener("click", () => {
             this._informationPopup.show();
         });
+        this.shadowRoot.querySelector("#code-btn").addEventListener("click", () => this.dispatchEvent(this._codeEvent()));
     }
 
     static get observedAttributes() {
@@ -69,14 +71,16 @@ class Header extends HTMLElement {
                     text-align: center;
                     cursor: pointer;
                 }
-                .panel__button--information {
+                .panel__button--icon {
                     background-color: rgb(255 255 255);
                     border: 1px solid black;
                     border-radius: 100%;
                     height: 30px;
                     width: 30px;
                     margin-left: 5px;
-                    padding: 2px 0 0 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .panel__button--start {
                     background-color: #03a688; /* Green */
@@ -87,7 +91,8 @@ class Header extends HTMLElement {
                     display: inline-block;
                 }
                 .button__image {
-                    height: 18px;
+                    max-height: 18px;
+                    max-width: 20px;
                 }
                 .panel__input {
                     display: flex;
@@ -112,8 +117,11 @@ class Header extends HTMLElement {
                 <div class="panel">
                     <div class="panel__title">
                         <h2>${this.getAttribute("title")}</h2>
-                        <button id="information-btn" class="panel__button panel__button--information">
+                        <button id="information-btn" class="panel__button panel__button--icon">
                             <img class="button__image" src="/static/img/information-mark.png" />
+                        </button>
+                        <button id="code-btn" class="panel__button panel__button--icon">
+                            <img class="button__image" src="/static/img/code-icon.png" />
                         </button>
                         <pop-up id="information-popup" overlay></pop-up>
                     </div>
