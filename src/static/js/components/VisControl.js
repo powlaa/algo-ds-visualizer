@@ -28,6 +28,7 @@ class VisControl extends HTMLElement {
                     display: inline-block;
                 }
                 .container {
+                    user-select: none;
                 }
                 .button {
                     font-size: 1em;

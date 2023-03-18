@@ -65,9 +65,11 @@ g.conceptG circle {
 }
 g.conceptG.highlight circle {
     stroke: rgb(166, 20, 28);
+    fill: #d2898d;
 }
 g.conceptG.mark circle {
     stroke: rgb(12, 166, 50);
+    fill: #85d298;
 }
 
 g.conceptG:hover circle {

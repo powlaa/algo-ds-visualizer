@@ -206,7 +206,7 @@ class BinaryTree extends HTMLElement {
                 .link {
                     fill: none;
                     stroke: #ccc;
-                    stroke-width: 2px;
+                    stroke-width: 6px;
                 }
             </style>
             <div id="container"></div>

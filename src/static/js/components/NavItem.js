@@ -24,6 +24,10 @@ class NavItem extends HTMLElement {
                     border-radius: 8px;
                     padding: 5px 10px;
                     cursor: pointer;
+                    background-color: #80808025;
+                }
+                .container:hover {
+                    background-color: #80808029;
                 }
                 a {
                     all: unset;
@@ -31,10 +35,18 @@ class NavItem extends HTMLElement {
                     align-items: center;
                     flex-direction: column;
                 }
-                img {
-                    max-width: 100%;
-                    max-height: 100px;
+                .img__container {
+                    border: 1px solid #ccc;
+                    pointer-events: none;
+                    background-color: white;
+                    width: 100%;
                     height: 100px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .img {
+                    max-height: 100px;
                     pointer-events: none;
                 }
                 .title {
@@ -46,7 +58,9 @@ class NavItem extends HTMLElement {
             </style>
             <div class="container">
                 <a href="${this.getAttribute("link")}" class="nav__link" data-link>
-                    <img src="${this.getAttribute("img")}" />
+                    <div class="img__container">
+                        <img class="img" src="${this.getAttribute("img")}" />
+                    </div>
                     <h1 id="title" class="title">${this.getAttribute("title")}</h1>
                 </a>
             </div>

@@ -12,10 +12,12 @@ class Header extends HTMLElement {
         this._informationPopup = this.shadowRoot.querySelector("#information-popup");
 
         if (!this.hasAttribute("no-start-btn")) this.shadowRoot.querySelector("#start-btn").addEventListener("click", this._start.bind(this));
-        this.shadowRoot.querySelector("#information-btn").addEventListener("click", () => {
-            this._informationPopup.show();
-        });
-        this.shadowRoot.querySelector("#code-btn").addEventListener("click", () => this.dispatchEvent(this._codeEvent()));
+        if (!this.hasAttribute("title-big")) {
+            this.shadowRoot.querySelector("#information-btn").addEventListener("click", () => {
+                this._informationPopup.show();
+            });
+            this.shadowRoot.querySelector("#code-btn").addEventListener("click", () => this.dispatchEvent(this._codeEvent()));
+        }
     }
 
     static get observedAttributes() {
@@ -53,9 +55,16 @@ class Header extends HTMLElement {
                 .container {
                     width: 100%;
                     height: 130px;
-                    background-color: #ced0c1;
+                    background-color: var(--header-background-color, #ced0c1);
                     display: flex;
                     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+                }
+                .title {
+                    width: 100%;
+                    align-items: center;
+                    display: flex;
+                    justify-content: center;
+                    font-size: 2.5em;
                 }
                 .panel {
                     margin: 0 10px;
@@ -114,7 +123,10 @@ class Header extends HTMLElement {
                 }
             </style>
             <div class="container">
-                <div class="panel">
+                ${
+                    this.hasAttribute("title-big")
+                        ? `<div class="title">${this.getAttribute("title")}</div>`
+                        : `<div class="panel">
                     <div class="panel__title">
                         <h2>${this.getAttribute("title")}</h2>
                         <button id="information-btn" class="panel__button panel__button--icon">
@@ -144,7 +156,8 @@ class Header extends HTMLElement {
                 <div class="explanations">
                     <h1 id="heading" class="explanations__heading"></h1>
                     <div id="description" class="explanations__description"></div>
-                </div>
+                </div>`
+                }
             </div>
         `;
     }

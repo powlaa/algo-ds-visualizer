@@ -8,37 +8,20 @@ class HomeView extends HTMLElement {
     _render() {
         this.shadowRoot.innerHTML = `
             <style>
-                .title {
-                    text-align: center;
-                    font-size: 2em;
-                    text-transform: uppercase;
-                    width: 100%;
-                    margin: 0;
-                    padding: 10px 0;
-                }
-                .title--big {
-                    font-size: 4em;
-                    padding: 30px 0;
-                }
-                .container {
-                    display: flex;
-                    justify-content: space-around;
-                }
                 .layout {
                     --split-layout-justify-content-left: none;
                     --split-layout-justify-content-right: none;
-                    --split-layout-height: none;
+                    --split-layout-height: calc(100% - 130px);
+                    --split-layout-resizer-border: 5px solid #80808030;
                 }
                 .content__left {
                     width: 100%;
                 }
                 .content__right {
                     width: 100%;
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
                 }
                 .category {
-                    border-top: 1px solid black;
+                    border-bottom: 1px solid #80808036;
                     width: calc(100% - 20px);
                     padding: 10px;
                 }
@@ -46,11 +29,7 @@ class HomeView extends HTMLElement {
                     margin: 10px;
                 }
             </style>
-            <h1 class="title title--big">Visualizer</h1>
-            <div class="container">
-                <h1 class="title">Algo</h1>
-                <h1 class="title">DS</h1>
-            </div>
+            <header-element title="Algorithm and Data Structure Visualizer" no-start-btn title-big></header-element>
             <split-layout class="layout">
                 <div slot="left" class="content__left">
                     <category-card
@@ -69,7 +48,13 @@ class HomeView extends HTMLElement {
                     </category-card>
                 </div>
                 <div slot="right" class="content__right">
-                    <nav-item class="ds-item" title="Linked List" img="/static/img/linked-list.png" link="/linkedlist"></nav-item>
+                    <category-card
+                        class="category"
+                        title="Data structures"
+                        description="Data structures are a way of organizing data in a computer so that it can be used efficiently."
+                    >
+                        <nav-item class="ds-item" title="Linked List" img="/static/img/linked-list.png" link="/linkedlist"></nav-item>
+                    </category-card>
                 </div>
             </split-layout>
         `;
