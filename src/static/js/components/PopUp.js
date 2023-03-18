@@ -38,6 +38,11 @@ class PopUp extends HTMLElement {
         this._overlay.style.display = "none";
     }
 
+    toggle() {
+        if (this._popUp.classList.contains("popup--hidden")) this.show();
+        else this.close();
+    }
+
     _render() {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="/static/css/index.css" />

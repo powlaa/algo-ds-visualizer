@@ -9,13 +9,20 @@ class VisControl extends HTMLElement {
         return this.hasAttribute("delete");
     }
 
+    get help() {
+        return this.hasAttribute("help");
+    }
+
     observedAttributes() {
-        return ["delete"];
+        return ["delete", "help"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         switch (newValue) {
             case "delete":
+                this._render();
+                break;
+            case "help":
                 this._render();
                 break;
         }
@@ -51,6 +58,13 @@ class VisControl extends HTMLElement {
             </style>
             <div class="container">
             ${
+                this.help
+                    ? `<button id="help-btn" class="button">
+                    <img class="button__image" src="/static/img/question-mark.png" />
+                </button>`
+                    : ""
+            }
+            ${
                 this.delete
                     ? `<button id="delete-btn" class="button">
                     <img class="button__image" src="/static/img/delete-icon.png" />
@@ -70,6 +84,11 @@ class VisControl extends HTMLElement {
             this.shadowRoot.querySelector("#delete-btn").addEventListener("click", (e) => {
                 e.stopPropagation();
                 this.dispatchEvent(new CustomEvent("delete", { bubbles: true, composed: true }));
+            });
+        if (this.help)
+            this.shadowRoot.querySelector("#help-btn").addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.dispatchEvent(new CustomEvent("help", { bubbles: true, composed: true }));
             });
     }
 }

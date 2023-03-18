@@ -52,6 +52,7 @@ class DijkstraView extends HTMLElement {
             this._edges = [];
             this._graphVis.showGraph(this._nodes, this._edges);
         });
+        this._graphVis.addEventListener("help", () => this._controlPopup.toggle());
 
         this._visContainer.addEventListener("start", () => {
             if (this._selectedNode) this._runDijkstra(this._selectedNode.id);
@@ -63,8 +64,6 @@ class DijkstraView extends HTMLElement {
         });
 
         this._visContainer.addEventListener("code", this._toggleCode.bind(this));
-
-        this.shadowRoot.querySelector("#control-btn").addEventListener("click", () => this._controlPopup.show());
 
         this._showExampleGraph();
 
@@ -458,24 +457,6 @@ class DijkstraView extends HTMLElement {
                     --popup-grid-template-columns: auto auto;
                     --popup-z-index: 2;
                 }
-                .button {
-                    position: absolute;
-                    bottom: 3em;
-                    left: 8px;
-                    z-index: 1;
-                    width: 30px;
-                    height: 30px;
-                    background-color: white;
-                    border: 1px solid black;
-                    border-radius: 50%;
-                    font-size: 20px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    padding: 3px 0 0 0;
-                }
-                .button__image {
-                    height: 19px
-                }
             </style>
 
             <vis-container title="Dijkstra" locked popup-template-id="${this.getAttribute("popup-template-id")}">
@@ -485,9 +466,6 @@ class DijkstraView extends HTMLElement {
                     <pseudocode-display slot="bottom-right" class="content__pseudocode"></pseudocode-display>
                 </split-layout>
                 <pop-up id="control-popup" class="popup"></pop-up>
-                <button id="control-btn" class="button">
-                    <img class="button__image" class="button__image" src="/static/img/question-mark.png" />
-                </button>
             </vis-container>
         `;
     }

@@ -663,7 +663,7 @@ class GraphCreator extends HTMLElement {
                 }
             </style>
             <div id="container" class="container"></div>
-            <vis-control delete></vis-control>
+            <vis-control delete help></vis-control>
         `;
     }
 }
