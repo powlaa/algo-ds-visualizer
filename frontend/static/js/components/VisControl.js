@@ -7,13 +7,27 @@ class VisControl extends HTMLElement {
             e.stopPropagation();
             this.dispatchEvent(new CustomEvent("center"));
         });
+        this.shadowRoot.querySelector("#delete-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.dispatchEvent(new CustomEvent("delete", { bubbles: true, composed: true }));
+        });
+    }
+
+    get delete() {
+        return this.hasAttribute("delete");
     }
 
     observedAttributes() {
-        return [];
+        return ["delete"];
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {}
+    attributeChangedCallback(name, oldValue, newValue) {
+        switch (newValue) {
+            case "delete":
+                this._render();
+                break;
+        }
+    }
 
     _render() {
         this.shadowRoot.innerHTML = `
@@ -33,13 +47,23 @@ class VisControl extends HTMLElement {
                     height: 30px;
                     width: 30px;
                     margin-left: 5px;
-                    padding: 2px 0 0 2px;
+                    margin-top: 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .button__image {
                     height: 18px;
                 }
             </style>
             <div class="container">
+            ${
+                this.delete
+                    ? `<button id="delete-btn" class="button">
+                    <img class="button__image" src="/static/img/delete-icon.png" />
+                </button>`
+                    : ""
+            }
                 <button id="center-btn" class="button">
                     <img class="button__image" src="/static/img/center-icon.png" />
                 </button>

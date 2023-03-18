@@ -60,6 +60,12 @@ class VisContainer extends HTMLElement {
         this._progressBar.reset();
     }
 
+    reset() {
+        this.resetProgressBar();
+        this._header.setAttribute("heading", "");
+        this._header.setAttribute("description", "");
+    }
+
     static get observedAttributes() {
         return ["popup-template-id", "title", "start-btn-name", "array-input", "no-start-btn"];
     }
@@ -94,9 +100,10 @@ class VisContainer extends HTMLElement {
         this._stepCounter++;
         const step = this._steps[e.detail.step];
         this.dispatchEvent(this._showStep(step));
+        if (!step) return;
         await this._wait(100);
-        this._header.setAttribute("heading", step.heading);
-        this._header.setAttribute("description", step.description);
+        this._header.setAttribute("heading", step?.heading);
+        this._header.setAttribute("description", step?.description);
     }
 
     _render() {

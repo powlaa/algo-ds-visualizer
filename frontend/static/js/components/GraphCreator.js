@@ -84,11 +84,12 @@ class GraphCreator extends HTMLElement {
         return this._yLoc;
     }
 
-    showGraph(nodes, edges) {
+    showGraph(nodes, edges, init) {
         this.nodes = nodes;
         this.edges = edges;
         this._idct = this.nodes.length;
-        this._initGraph();
+        if (init) this._initGraph();
+        else this._updateGraph();
     }
 
     reset() {
@@ -662,7 +663,7 @@ class GraphCreator extends HTMLElement {
                 }
             </style>
             <div id="container" class="container"></div>
-            <vis-control></vis-control>
+            <vis-control delete></vis-control>
         `;
     }
 }

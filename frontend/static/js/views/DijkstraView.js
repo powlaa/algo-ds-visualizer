@@ -46,6 +46,12 @@ class DijkstraView extends HTMLElement {
             this._resetDijkstra();
         });
         this._graphVis.addEventListener("error", (e) => alert(e.detail.message));
+        this._graphVis.addEventListener("delete", () => {
+            this._resetDijkstra();
+            this._nodes = [];
+            this._edges = [];
+            this._graphVis.showGraph(this._nodes, this._edges);
+        });
 
         this._visContainer.addEventListener("start", () => {
             if (this._selectedNode) this._runDijkstra(this._selectedNode.id);
@@ -53,7 +59,7 @@ class DijkstraView extends HTMLElement {
         });
 
         this._visContainer.addEventListener("show-step", (e) => {
-            e.detail.step.animation(this._visContainer.steps, this._visContainer.currentStepIndex);
+            e.detail.step?.animation(this._visContainer.steps, this._visContainer.currentStepIndex);
         });
 
         this._visContainer.addEventListener("code", this._toggleCode.bind(this));
@@ -123,7 +129,7 @@ class DijkstraView extends HTMLElement {
             { source: this._nodes[5], target: this._nodes[3], weight: 4 },
             { source: this._nodes[5], target: this._nodes[4], weight: 3 },
         ];
-        this._graphVis.showGraph(this._nodes, this._edges);
+        this._graphVis.showGraph(this._nodes, this._edges, true);
     }
 
     _showTable(start) {
@@ -249,12 +255,12 @@ class DijkstraView extends HTMLElement {
     _runDijkstra(start) {
         this._start = start;
         this._showTable(start);
-        this._visContainer.updateSteps(this._dijkstra(start), { locked: false });
+        this._visContainer.updateSteps(this._dijkstra(start), { locked: false, currentStep: 0 });
     }
 
     _resetDijkstra() {
-        this._visContainer.setAttribute("locked", "");
-        this._visContainer.resetProgressBar();
+        this._visContainer.updateSteps([], { locked: true });
+        this._visContainer.reset();
         this._tableVis.reset();
         this._graphVis.reset();
         this._highlightPseudocode();
