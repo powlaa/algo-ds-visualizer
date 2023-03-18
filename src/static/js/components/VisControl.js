@@ -3,14 +3,6 @@ class VisControl extends HTMLElement {
         super();
         this.attachShadow({ mode: "open" });
         this._render();
-        this.shadowRoot.querySelector("#center-btn").addEventListener("click", (e) => {
-            e.stopPropagation();
-            this.dispatchEvent(new CustomEvent("center"));
-        });
-        this.shadowRoot.querySelector("#delete-btn").addEventListener("click", (e) => {
-            e.stopPropagation();
-            this.dispatchEvent(new CustomEvent("delete", { bubbles: true, composed: true }));
-        });
     }
 
     get delete() {
@@ -69,6 +61,15 @@ class VisControl extends HTMLElement {
                 </button>
             </div>
         `;
+        this.shadowRoot.querySelector("#center-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.dispatchEvent(new CustomEvent("center"));
+        });
+        if (this.delete)
+            this.shadowRoot.querySelector("#delete-btn").addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.dispatchEvent(new CustomEvent("delete", { bubbles: true, composed: true }));
+            });
     }
 }
 

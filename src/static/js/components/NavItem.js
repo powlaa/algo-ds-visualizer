@@ -35,11 +35,13 @@ class NavItem extends HTMLElement {
                     max-width: 100%;
                     max-height: 100px;
                     height: 100px;
+                    pointer-events: none;
                 }
                 .title {
                     font-size: 1.5em;
                     width: 100%;
                     margin: 10px 0;
+                    pointer-events: none;
                 }
             </style>
             <div class="container">
