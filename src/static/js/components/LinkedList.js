@@ -495,7 +495,7 @@ class LinkedList extends HTMLElement {
                 }
             </style>
             <div id="container" class="container"></div>
-            <vis-control></vis-control>
+            <vis-control center-icon="/static/img/center-icon.png"></vis-control>
         `;
     }
 }
