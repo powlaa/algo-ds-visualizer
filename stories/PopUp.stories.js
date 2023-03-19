@@ -1,6 +1,5 @@
 import "../src/static/css/index.css";
 import { PopUp } from "../src/static/js/components/PopUp";
-import { action } from "@storybook/addon-actions";
 
 export default {
     title: "PopUp",
