@@ -35,10 +35,10 @@ class ProgressBar extends HTMLElement {
         return this.hasAttribute("locked");
     }
 
-    setCurrentStep(step) {
+    setCurrentStep(step, setup) {
         if (step < 0 || step > this.totalSteps) return;
         this.currentStep = step;
-        this._updateStep();
+        this._updateStep(setup);
     }
 
     static get observedAttributes() {
@@ -80,10 +80,10 @@ class ProgressBar extends HTMLElement {
         this._slider.style.setProperty("--value", this._slider.value);
     }
 
-    _updateStep() {
+    _updateStep(setup) {
         this._slider.value = this.currentStep;
         this._updateStepDisplay();
-        this.dispatchEvent(new CustomEvent("update-step", { detail: { step: this.currentStep } }));
+        if (!setup) this.dispatchEvent(new CustomEvent("update-step", { detail: { step: this.currentStep } }));
     }
 
     _render() {

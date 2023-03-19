@@ -48,9 +48,9 @@ class VisContainer extends HTMLElement {
         this._steps = steps;
         this._stepCounter = 0;
         this._progressBar.setAttribute("total-steps", this._steps.length - 1);
-        if (currentStep !== undefined) this._progressBar.setCurrentStep(currentStep);
+        if (currentStep !== undefined) this._progressBar.setCurrentStep(currentStep, nextStep);
         if (locked !== undefined) locked ? this._progressBar.setAttribute("locked", true) : this._progressBar.removeAttribute("locked");
-        if (nextStep !== undefined && nextStep) {
+        if (nextStep) {
             await this._wait(50);
             this._progressBar.nextStep();
         }
