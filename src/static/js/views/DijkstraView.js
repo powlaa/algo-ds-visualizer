@@ -442,8 +442,6 @@ class DijkstraView extends HTMLElement {
                 }
                 .content__pseudocode {
                     width: 100%;
-                    --pseudocode-highlight-background-color: #b0e2d9;
-                    --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
                 }
                 .popup {
                     --popup-display: grid;

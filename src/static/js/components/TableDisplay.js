@@ -84,8 +84,8 @@ class TableDisplay extends HTMLElement {
                     padding-top: 12px;
                     padding-bottom: 12px;
                     text-align: left;
-                    background-color: #03a688;
-                    color: white;
+                    background-color: var(--table-background-color, #03a688);
+                    color: var(--table-color, white);
                 }
             </style>
             <div id="container" class="container"></div>

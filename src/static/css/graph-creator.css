@@ -64,12 +64,12 @@ g.conceptG circle {
     stroke-width: 2px;
 }
 g.conceptG.highlight circle {
-    stroke: rgb(166, 20, 28);
-    fill: #d2898d;
+    stroke: var(--graph-highlight-stroke, #a6141c);
+    fill: var(--graph-highlight-fill, #d2898d);
 }
 g.conceptG.mark circle {
-    stroke: rgb(12, 166, 50);
-    fill: #85d298;
+    stroke: var(--graph-mark-stroke, #0ca632);
+    fill: var(--graph-mark-fill, #85d298);
 }
 
 g.conceptG:hover circle {
@@ -106,8 +106,8 @@ path.link.selected {
     stroke: #b0e2d9;
 }
 path.link.highlight {
-    stroke: rgba(166, 20, 28, 0.7);
+    stroke: var(--graph-link-highlight, rgba(166, 20, 28, 0.7));
 }
 path.link.mark {
-    stroke: rgba(12, 166, 50, 0.7);
+    stroke: var(--graph-link-mark, rgba(12, 166, 50, 0.7));
 }

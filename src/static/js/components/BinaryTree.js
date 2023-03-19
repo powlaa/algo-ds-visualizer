@@ -189,16 +189,16 @@ class BinaryTree extends HTMLElement {
                     stroke-width: 3px;
                 }
                 .node__circle--mark {
-                    stroke: #a6141c;
-                    fill: #D2898D;
+                    stroke: var(--binary-tree-mark-stroke, #a6141c);
+                    fill: var(--binary-tree-mark-fill, #d2898d);
                 }
                 .node__circle--highlight {
-                    stroke: #0ca632;
-                    fill: #85D298;
+                    stroke: var(--binary-tree-highlight-stroke, #0ca632);
+                    fill: var(--binary-tree-highlight-fill, #85d298);
                 }
                 .node__circle--lock {
-                    fill: #B9B9B9;
-                    stroke: grey;
+                    stroke: var(--binary-tree-lock-stroke, grey);
+                    fill: var(--binary-tree-lock-fill, #b9b9b9);
                 }
                 .node__text {
                     font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;

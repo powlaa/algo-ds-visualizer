@@ -62,6 +62,7 @@ class Header extends HTMLElement {
                     background-color: var(--header-background-color, #ced0c1);
                     display: flex;
                     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+                    color: var(--header-color, black);
                 }
                 .title {
                     width: 100%;
@@ -96,9 +97,9 @@ class Header extends HTMLElement {
                     justify-content: center;
                 }
                 .panel__button--start {
-                    background-color: #03a688; /* Green */
+                    background-color: var(--primary-background-color, #03a688);
                     border: none;
-                    color: white;
+                    color: var(--primary-color, white);
                     padding: 8px 18px;
                     text-decoration: none;
                     display: inline-block;

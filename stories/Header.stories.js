@@ -9,8 +9,19 @@ export default {
     title: "Header",
 };
 
-const Template = ({ title, titleBig, heading, description, arrayInput, startBtnName, codeIcon, informationIcon, headerBackgroundColor }) =>
-    `<header-element style="${"--header-background-color:" + headerBackgroundColor}" title="${title}"  ${
+const Template = ({
+    title,
+    titleBig,
+    heading,
+    description,
+    arrayInput,
+    startBtnName,
+    codeIcon,
+    informationIcon,
+    headerBackgroundColor,
+    headerColor,
+}) =>
+    `<header-element style="${`--header-background-color: ${headerBackgroundColor}; --header-color: ${headerColor}`}" title="${title}"  ${
         titleBig ? "title-big" : ""
     } heading="${heading}" description="${description}" ${
         arrayInput ? "array-input" : ""
@@ -25,6 +36,7 @@ VisHeader.args = {
     codeIcon: CodeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
+    hederColor: "#000000",
 };
 
 export const VisHeaderSort = Template.bind({});
@@ -37,6 +49,7 @@ VisHeaderSort.args = {
     codeIcon: CodeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
+    hederColor: "#000000",
 };
 
 export const TitleHeader = Template.bind({});
@@ -44,6 +57,7 @@ TitleHeader.args = {
     title: "Header with big title",
     titleBig: true,
     headerBackgroundColor: "#ced0c1",
+    hederColor: "#000000",
 };
 
 document.addEventListener("DOMContentLoaded", (e) => {

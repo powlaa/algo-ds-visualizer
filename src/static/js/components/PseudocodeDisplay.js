@@ -49,10 +49,10 @@ class PseudocodeDisplay extends HTMLElement {
                     background-color: #80808036;
                 }
                 .code__line--highlighted {
-                    background-color: var(--pseudocode-highlight-background-color, greenyellow) !important;
+                    background-color: var(--pseudocode-highlight-background-color, #b0e2d9) !important;
                 }
                 .code__line--highlighted:nth-child(even) {
-                    background-color: var(--pseudocode-highlight-background-color-alternate, green) !important;
+                    background-color: var(--pseudocode-highlight-background-color-alternate, #b0e2d9aa) !important;
                 }
                 .code__number {
                     margin-right: 1em;

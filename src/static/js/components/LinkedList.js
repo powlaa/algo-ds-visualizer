@@ -259,8 +259,8 @@ class LinkedList extends HTMLElement {
             .attr("orient", "auto-start-reverse")
             .append("path")
             .attr("d", "M0,-5L10,0L0,5")
-            .attr("stroke", "red")
-            .attr("fill", "red");
+            .attr("stroke", "#a6141c")
+            .attr("fill", "#a6141c");
 
         this._element = this._g.append("g").selectAll("g");
         this._link = this._g.append("g").selectAll("g");
@@ -465,7 +465,7 @@ class LinkedList extends HTMLElement {
                     height: 100%;
                 }
                 .element--highlight > .element__rect:first-of-type {
-                    fill: #D2898D;
+                    fill: var(--linked-list-highlight-fill, #d2898d);
                 }
                 .element__null {
                     font-size: 2em;
@@ -480,7 +480,7 @@ class LinkedList extends HTMLElement {
                     width: 25px;
                 }
                 .element__head--highlight{
-                    fill: red;
+                    fill: var(--linked-list-highlight-stroke, #a6141c);
                 }
                 .link {
                     fill: none;
@@ -488,10 +488,10 @@ class LinkedList extends HTMLElement {
                     stroke-width: 2px;
                 }
                 .link--highlight {
-                    stroke: red;
+                    stroke: var(--linked-list-highlight-stroke, #a6141c);
                 }
                 .link--current {
-                    stroke: red;
+                    stroke: var(--linked-list-highlight-stroke, #a6141c);
                 }
             </style>
             <div id="container" class="container"></div>
