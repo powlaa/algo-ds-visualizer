@@ -25,7 +25,7 @@ const Template = ({
         titleBig ? "title-big" : ""
     } heading="${heading}" description="${description}" ${
         arrayInput ? "array-input" : ""
-    } start-btn-name="${startBtnName}" code-icon="${codeIcon}" information-icon="${informationIcon}" onStart="action("start")"></header-element>`;
+    } start-btn-name="${startBtnName}" code-icon="${codeIcon}" information-icon="${informationIcon}"></header-element>`;
 
 export const VisHeader = Template.bind({});
 VisHeader.args = {
@@ -61,8 +61,8 @@ TitleHeader.args = {
 };
 
 document.addEventListener("DOMContentLoaded", (e) => {
-    if (!e.isTrusted) {
-        const header = document.querySelector("header-element");
+    const header = document.querySelector("header-element");
+    if (!e.isTrusted && header) {
         header.addEventListener("start", (e) => action("start")(e.detail));
         header.addEventListener("code", (e) => action("code")(e.detail));
     }

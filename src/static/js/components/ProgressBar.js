@@ -22,9 +22,13 @@ class ProgressBar extends HTMLElement {
         if (!this.locked) this._updateStepDisplay();
 
         document.addEventListener("keydown", (e) => {
-            if (e.keyCode === 39 && !this.locked) this.nextStep();
-            else if (e.keyCode === 37 && !this.locked) this.prevStep();
+            if (e.keyCode === 39 && !this.locked && !this._disconnected) this.nextStep();
+            else if (e.keyCode === 37 && !this.locked && !this._disconnected) this.prevStep();
         });
+    }
+
+    disconnectedCallback() {
+        this._disconnected = true;
     }
 
     get totalSteps() {
@@ -88,7 +92,6 @@ class ProgressBar extends HTMLElement {
 
     _render() {
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/index.css" />
             <style>
                 :host {
                     display: inline-block;
@@ -146,10 +149,157 @@ class ProgressBar extends HTMLElement {
                     ${this.locked ? "disabled" : ""}
                 />
             </div>
+            <style>
+                /*generated with Input range slider CSS style generator (version 20211225)
+                https://toughengineer.github.io/demo/slider-styler*/
+                input[type="range"].slider {
+                    height: 1em;
+                    -webkit-appearance: none;
+                }
+
+                /*progress support*/
+                input[type="range"].slider.slider-progress {
+                    --range: calc(var(--max) - var(--min));
+                    --ratio: calc((var(--value) - var(--min)) / var(--range));
+                    --sx: calc(0.5 * 1.5em + var(--ratio) * (100% - 1.5em));
+                }
+
+                input[type="range"].slider:focus {
+                    outline: none;
+                }
+
+                /*webkit*/
+                input[type="range"].slider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    width: 1.5em;
+                    height: 2em;
+                    border-radius: 0;
+                    background: var(--primary-background-color-darker, #038b72);
+                    border: none;
+                    box-shadow: 0 0 1px black;
+                    margin-top: calc(max((2em - 1px - 1px) * 0.5, 0px) - 2em * 0.5);
+                }
+
+                input[type="range"].slider::-webkit-slider-runnable-track {
+                    height: 2em;
+                    border: 1px solid #b2b2b2;
+                    border-radius: 0;
+                    background: #b0e2d9;
+                    box-shadow: none;
+                }
+
+                input[type="range"].slider::-webkit-slider-thumb:hover {
+                    background: var(--primary-background-color-darker-darker, #037b72);
+                }
+
+                input[type="range"].slider:hover::-webkit-slider-runnable-track {
+                    background: #a8e0d7;
+                }
+
+                input[type="range"].slider.slider-progress::-webkit-slider-runnable-track {
+                    background: linear-gradient(var(--primary-background-color, #03a688), var(--primary-background-color, #03a688)) 0 / var(--sx) 100%
+                            no-repeat,
+                        #b0e2d9;
+                }
+
+                input[type="range"].slider.slider-progress:hover::-webkit-slider-runnable-track {
+                    background: linear-gradient(var(--primary-color-lighter, #03a088), var(--primary-color-lighter, #03a088)) 0 / var(--sx) 100%
+                            no-repeat,
+                        #a8e0d7;
+                }
+
+                /*mozilla*/
+                input[type="range"].slider::-moz-range-thumb {
+                    width: 1.5em;
+                    height: 2em;
+                    border-radius: 0;
+                    background: var(--primary-background-color-darker, #038b72);
+                    border: none;
+                    box-shadow: 0 0 1px black;
+                }
+
+                input[type="range"].slider::-moz-range-track {
+                    height: max(calc(2em - 1px - 1px), 0px);
+                    border: 1px solid #b2b2b2;
+                    border-radius: 0;
+                    background: #b0e2d9;
+                    box-shadow: none;
+                }
+
+                input[type="range"].slider::-moz-range-thumb:hover {
+                    background: var(--primary-background-color-darker-darker, #037b72);
+                }
+
+                input[type="range"].slider:hover::-moz-range-track {
+                    background: #a8e0d7;
+                }
+
+                input[type="range"].slider.slider-progress::-moz-range-track {
+                    background: linear-gradient(var(--primary-background-color, #03a688), var(--primary-background-color, #03a688)) 0 / var(--sx) 100%
+                            no-repeat,
+                        #b0e2d9;
+                }
+
+                input[type="range"].slider.slider-progress:hover::-moz-range-track {
+                    background: linear-gradient(var(--primary-color-lighter, #03a088), var(--primary-color-lighter, #03a088)) 0 / var(--sx) 100%
+                            no-repeat,
+                        #a8e0d7;
+                }
+
+                /*ms*/
+                input[type="range"].slider::-ms-fill-upper {
+                    background: transparent;
+                    border-color: transparent;
+                }
+
+                input[type="range"].slider::-ms-fill-lower {
+                    background: transparent;
+                    border-color: transparent;
+                }
+
+                input[type="range"].slider::-ms-thumb {
+                    width: 1.5em;
+                    height: 2em;
+                    border-radius: 0;
+                    background: var(--primary-background-color-darker, #038b72);
+                    border: none;
+                    box-shadow: 0 0 1px black;
+                    margin-top: 0;
+                    box-sizing: border-box;
+                }
+
+                input[type="range"].slider::-ms-track {
+                    height: 2em;
+                    border-radius: 0;
+                    background: #b0e2d9;
+                    border: 1px solid #b2b2b2;
+                    box-shadow: none;
+                    box-sizing: border-box;
+                }
+
+                input[type="range"].slider::-ms-thumb:hover {
+                    background: var(--primary-background-color-darker-darker, #037b72);
+                }
+
+                input[type="range"].slider:hover::-ms-track {
+                    background: #a8e0d7;
+                }
+
+                input[type="range"].slider.slider-progress::-ms-fill-lower {
+                    height: max(calc(2em - 1px - 1px), 0px);
+                    border-radius: 0px 0 0 0px;
+                    margin: -1px 0 -1px -1px;
+                    background: var(--primary-background-color, #03a688);
+                    border: 1px solid #b2b2b2;
+                    border-right-width: 0;
+                }
+
+                input[type="range"].slider.slider-progress:hover::-ms-fill-lower {
+                    background: var(--primary-color-lighter, #03a088);
+                }
+            </style>
         `;
     }
 }
 
 customElements.define("progress-bar", ProgressBar);
-
-// - lock visualisierung (Anzeige) beim slider und den controls
