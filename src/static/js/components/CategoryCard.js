@@ -27,8 +27,6 @@ class CategoryCard extends HTMLElement {
                     width: 100%;
                     margin: 10px 0;
                 }
-                .description {
-                }
                 .items {
                     margin-top: 15px;
                     display: grid;

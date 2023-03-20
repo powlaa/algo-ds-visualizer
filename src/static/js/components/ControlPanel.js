@@ -80,9 +80,9 @@ class ControlPanel extends HTMLElement {
                 .method__button {
                     font-size: 1em;
                     text-align: center;
-                    background-color: #03a688; /* Green */
+                    background-color: var(--primary-background-color, #03a688);
                     border: none;
-                    color: white;
+                    color: var(--primary-color, white);
                     padding: 8px 18px;
                     text-decoration: none;
                     display: inline-block;

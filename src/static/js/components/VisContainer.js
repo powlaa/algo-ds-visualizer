@@ -122,6 +122,10 @@ class VisContainer extends HTMLElement {
                 ${this.hasAttribute("start-btn-name") ? "start-btn-name=" + this.getAttribute("start-btn-name") : ""}
                 ${this.hasAttribute("array-input") ? "array-input" : ""}
                 ${this.hasAttribute("no-start-btn") ? "no-start-btn" : ""}
+                information-icon="${
+                    this.hasAttribute("information-icon") ? this.getAttribute("information-icon") : "/static/img/information-mark.png"
+                } "
+                code-icon="${this.hasAttribute("code-icon") ? this.getAttribute("code-icon") : "/static/img/code-icon.png"} "
             ></header-element>
             <slot></slot>
             <progress-bar class="progress" ${this.hasAttribute("locked") ? "locked" : ""}></progress-bar>

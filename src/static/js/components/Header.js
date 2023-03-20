@@ -50,14 +50,19 @@ class Header extends HTMLElement {
 
     _render() {
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/index.css" />
             <style>
+                h2 {
+                    font-weight: 500;
+                    margin: 15px 0 6px 0;
+                    font-size: 1.8em;
+                }
                 .container {
                     width: 100%;
                     height: 130px;
                     background-color: var(--header-background-color, #ced0c1);
                     display: flex;
                     box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+                    color: var(--header-color, black);
                 }
                 .title {
                     width: 100%;
@@ -92,9 +97,9 @@ class Header extends HTMLElement {
                     justify-content: center;
                 }
                 .panel__button--start {
-                    background-color: #03a688; /* Green */
+                    background-color: var(--primary-background-color, #03a688);
                     border: none;
-                    color: white;
+                    color: var(--primary-color, white);
                     padding: 8px 18px;
                     text-decoration: none;
                     display: inline-block;
@@ -114,6 +119,7 @@ class Header extends HTMLElement {
                     justify-content: center;
                 }
                 .explanations__heading {
+                    font-weight: 500;
                     font-size: 2.2em;
                     margin: 0 0 6px 0;
                 }
@@ -130,10 +136,10 @@ class Header extends HTMLElement {
                     <div class="panel__title">
                         <h2>${this.getAttribute("title")}</h2>
                         <button id="information-btn" class="panel__button panel__button--icon">
-                            <img class="button__image" src="/static/img/information-mark.png" />
+                            <img class="button__image" src="${this.getAttribute("information-icon")}" />
                         </button>
                         <button id="code-btn" class="panel__button panel__button--icon">
-                            <img class="button__image" src="/static/img/code-icon.png" />
+                            <img class="button__image" src="${this.getAttribute("code-icon")}" />
                         </button>
                         <pop-up id="information-popup" overlay></pop-up>
                     </div>

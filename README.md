@@ -7,16 +7,22 @@ D3.js. It was developed as part of my masters thesis.
 
 For development purposes, express.js is used to redirect all URLs to the `index.html`.
 
-Install Dependencies
+**Install Dependencies**
 
 ```
 npm i
 ```
 
-Run
+**Run**
 
 ```
 npm start
+```
+
+To Have a look at the components individually: **Run Storybook**
+
+```
+npm run storybook
 ```
 
 ## Deployment

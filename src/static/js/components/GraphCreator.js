@@ -653,7 +653,6 @@ class GraphCreator extends HTMLElement {
 
     _render() {
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/graph-creator.css" />
             <style>
                 vis-control {
                     position: absolute;
@@ -661,9 +660,130 @@ class GraphCreator extends HTMLElement {
                     right: 10px;
                     z-index: 1;
                 }
+                p {
+                    text-align: center;
+                    overflow: overlay;
+                    position: relative;
+                }
+
+                .svg-content-responsive {
+                    display: inline-block;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    width: 100%;
+                }
+
+                .container {
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                    background-color: rgb(248, 248, 248);
+                }
+
+                #toolbox {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    margin-bottom: 1.5em;
+                    margin-left: 1em;
+                    border: 2px solid #eeeeee;
+                    border-radius: 5px;
+                    padding: 1em;
+                    z-index: 5;
+                }
+
+                #toolbox input {
+                    width: 30px;
+                    opacity: 0.4;
+                }
+                #toolbox input:hover {
+                    opacity: 1;
+                    cursor: pointer;
+                }
+
+                #hidden-file-upload {
+                    display: none;
+                }
+
+                #download-input {
+                    margin: 0 0.5em;
+                }
+
+                .conceptG text {
+                    pointer-events: none;
+                }
+
+                marker {
+                    fill: #aaa;
+                }
+
+                g.conceptG circle {
+                    fill: #f6fbff;
+                    stroke: #bbb;
+                    stroke-width: 2px;
+                }
+                g.conceptG.highlight circle {
+                    stroke: var(--graph-highlight-stroke, #a6141c);
+                    fill: var(--graph-highlight-fill, #d2898d);
+                }
+                g.conceptG.mark circle {
+                    stroke: var(--graph-mark-stroke, #0ca632);
+                    fill: var(--graph-mark-fill, #85d298);
+                }
+
+                g.conceptG:hover circle {
+                    fill: #ddd;
+                }
+
+                g.selected circle {
+                    fill: #b0e2d9;
+                }
+                g.selected:hover circle {
+                    fill: #a7d8cf;
+                }
+
+                path.link {
+                    fill: none;
+                    stroke: rgba(0, 0, 0, 0.1);
+                    stroke-width: 6px;
+                    cursor: default;
+                }
+
+                path.link:hover {
+                    stroke: rgb(171, 171, 171);
+                }
+
+                g.connect-node circle {
+                    fill: #beffff;
+                }
+
+                path.link.hidden {
+                    stroke-width: 0;
+                }
+
+                path.link.selected {
+                    stroke: #b0e2d9;
+                }
+                path.link.highlight {
+                    stroke: var(--graph-link-highlight, rgba(166, 20, 28, 0.7));
+                }
+                path.link.mark {
+                    stroke: var(--graph-link-mark, rgba(12, 166, 50, 0.7));
+                }
             </style>
             <div id="container" class="container"></div>
-            <vis-control delete help></vis-control>
+            <vis-control
+                del
+                help
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
+                delete-icon="${this.hasAttribute("delete-icon") ? this.getAttribute("delete-icon") : "/static/img/delete-icon.png"}"
+                help-icon="${this.hasAttribute("help-icon") ? this.getAttribute("help-icon") : "/static/img/question-mark.png"}"
+            ></vis-control>
         `;
     }
 }

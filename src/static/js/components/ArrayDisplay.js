@@ -75,13 +75,13 @@ class ArrayDisplay extends HTMLElement {
                     flex: 1;
                 }
                 .array__element--mark {
-                    background-color: #D2898D;
+                    background-color: var(--array-mark-background-color, #d2898d);
                 }
                 .array__element--highlight {
-                    background-color: #85D298;
+                    background-color: var(--array-highlight-background-color, #85d298);
                 }
                 .array__element--lock {
-                    background-color: #B9B9B9;
+                    background-color: var(--array-lock-background-color, #b9b9b9);
                 }
             </style>
             <div id="array" class="array">${

@@ -6,7 +6,7 @@ class VisControl extends HTMLElement {
     }
 
     get delete() {
-        return this.hasAttribute("delete");
+        return this.hasAttribute("del");
     }
 
     get help() {
@@ -14,12 +14,12 @@ class VisControl extends HTMLElement {
     }
 
     observedAttributes() {
-        return ["delete", "help"];
+        return ["del", "help"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         switch (newValue) {
-            case "delete":
+            case "del":
                 this._render();
                 break;
             case "help":
@@ -60,19 +60,19 @@ class VisControl extends HTMLElement {
             ${
                 this.help
                     ? `<button id="help-btn" class="button">
-                    <img class="button__image" src="/static/img/question-mark.png" />
+                    <img class="button__image" src="${this.getAttribute("help-icon")}" />
                 </button>`
                     : ""
             }
             ${
                 this.delete
                     ? `<button id="delete-btn" class="button">
-                    <img class="button__image" src="/static/img/delete-icon.png" />
+                    <img class="button__image" src="${this.getAttribute("delete-icon")}" />
                 </button>`
                     : ""
             }
                 <button id="center-btn" class="button">
-                    <img class="button__image" src="/static/img/center-icon.png" />
+                    <img class="button__image" src="${this.getAttribute("center-icon")}" />
                 </button>
             </div>
         `;

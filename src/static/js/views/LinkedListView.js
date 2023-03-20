@@ -220,8 +220,6 @@ class LinkedListView extends HTMLElement {
                 }
                 .content__pseudocode {
                     width: 100%;
-                    --pseudocode-highlight-background-color: #b0e2d9;
-                    --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
                 }
                 .content__linked-list {
                     display: inline-block;

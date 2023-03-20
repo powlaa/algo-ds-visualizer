@@ -24,10 +24,11 @@ class NavItem extends HTMLElement {
                     border-radius: 8px;
                     padding: 5px 10px;
                     cursor: pointer;
-                    background-color: #80808025;
+                    background-color: var(--nav-background-color, #80808025);
+                    color: var(--nav-color, black);
                 }
                 .container:hover {
-                    background-color: #80808029;
+                    background-color: var(--nav-background-color-hover, #80808029);
                 }
                 a {
                     all: unset;
