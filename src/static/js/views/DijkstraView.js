@@ -162,6 +162,7 @@ class DijkstraView extends HTMLElement {
                 };
             })
         );
+
         this._tableVis.showTable(columns, rows);
     }
 

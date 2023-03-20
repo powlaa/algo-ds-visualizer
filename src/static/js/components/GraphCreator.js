@@ -215,9 +215,6 @@ class GraphCreator extends HTMLElement {
 
         this._svg.call(this._dragSvg).on("dblclick.zoom", null);
 
-        // listen for resize
-        window.onresize = this._updateWindow.bind(this, this._svg);
-
         // handle delete graph
         d3.select("#delete-graph").on("click", this.deleteGraph.bind(this, false));
         this._updateGraph();
@@ -330,6 +327,7 @@ class GraphCreator extends HTMLElement {
             // make title of text immediately editable
             var d3txt = this._changeTextOfNode(
                 this._circles.filter((dval) => dval.id === d.id),
+                e,
                 d
             );
             var txtNode = d3txt.node();
@@ -418,7 +416,7 @@ class GraphCreator extends HTMLElement {
                 // clicked, not dragged
                 if (e.shiftKey) {
                     // shift-clicked node: edit text content
-                    var d3txt = this._changeTextOfNode(d3node, d);
+                    var d3txt = this._changeTextOfNode(d3node, e, d);
                     var txtNode = d3txt.node();
                     this._selectElementContents(txtNode);
                     txtNode.focus();
@@ -473,14 +471,6 @@ class GraphCreator extends HTMLElement {
     _zoomed(e) {
         this._state.justScaleTransGraph = true;
         d3.select(this.shadowRoot.querySelector("." + this._CONSTS.graphClass)).attr("transform", e.transform);
-    }
-
-    _updateWindow(svg) {
-        var docEl = document.documentElement,
-            bodyEl = document.getElementsByTagName("body")[0];
-        var x = window.innerWidth || docEl.clientWidth || bodyEl.clientWidth;
-        var y = window.innerHeight || docEl.clientHeight || bodyEl.clientHeight;
-        svg.attr("width", x).attr("height", y);
     }
 
     deleteGraph(skipPrompt) {
@@ -554,22 +544,18 @@ class GraphCreator extends HTMLElement {
     }
 
     /* place editable text on node in place of svg text */
-    _changeTextOfNode(d3node, d) {
+    _changeTextOfNode(d3node, e, d) {
         d3node.selectAll("text").remove();
-        var nodeBCR = d3node.node().getBoundingClientRect(),
-            curScale = nodeBCR.width / this._CONSTS.nodeRadius,
-            placePad = 5 * curScale,
-            useHW = curScale > 1 ? nodeBCR.width * 0.71 : this._CONSTS.nodeRadius * 1.42;
+
         // replace with editableconent text
-        var d3txt = this._svg
+        var d3txt = this._g
             .selectAll("foreignObject")
             .data([d])
             .enter()
             .append("foreignObject")
-            .attr("x", nodeBCR.left + placePad)
-            .attr("y", nodeBCR.top + placePad - 110)
-            .attr("height", 2 * useHW)
-            .attr("width", useHW)
+            .attr("transform", `translate(${d.x - this._CONSTS.nodeRadius}, ${d.y - this._CONSTS.nodeRadius})`)
+            .attr("height", 50)
+            .attr("width", 50)
             .append("xhtml:p")
             .attr("id", this._CONSTS.activeEditId)
             .attr("contentEditable", "true")
@@ -599,16 +585,15 @@ class GraphCreator extends HTMLElement {
         var target = ids[1];
         var weight = d3.select(this.shadowRoot.querySelector(`#weight-${source}-${target}`));
         var weightBack = d3.select(this.shadowRoot.querySelector(`#weight-${target}-${source}`));
-
-        var nodeBCR = weight.node().getBoundingClientRect();
         // replace with editableconent text
-        var d3txt = this._svg
+        var d3txt = this._g
             .selectAll("foreignObject")
             .data([d])
             .enter()
             .append("foreignObject")
-            .attr("x", nodeBCR.x)
-            .attr("y", nodeBCR.y - 115)
+            .attr("x", -20)
+            .attr("y", -25)
+            .attr("transform", weight.attr("transform"))
             .attr("height", 50)
             .attr("width", 40)
             .append("xhtml:p")
