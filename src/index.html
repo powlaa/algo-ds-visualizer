@@ -43,17 +43,129 @@
             <dijkstra-view popup-template-id="dijkstra-popup-content" control-template-id="graph-control-explanations"></dijkstra-view>
         </template>
         <template id="linked-list-view">
-            <linked-list-view></linked-list-view>
+            <linked-list-view popup-template-id="linked-list-popup-content"></linked-list-view>
+        </template>
+        <template id="linked-list-popup-content">
+            <h2>Singly Linked List Visualization</h2>
+            <h3>General</h3>
+            <p>
+                This is an interactive visualization of the data structure Singly Linked List Visualization. On the left side is the control panel
+                where all the methods can be executed. Below that is the pseudocode for the class definitions. <br />
+                On the right side is the visualization of the Singly Linked List. Each Node is represented as a rectangle and points to the next Node
+                in the list. The last Node points to null. The first Node is the head. Below that the pseudocode for the currently executed method is
+                shown. <br />
+                The slider and the buttons at the bottom as well as the arrow keys can be used to step through the methods that were executed on the
+                list.
+            </p>
+            <h3>The Singly Linked List</h3>
+            <h4>General Information <sup>1</sup></h4>
+            <p>
+                A singly linked list is a type of linked list that is <b>unidirectional</b>, that is, it can be traversed in only one direction from
+                head to the last node (tail). Each element in a linked list is called a node. A single node contains data and a pointer to the next
+                node which helps in maintaining the structure of the list.
+            </p>
+            <p>
+                The first node is called the head; it points to the first node of the list and helps us access every other element in the list. The
+                last node, also sometimes called the tail, points to NULL which helps us in determining when the list ends.
+            </p>
+            <h4>Searching for a Node <sup>1</sup></h4>
+            <p>
+                You can determine and retrieve a specific node either from the front, the end, or anywhere in the list. The worst case Time Complexity
+                for retrieving a node from anywhere in the list is <b>O(n)</b>.
+            </p>
+            <h4>Adding a Node <sup>1</sup></h4>
+            <p>
+                You can add a node at the front, the end or anywhere in the linked list. The worst case Time Complexity for performing these
+                operations is as follows:
+            </p>
+            <ul>
+                <li>Add item to the front of the list: <b>O(1)</b></li>
+                <li>Add item to the end of the list: <b>O(n)</b></li>
+                <li>Add item anywhere in the list: <b>O(n)</b></li>
+            </ul>
+            <h4>Remove a Node <sup>1</sup></h4>
+            <p>
+                You can remove a node either from the front, the end or from anywhere in the list. The worst case Time Complexity for performing this
+                operation is as follows:
+            </p>
+            <ul>
+                <li>Remove item from the front of the list: <b>O(1)</b></li>
+                <li>Remove item from the end of the list: <b>O(n)</b></li>
+                <li>Remove item from anywhere in the list: <b>O(n)</b></li>
+            </ul>
+            <h4>Advantages of Linked Lists <sup>2</sup></h4>
+            <ul>
+                <li>
+                    <b>Dynamic data structure</b> – A linked list is a dynamic arrangement so it can grow and shrink at runtime by allocating and
+                    deallocating memory. So there is no need to give the initial size of the linked list.
+                </li>
+                <li>
+                    <b>Insertion and Deletion Operations</b> - Insertion and deletion operations are quite easier in the linked list. There is no need
+                    to shift elements after the insertion or deletion of an element only the address present in the next pointer needs to be updated.
+                </li>
+                <li>
+                    <b>Efficient for large data</b> – When working with large datasets linked lists play a crucial role as it can grow and shrink
+                    dynamically.
+                </li>
+            </ul>
+            <h4>Disadvantages of Linked Lists <sup>2</sup></h4>
+            <ul>
+                <li>
+                    <b>Memory usage</b> – More memory is required in the linked list as compared to an array. Because in a linked list, a pointer is
+                    also required to store the address of the next element and it requires extra memory for itself.
+                </li>
+                <li>
+                    <b>Traversal</b> - In a Linked list traversal is more time-consuming as compared to an array. Direct access to an element is not
+                    possible in a linked list as in an array by index. For example, for accessing a node at position n, one has to traverse all the
+                    nodes before it.
+                </li>
+                <li>
+                    <b>Reverse Traversing</b> – In a singly linked list reverse traversing is not possible, but in the case of a doubly-linked list,
+                    it can be possible as it contains a pointer to the previously connected nodes with each node. For performing this extra memory is
+                    required for the back pointer hence, there is a wastage of memory.
+                </li>
+            </ul>
+            <h4>Applications of Singly Linked Lists <sup>3</sup></h4>
+            <ul>
+                <li>The singly linked list is used to implement stack and queue.</li>
+                <li>The undo or redo options, the back buttons, etc., are implemented using a singly linked list.</li>
+                <li>
+                    During the implementation of a hash function, there arises a problem of collision, to deal with this problem, a singly linked list
+                    is used.
+                </li>
+            </ul>
+
+            <p style="color: rgba(0, 0, 0, 0)">.</p>
+            <p>
+                <sup>1</sup> Explanations in this section are from: What is a singly linked list?. (n.d.). Educative.
+                <a href="https://www.educative.io/answers/what-is-a-singly-linked-list"
+                    >https://www.educative.io/answers/what-is-a-singly-linked-list</a
+                >
+                (last accessed: 20.03.2023)
+            </p>
+            <p>
+                <sup>2</sup> Explanations in this section are from: Advantages and Disadvantages of Linked List. (2023, February 15). GeeksforGeeks.
+                <a href="https://www.geeksforgeeks.org/advantages-and-disadvantages-of-linked-list/"
+                    >https://www.geeksforgeeks.org/advantages-and-disadvantages-of-linked-list/</a
+                >
+                (last accessed: 20.03.2023)
+            </p>
+            <p>
+                <sup>3</sup> Explanations in this section are from: What are the Applications of Linked List?. (n.d.). Interview Kickstart.
+                <a href="https://www.scaler.com/topics/application-of-linked-list/">https://www.scaler.com/topics/application-of-linked-list/</a>
+                (last accessed: 20.03.2023)
+            </p>
         </template>
         <template id="heapsort-popup-content">
             <h2>Heapsort Visualization</h2>
             <h3>General</h3>
             <p>
                 This is an interactive visualization of the Heapsort Algorithm. On the left side is the representation of the array. It can be changed
-                by entering new data in the input field at the top left (e.g. 5,3,7,11,9,4,2). On the right side the data is shown in binary tree form
-                where the root element is the first element of the array, the first child is the second element of the array, the second child is the
-                third element of the array and so on. The slider and the buttons at the bottom as well as the arrow keys can be used to step through
-                the algorithm.
+                by entering new data in the input field at the top left (e.g. 5,3,7,11,9,4,2). Below that the pseudocode for the algorithm is shown
+                and the corresponding lines will be highlighted while stepping through the algorithm. <br />
+                On the right side the data is shown in binary tree form where the root element is the first element of the array, the first child is
+                the second element of the array, the second child is the third element of the array and so on. <br />
+                The slider and the buttons at the bottom as well as the arrow keys can be used to step through the algorithm.
             </p>
             <h3>The Heapsort Algorithm</h3>
             <h4>General Information <sup>1</sup></h4>
@@ -138,7 +250,7 @@
             </p>
             <p style="color: rgba(0, 0, 0, 0)">.</p>
             <p>
-                <sup>1</sup> Explanations in this section are from: Heap Sort. (2013, März 16). GeeksforGeeks.
+                <sup>1</sup> Explanations in this section are from: Heap Sort. (2023, März 16). GeeksforGeeks.
                 <a href="https://www.geeksforgeeks.org/heap-sort/">https://www.geeksforgeeks.org/heap-sort/</a> (last accessed: 20.03.2023)
             </p>
             <p>
@@ -154,9 +266,10 @@
             <h3>General</h3>
             <p>
                 This is an interactive visualization of the Dijkstra Algorithm. On the left side is the graph which can be altered by adding and
-                deleting nodes and edges. To start the algorithm, select a node as the starting node and press the start button. The algorithm will
-                then run and the table on the right side will be updated with the current shortest path to each node. The slider and the buttons at
-                the bottom as well as the arrow keys can be used to step through the algorithm.
+                deleting nodes and edges. To start the algorithm, select a node as the starting node and press the start button. <br />
+                The algorithm will then run and the table on the right side will be updated with the current shortest path to each node. The
+                pseudocode shown below the table will highlight the corresponding lines of code. <br />
+                The slider and the buttons at the bottom as well as the arrow keys can be used to step through the algorithm.
             </p>
             <h3>The Dijkstra Algorithm</h3>
             <h4>Purpose and Use Cases <sup>1</sup></h4>
