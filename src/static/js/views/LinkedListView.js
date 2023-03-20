@@ -154,7 +154,7 @@ class LinkedListView extends HTMLElement {
         this._visContainer.updateSteps(
             [
                 {
-                    heading: "Singly Linked List",
+                    heading: "",
                     description: "",
                     array: this._linkedList.toArray(),
                     method: "delete",
@@ -230,7 +230,7 @@ class LinkedListView extends HTMLElement {
                     width: 100%;
                 }
             </style>
-            <vis-container title="Linked List" no-start-btn locked popup-template-id="${this.getAttribute("popup-template-id")}">
+            <vis-container title="Singly Linked List" no-start-btn locked popup-template-id="${this.getAttribute("popup-template-id")}">
                 <split-layout class="content" top-bottom-left top-bottom-right>
                     <control-panel slot="top-left" class="content__control-panel"></control-panel>
                     <pseudocode-display id="pseudocode-classes" slot="bottom-left" class="content__pseudocode"></pseudocode-display>
@@ -338,14 +338,14 @@ class SinglyLinkedList {
 
     delete(data) {
         if (this.head === null) return [];
-        var { node, steps, index } = this.getNodeBefore(data, `Delete Node ${data}`, "delete");
+        var { node, steps, index } = this.getNodeBefore(data, `Delete Node "${data}"`, "delete");
 
         if ((node === this.head) & (index === null)) {
             //data is in the head
             steps.push({
                 array: this.toArray(),
-                heading: "Delete Node " + data,
-                description: `${data} is in head, move head to head.next`,
+                heading: `Delete Node "${data}"`,
+                description: `"${data}" is in head, move head to head.next`,
                 codeLabel: ["delete-if-head-data", "delete-set-head"],
                 animation: async (linkedListVis, duration) => {
                     linkedListVis.highlightElements(0);
@@ -355,8 +355,8 @@ class SinglyLinkedList {
 
             steps.push({
                 array: this.toArray(),
-                heading: `Node ${data} is deleted`,
-                description: `${data} is removed because no Node is pointing to it anymore`,
+                heading: `Node "${data}" is deleted`,
+                description: `"${data}" is removed because no Node is pointing to it anymore`,
                 codeLabel: ["delete-return"],
                 animation: async (linkedListVis, duration) => {
                     await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 });
@@ -371,8 +371,8 @@ class SinglyLinkedList {
             //data is found
             steps.push({
                 array: this.toArray(),
-                heading: "Delete Node " + data,
-                description: `Set next pointer of current Node to the next of ${data}`,
+                heading: `Delete Node "${data}"`,
+                description: `Set next pointer of current Node to the next of "${data}"`,
                 _index: index,
                 codeLabel: ["delete-set-current"],
                 animation: async (linkedListVis, duration, step) => {
@@ -385,8 +385,8 @@ class SinglyLinkedList {
 
             steps.push({
                 array: this.toArray(),
-                heading: `Node ${data} is deleted`,
-                description: `${data} is removed because no Node is pointing to it anymore`,
+                heading: `Node "${data}" is deleted`,
+                description: `"${data}" is removed because no Node is pointing to it anymore`,
                 _index: index,
                 codeLabel: [],
                 animation: async (linkedListVis, duration, step) => {
@@ -405,13 +405,13 @@ class SinglyLinkedList {
 
     contains(data) {
         if (this.head === null) return [];
-        var { node, steps, index } = this.getNodeBefore(data, `Contains ${data}`, "contains");
+        var { node, steps, index } = this.getNodeBefore(data, `Contains "${data}"`, "contains");
 
         if ((node === this.head) & (index === null)) {
             steps.push({
                 array: this.toArray(),
-                heading: "Contains " + data,
-                description: `${data} is in head`,
+                heading: `Contains "${data}"`,
+                description: `"${data}" is in head`,
                 codeLabel: ["contains-if-head-data", "contains-return"],
                 animation: async (linkedListVis) => {
                     linkedListVis.highlightElements(0);
@@ -453,7 +453,7 @@ class SinglyLinkedList {
         steps.push({
             array: this.toArray(),
             heading: heading,
-            description: `${data} is not in head, so go through list until ${data} is found in the next Node`,
+            description: `"${data}" is not in head, so go through list until "${data}" is found in the next Node`,
             _index: index,
             codeLabel: [`${codeLabelPrefix}-current-head`],
             animation: async (linkedListVis, duration, step) => {
@@ -467,7 +467,7 @@ class SinglyLinkedList {
                 steps.push({
                     array: this.toArray(),
                     heading: heading,
-                    description: `${data} is found in the next Node of the current one`,
+                    description: `"${data}" is found in the next Node of the current one`,
                     _index: index,
                     codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-current-data`, `${codeLabelPrefix}-found`],
                     animation: async (linkedListVis, duration, step, visContainer) => {
@@ -487,7 +487,7 @@ class SinglyLinkedList {
             steps.push({
                 array: this.toArray(),
                 heading: heading,
-                description: `Go through list until current.next.data equals ${data}`,
+                description: `Go through list until current.next.data equals "${data}"`,
                 _index: index,
                 codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-current-next`],
                 animation: async (linkedListVis, duration, step, visContainer) => {
@@ -508,7 +508,7 @@ class SinglyLinkedList {
         steps.push({
             array: this.toArray(),
             heading: heading,
-            description: `current.next is null, therefore ${data} is not in the list`,
+            description: `current.next is null, therefore "${data}" is not in the list`,
             _index: index,
             codeLabel: [`${codeLabelPrefix}-while`, `${codeLabelPrefix}-not-found`],
             animation: async (linkedListVis, duration, step, visContainer) => {

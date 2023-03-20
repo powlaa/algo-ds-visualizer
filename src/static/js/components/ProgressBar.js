@@ -134,23 +134,23 @@ class ProgressBar extends HTMLElement {
                 }
 
                 input[type="range"].slider:disabled.slider-progress::-webkit-slider-runnable-track {
-                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                    background: linear-gradient(var(--disabled-progress-background-color, #b7b7b7), var(--disabled-progress-background-color, #b7b7b7)) 0 / var(--sx) 100%
                             no-repeat,
                         var(--disabled-track-background-color, #b7b7b7);
                 }
                 input[type="range"].slider:disabled.slider-progress:hover::-webkit-slider-runnable-track {
-                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                    background: linear-gradient(var(--disabled-progress-background-color, #b7b7b7), var(--disabled-progress-background-color, #b7b7b7)) 0 / var(--sx) 100%
                             no-repeat,
                         var(--disabled-track-background-color, #b7b7b7);
                 }
 
                 input[type="range"].slider:disabled.slider-progress::-moz-range-track {
-                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                    background: linear-gradient(var(--disabled-progress-background-color, #b7b7b7), var(--disabled-progress-background-color, #b7b7b7)) 0 / var(--sx) 100%
                             no-repeat,
                         var(--disabled-track-background-color, #b7b7b7);
                 }
                 input[type="range"].slider:disabled.slider-progress:hover::-moz-range-track {
-                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                    background: linear-gradient(var(--disabled-progress-background-color, #b7b7b7), var(--disabled-progress-background-color, #b7b7b7)) 0 / var(--sx) 100%
                             no-repeat,
                         var(--disabled-track-background-color, #b7b7b7);
                 }

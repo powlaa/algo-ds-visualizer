@@ -30,6 +30,7 @@ html {
     --nav-background: black;
 
     --disabled-track-background-color: #dfdfdf;
+    --disabled-progress-background-color: #dfdfdf;
     --disabled-thumb-background-color: #7f7f7f;
 
     --pseudocode-highlight-background-color: #b0e2d9;
