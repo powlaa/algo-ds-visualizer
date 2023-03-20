@@ -442,7 +442,6 @@ class LinkedList extends HTMLElement {
 
     _render() {
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/index.css" />
             <style>
                 :host {
                     display: inline-block;
@@ -463,6 +462,7 @@ class LinkedList extends HTMLElement {
                     top: 0;
                     left: 0;
                     height: 100%;
+                    width: 100%;
                 }
                 .element--highlight > .element__rect:first-of-type {
                     fill: var(--linked-list-highlight-fill, #d2898d);
@@ -479,7 +479,7 @@ class LinkedList extends HTMLElement {
                 .element__rect--link {
                     width: 25px;
                 }
-                .element__head--highlight{
+                .element__head--highlight {
                     fill: var(--linked-list-highlight-stroke, #a6141c);
                 }
                 .link {
@@ -495,7 +495,9 @@ class LinkedList extends HTMLElement {
                 }
             </style>
             <div id="container" class="container"></div>
-            <vis-control center-icon="/static/img/center-icon.png"></vis-control>
+            <vis-control
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
+            ></vis-control>
         `;
     }
 }

@@ -210,7 +210,9 @@ class BinaryTree extends HTMLElement {
                 }
             </style>
             <div id="container"></div>
-            <vis-control center-icon="/static/img/center-icon.png"></vis-control>
+            <vis-control
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
+            ></vis-control>
         `;
     }
 }

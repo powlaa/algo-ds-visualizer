@@ -663,7 +663,13 @@ class GraphCreator extends HTMLElement {
                 }
             </style>
             <div id="container" class="container"></div>
-            <vis-control del help center-icon="/static/img/center-icon.png" delete-icon="/static/img/delete-icon.png" help-icon="/static/img/question-mark.png"></vis-control>
+            <vis-control
+                del
+                help
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
+                delete-icon="${this.hasAttribute("delete-icon") ? this.getAttribute("delete-icon") : "/static/img/delete-icon.png"}"
+                help-icon="${this.hasAttribute("help-icon") ? this.getAttribute("help-icon") : "/static/img/question-mark.png"}"
+            ></vis-control>
         `;
     }
 }
