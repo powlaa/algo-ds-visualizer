@@ -1,33 +1,21 @@
-import "../src/static/css/index.css";
 import { BinaryTree } from "../src/static/js/components/BinaryTree";
+import CenterIcon from "../src/static/img/center-icon.png";
 
 export default {
-    title: "BinaryTree",
+    title: "Vis/BinaryTree",
 };
 
-const Template = ({ popupWidth, popupMinWidth, popupHeight, overlay }) =>
-    `<binary-tree style="--popup-width: ${popupWidth}; --popup-min-width: ${popupMinWidth}; --popup-height: ${popupHeight};" ${
-        overlay ? "overlay" : ""
-    }></binary-tree>`;
+const Template = ({ centerIcon, nodeRadius }) => `<binary-tree center-icon="${centerIcon}" node-radius="${nodeRadius}"></binary-tree>`;
 
-export const PopUpNoOverlay = Template.bind({});
-PopUpNoOverlay.args = {
-    overlay: false,
-    popupMinWidth: "20%",
-    popupWidth: "50%",
-    popupHeight: "50%",
-};
-
-export const PopUpOverlay = Template.bind({});
-PopUpOverlay.args = {
-    overlay: true,
-    popupMinWidth: "30%",
-    popupWidth: "60%",
-    popupHeight: "60%",
+export const BinaryTreeRegular = Template.bind({});
+BinaryTreeRegular.args = {
+    centerIcon: CenterIcon,
+    nodeRadius: 30,
 };
 
 document.addEventListener("DOMContentLoaded", (e) => {
-    const popup = document.querySelector("binary-tree");
-    if (!e.isTrusted && popup) {
+    const binaryTree = document.querySelector("binary-tree");
+    if (!e.isTrusted && binaryTree) {
+        binaryTree.data = [{ value: 2 }, { value: 5 }, { value: 6 }, { value: 13 }, { value: 7 }, { value: 8 }, { value: 9 }];
     }
 });
