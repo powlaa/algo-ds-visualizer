@@ -56,13 +56,17 @@
                 the algorithm.
             </p>
             <h3>The Heapsort Algorithm</h3>
+            <h4>General Information <sup>1</sup></h4>
             <p>
                 Heapsort is a comparison-based sorting technique based on Binary Heap data structure. It is similar to the selection sort where we
                 first find the minimum element and place the minimum element at the beginning. Repeat the same process for the remaining elements.
-                <br />
-                Time Complexity: O(N log N)
             </p>
-            <h4>Steps</h4>
+            <ul>
+                <li>Heap sort is an in-place algorithm.</li>
+                <li>Its typical implementation is not stable, but can be made stable</li>
+                <li>Typically 2-3 times slower than well-implemented QuickSort. The reason for slowness is a lack of locality of reference.</li>
+            </ul>
+            <h4>Steps <sup>1</sup></h4>
             <ul>
                 <li>Build a max heap from the input data.</li>
                 <li>
@@ -71,12 +75,34 @@
                 </li>
                 <li>Repeat step 2 while the size of the heap is greater than 1.</li>
             </ul>
-            <h4>What is meant by Heapify?</h4>
+            <h4>What is meant by Heapify? <sup>1</sup></h4>
             <p>
                 Heapify is the process of creating a heap data structure from a binary tree represented using an array. It is used to create Min-Heap
                 or Max-heap. Start from the first index of the non-leaf node whose index is given by n/2 – 1. Heapify uses recursion.
             </p>
-            <h4>Advantages of heapsort</h4>
+            <h4>Time Complexity <sup>2</sup></h4>
+            <p>The time complexity of heap sort is non-quadratic and comes out the same in the best, worst and average cases: O(nlogn)</p>
+            <ol>
+                <li>The first step of heap sort, which is building a heap out of a randomly arranged array, can be done in <b>O(n)</b>.</li>
+                <li>
+                    Swapping the max element with the bottom level right-most element and reducing the heap size can be done in constant time,
+                    <b>O(1)</b>.
+                </li>
+                <li>
+                    In the worst case, the new value at the root position will have to be swapped log(N) times to be sent to the bottom of the heap to
+                    achieve a MaxHeap once again. So each reheapification after the extraction costs <b>O(logN)</b>.
+                </li>
+            </ol>
+            <p>
+                Step 2 and 3 will be performed N times, so the total time complexity of getting a sorted array out of a MaxHeap is
+                <b>O(N*log(N))</b>.<br />
+                <br />
+                We can calculate the total time complexity of heap sort as: <br />
+                Time for creating a MaxHeap + Time for getting a sorted array out of a MaxHeap <br />
+                <b>= O(N) + O(N*log(N))</b> <br />
+                <b>= O(N*log(N))</b>
+            </p>
+            <h4>Advantages of Heapsort <sup>1</sup></h4>
             <ul>
                 <li>
                     <b>Efficiency</b> – The time required to perform Heap sort increases logarithmically while other algorithms may grow exponentially
@@ -91,10 +117,35 @@
                     computer science concepts such as recursion
                 </li>
             </ul>
-            <p></p>
+            <h4>Disadvantages of Heapsort <sup>1</sup></h4>
+            <ul>
+                <li><b>Costly</b> – Heap sort is costly.</li>
+                <li>
+                    <b>Unstable</b> - Heap sort is unstable. This algorithm is not stable because the operations that are performed in a heap can
+                    change the relative ordering of the equivalent keys.
+                </li>
+                <li><b>Efficient</b> – Heap Sort are not very efficient when working with highly complex data.</li>
+            </ul>
+            <h4>Applications of Heapsort <sup>1</sup></h4>
+            <ul>
+                <li>Heapsort is mainly used in hybrid algorithms like the IntroSort</li>
+                <li>Sort a nearly sorted (or K sorted) array</li>
+                <li>k largest(or smallest) elements in an array</li>
+            </ul>
             <p>
-                Explanations taken from: GeeksforGeeks. (2013, März 16). Heap Sort. GeeksforGeeks.
-                <a href="https://www.geeksforgeeks.org/heap-sort/">https://www.geeksforgeeks.org/heap-sort/</a>
+                The heap sort algorithm has limited uses because Quicksort and Mergesort are better in practice. Nevertheless, the Heap data structure
+                itself is enormously used.
+            </p>
+            <p style="color: rgba(0, 0, 0, 0)">.</p>
+            <p>
+                <sup>1</sup> Explanations in this section are from: Heap Sort. (2013, März 16). GeeksforGeeks.
+                <a href="https://www.geeksforgeeks.org/heap-sort/">https://www.geeksforgeeks.org/heap-sort/</a> (last accessed: 20.03.2023)
+            </p>
+            <p>
+                <sup>2</sup> Explanations in this section are from: Heap Sort Algorithm: Explanation, Implementation, and Complexity. (n.d.).
+                Interview Kickstart.
+                <a href="https://www.interviewkickstart.com/learn/heap-sort">https://www.interviewkickstart.com/learn/heap-sort</a> (last accessed:
+                20.03.2023)
             </p>
         </template>
 
@@ -108,14 +159,14 @@
                 the bottom as well as the arrow keys can be used to step through the algorithm.
             </p>
             <h3>The Dijkstra Algorithm</h3>
-            <h4>Purpose and Use Cases</h4>
+            <h4>Purpose and Use Cases <sup>1</sup></h4>
             <p>
                 With Dijkstra's Algorithm, you can find the shortest path between nodes in a graph. Particularly, you can find the shortest path from
                 a node (called the "source node") to all other nodes in the graph, producing a shortest-path tree. This algorithm is used in GPS
                 devices to find the shortest path between the current location and the destination. It has broad applications in industry, specially
                 in domains that require modeling networks.
             </p>
-            <h4>Basics</h4>
+            <h4>Basics <sup>1</sup></h4>
             <ul>
                 <li>
                     Dijkstra's Algorithm basically starts at the node that you choose (the source node) and it analyzes the graph to find the shortest
@@ -134,20 +185,54 @@
                     source node to all other nodes following the shortest path possible to reach each node.
                 </li>
             </ul>
-            <h4>Requirements</h4>
+            <h4>Requirements <sup>1</sup></h4>
             <p>
                 Dijkstra's Algorithm can only work with graphs that have positive weights. This is because, during the process, the weights of the
                 edges have to be added to find the shortest path. If there is a negative weight in the graph, then the algorithm will not work
                 properly. Once a node has been marked as "visited", the current path to that node is marked as the shortest path to reach that node.
                 And negative weights can alter this if the total weight can be decremented after this step has occurred.
             </p>
-            <p></p>
+            <h4>Time Complexity <sup>2</sup></h4>
             <p>
-                Explanations taken from: Navone, E. C. (2020, September 28). Dijkstra’s Shortest Path Algorithm—A Detailed and Visual Introduction.
-                FreeCodeCamp.Org.
+                Time complexity of Dijkstra's algorithm is O(V<sup>2</sup>) where V is the number of vertices in the graph. It can be explained as
+                below:
+            </p>
+            <ol>
+                <li>
+                    First thing we need to do is find the unvisited vertex with the smallest path. For that we require O(V) time as we need check all
+                    the vertices.
+                </li>
+                <li>
+                    Now for each vertex selected as above, we need to relax its neighbours which means to update each neighbours path to the smaller
+                    value between its current path or to the newly found. The time required to relax one neighbour comes out to be of order of O(1)
+                    (constant time).
+                </li>
+                <li>
+                    For each vertex we need to relax all of its neighbours, and a vertex can have at most V-1 neighbours, so the time required to
+                    update all neighbours of a vertex comes out to be [O(V) * O(1)] = O(V)
+                </li>
+            </ol>
+            <p>So now following the above conditions, we get:</p>
+            <ul>
+                <li>Time for visiting all vertices <b>= O(V)</b></li>
+                <li>Time required for processing one vertex <b>= O(V)</b></li>
+                <li>Time required for visiting and processing all the vertices <b>= O(V) * O(V) = O(V<sup>2</sup>)</b></li>
+            </ul>
+            <p style="color: rgba(0, 0, 0, 0)">.</p>
+            <p>
+                <sup>1</sup> Explanations in this section are from: Navone, E. C. (2020, September 28). Dijkstra’s Shortest Path Algorithm—A Detailed
+                and Visual Introduction. FreeCodeCamp.Org.
                 <a href="https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/"
                     >https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/</a
                 >
+                (last accessed: 20.03.2023)
+            </p>
+            <p>
+                <sup>2</sup> Explanations in this section are from: Pandey, M. (2021, December 20). Dijkstra Algorithm. Scaler Topics.
+                <a href="https://www.scaler.com/topics/data-structures/dijkstra-algorithm/"
+                    >https://www.scaler.com/topics/data-structures/dijkstra-algorithm/</a
+                >
+                (last accessed: 20.03.2023)
             </p>
         </template>
 

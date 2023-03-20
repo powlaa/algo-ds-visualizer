@@ -81,9 +81,7 @@ class PopUp extends HTMLElement {
                     display: none;
                 }
                 .popup__button {
-                    position: absolute;
-                    top: 3px;
-                    right: 5px;
+                    position: fixed;
                     border: none;
                     font-size: 1.5em;
                     background-color: rgba(0, 0, 0, 0);
@@ -91,11 +89,14 @@ class PopUp extends HTMLElement {
                 .popup__content {
                     display: var(--popup-display, block);
                     grid-template-columns: var(--popup-grid-template-columns, auto auto);
+                    white-space: normal;
                 }
             </style>
             <div id="overlay" class="overlay"></div>
             <div id="popup" class="popup popup--hidden">
-                <button id="close-btn" class="popup__button">x</button>
+                <div style="position: absolute; top: 3px; right: 40px;">
+                    <button id="close-btn" class="popup__button">x</button>
+                </div>
                 <div id="popup-content" class="popup__content"><slot></slot></div>
             </div>
         `;
