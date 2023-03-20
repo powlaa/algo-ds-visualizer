@@ -1,3 +1,8 @@
+/*
+Parts of this code were taken and adapted from Colorado Reed's directed-graph-creator: https://github.com/cjrd/directed-graph-creator (last accessed: 20.03.2023)
+Copyright (c) 2014 Colorado Reed
+*/
+
 class GraphCreator extends HTMLElement {
     _CONSTS = {
         selectedClass: "selected",
