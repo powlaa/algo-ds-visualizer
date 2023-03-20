@@ -24,13 +24,16 @@ html {
 
     --header-background-color: var(--secondary-background-color);
     --header-color: var(--secondary-color);
-    --pseudocode-highlight-background-color: #b0e2d9;
-    --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
-    --table-background-color: var(--primary-background-color);
-    --table-color: var(--primary-color);
+
     --nav-background-color: #80808025;
     --nav-background-color-hover: #80808029;
     --nav-background: black;
+
+    --pseudocode-highlight-background-color: #b0e2d9;
+    --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
+
+    --table-background-color: var(--primary-background-color);
+    --table-color: var(--primary-color);
 
     --binary-tree-mark-stroke: var(--red);
     --binary-tree-mark-fill: var(--red-background);

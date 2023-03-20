@@ -2,7 +2,7 @@ import "../src/static/css/index.css";
 import { PseudocodeDisplay } from "../src/static/js/components/PseudocodeDisplay";
 
 export default {
-    title: "PseudocodeDisplay",
+    title: "Vis/PseudocodeDisplay",
 };
 
 const Template = ({}) => `<pseudocode-display></pseudocode-display>`;

@@ -162,7 +162,8 @@ class DijkstraView extends HTMLElement {
                 };
             })
         );
-
+        console.log(columns);
+        console.log(rows);
         this._tableVis.showTable(columns, rows);
     }
 
@@ -225,6 +226,7 @@ class DijkstraView extends HTMLElement {
             })
         );
 
+        console.log(rows);
         this._tableVis.updateRows(rows, highlights);
     }
 
