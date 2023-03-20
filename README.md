@@ -19,6 +19,12 @@ Run
 npm start
 ```
 
+Run Storybook
+
+```
+npm run storybook
+```
+
 ## Deployment
 
 Currently, the web application is only deployed on Firebase. For deployment on other servers ensure that all URLs are
