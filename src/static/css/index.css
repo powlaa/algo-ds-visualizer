@@ -29,6 +29,9 @@ html {
     --nav-background-color-hover: #80808029;
     --nav-background: black;
 
+    --disabled-track-background-color: #dfdfdf;
+    --disabled-thumb-background-color: #7f7f7f;
+
     --pseudocode-highlight-background-color: #b0e2d9;
     --pseudocode-highlight-background-color-alternate: #b0e2d9aa;
 

@@ -132,24 +132,45 @@ class ProgressBar extends HTMLElement {
                     margin: 0;
                     z-index: var(--progress-bar-slider-z-index);
                 }
-            </style>
-            <div class="container">
-                <div class="control">
-                    <button id="prev-btn" class="control__button" ${this.locked ? "disabled" : ""}><</button>
-                    <span id="step-display" class="control__display" class="text">0/0</span>
-                    <button id="next-btn" class="control__button" ${this.locked ? "disabled" : ""}>></button>
-                </div>
-                <input
-                    type="range"
-                    min="0"
-                    max="${this.totalSteps}}"
-                    value="0"
-                    class="slider slider-progress"
-                    id="range"
-                    ${this.locked ? "disabled" : ""}
-                />
-            </div>
-            <style>
+
+                input[type="range"].slider:disabled.slider-progress::-webkit-slider-runnable-track {
+                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                            no-repeat,
+                        var(--disabled-track-background-color, #b7b7b7);
+                }
+                input[type="range"].slider:disabled.slider-progress:hover::-webkit-slider-runnable-track {
+                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                            no-repeat,
+                        var(--disabled-track-background-color, #b7b7b7);
+                }
+
+                input[type="range"].slider:disabled.slider-progress::-moz-range-track {
+                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                            no-repeat,
+                        var(--disabled-track-background-color, #b7b7b7);
+                }
+                input[type="range"].slider:disabled.slider-progress:hover::-moz-range-track {
+                    background: linear-gradient(var(--disabled-progress-background-color, darkgrey), var(--disabled-progress-background-color, darkgrey)) 0 / var(--sx) 100%
+                            no-repeat,
+                        var(--disabled-track-background-color, #b7b7b7);
+                }
+
+                input[type="range"].slider:disabled::-webkit-slider-thumb {
+                    background: var(--disabled-thumb-background-color, grey);
+                }
+
+                input[type="range"].slider:disabled::-webkit-slider-thumb:hover {
+                    background: var(--disabled-thumb-background-color, grey);
+                }
+
+                input[type="range"].slider:disabled::-moz-range-thumb {
+                    background: var(--disabled-thumb-background-color, grey);
+                }
+
+                input[type="range"].slider:disabled::-moz-range-thumb:hover {
+                    background: var(--disabled-thumb-background-color, grey);
+                }
+
                 /*generated with Input range slider CSS style generator (version 20211225)
                 https://toughengineer.github.io/demo/slider-styler*/
                 input[type="range"].slider {
@@ -298,6 +319,22 @@ class ProgressBar extends HTMLElement {
                     background: var(--primary-color-lighter, #03a088);
                 }
             </style>
+            <div class="container">
+                <div class="control">
+                    <button id="prev-btn" class="control__button" ${this.locked ? "disabled" : ""}><</button>
+                    <span id="step-display" class="control__display" class="text">0/0</span>
+                    <button id="next-btn" class="control__button" ${this.locked ? "disabled" : ""}>></button>
+                </div>
+                <input
+                    type="range"
+                    min="0"
+                    max="${this.totalSteps}}"
+                    value="0"
+                    class="slider slider-progress"
+                    id="range"
+                    ${this.locked ? "disabled" : ""}
+                />
+            </div>
         `;
     }
 }
