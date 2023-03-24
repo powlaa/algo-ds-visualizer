@@ -118,10 +118,22 @@ class LinkedListView extends HTMLElement {
 
         this._visContainer.addEventListener("code", this._toggleCode.bind(this));
 
-        this._controlPanel.addEventListener("add", this._addNode.bind(this));
-        this._controlPanel.addEventListener("delete", this._deleteNode.bind(this));
-        this._controlPanel.addEventListener("contains", this._containsNode.bind(this));
-        this._controlPanel.addEventListener("get", this._getIndex.bind(this));
+        this._controlPanel.addEventListener("call-method", ({ detail }) => {
+            switch (detail.method) {
+                case "add":
+                    this._addNode(detail.params);
+                    break;
+                case "delete":
+                    this._deleteNode(detail.params);
+                    break;
+                case "contains":
+                    this._containsNode(detail.params);
+                    break;
+                case "get":
+                    this._getIndex(detail.params);
+                    break;
+            }
+        });
 
         this._initVis();
     }
@@ -167,28 +179,28 @@ class LinkedListView extends HTMLElement {
         this._linkedListVis.updateLinkedList();
     }
 
-    _addNode(e) {
-        let index = parseInt(e.detail.params.index);
-        if (!e.detail.params.index) index = 0;
-        const newSteps = this._linkedList.add(e.detail.params.data, index);
+    _addNode(params) {
+        let index = parseInt(params.index);
+        if (!params.index) index = 0;
+        const newSteps = this._linkedList.add(params.data, index);
         newSteps.forEach((n) => (n.method = "add"));
         this._addSteps(newSteps);
     }
 
-    _deleteNode(e) {
-        const newSteps = this._linkedList.delete(e.detail.params.data);
+    _deleteNode(params) {
+        const newSteps = this._linkedList.delete(params.data);
         newSteps.forEach((n) => (n.method = "delete"));
         this._addSteps(newSteps);
     }
 
-    _containsNode(e) {
-        const newSteps = this._linkedList.contains(e.detail.params.data);
+    _containsNode(params) {
+        const newSteps = this._linkedList.contains(params.data);
         newSteps.forEach((n) => (n.method = "contains"));
         this._addSteps(newSteps);
     }
 
-    _getIndex(e) {
-        const newSteps = this._linkedList.get(parseInt(e.detail.params.index));
+    _getIndex(params) {
+        const newSteps = this._linkedList.get(parseInt(params.index));
         newSteps.forEach((n) => (n.method = "get"));
         this._addSteps(newSteps);
     }

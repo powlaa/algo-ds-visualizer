@@ -35,9 +35,6 @@ document.addEventListener("DOMContentLoaded", (e) => {
                 parameters: [{ name: "index", type: "number", min: 0 }],
             },
         ];
-        controlPanel.addEventListener("add", (e) => action("add")(e.detail));
-        controlPanel.addEventListener("delete", (e) => action("delete")(e.detail));
-        controlPanel.addEventListener("contains", (e) => action("contains")(e.detail));
-        controlPanel.addEventListener("get", (e) => action("get")(e.detail));
+        controlPanel.addEventListener("call-method", (e) => action("call-method")(e.detail));
     }
 });

@@ -26,8 +26,9 @@ class ControlPanel extends HTMLElement {
                 });
 
                 this.dispatchEvent(
-                    new CustomEvent(method.name, {
+                    new CustomEvent("call-method", {
                         detail: {
+                            method: method.name,
                             params,
                         },
                     })
