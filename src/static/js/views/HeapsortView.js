@@ -127,6 +127,10 @@ class HeapsortView extends HTMLElement {
     _sort(data) {
         if (!data) data = this._EXAMPLE_DATA;
 
+        if (data.length > 31) this._binaryTreeVis.setAttribute("node-radius", 15);
+        else if (data.length > 15) this._binaryTreeVis.setAttribute("node-radius", 20);
+        else this._binaryTreeVis.setAttribute("node-radius", 30);
+
         this._visContainer.updateSteps(this._heapSort(data), { currentStep: 0 });
     }
 
@@ -277,6 +281,7 @@ class HeapsortView extends HTMLElement {
                 }
                 .content__array-display {
                     width: 100%;
+                    overflow: auto;
                 }
                 .content__pseudocode {
                     width: 100%;

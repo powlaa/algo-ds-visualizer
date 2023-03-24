@@ -3,10 +3,11 @@ class BinaryTree extends HTMLElement {
     _WIDTH = window.innerWidth - this._MARGIN.left - this._MARGIN.right;
     _HEIGHT = window.innerHeight - this._MARGIN.top - this._MARGIN.bottom;
 
-    _node_radius = 25;
+    _nodeRadius = 25;
 
     // declares a tree layout and assigns the size
     _treemap = d3.tree().size([this._WIDTH / 2, this._HEIGHT / 2]);
+
     _treeData = [];
 
     constructor() {
@@ -51,7 +52,7 @@ class BinaryTree extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
             case "node-radius":
-                this._node_radius = newValue;
+                this._nodeRadius = newValue;
                 break;
         }
     }
@@ -134,7 +135,7 @@ class BinaryTree extends HTMLElement {
         this._node
             .append("circle")
             .attr("id", (d) => "node" + d.data.index)
-            .attr("r", this._node_radius)
+            .attr("r", this._nodeRadius)
             .attr("class", (d) => (d.data.modifier ? "node__circle node__circle--" + d.data.modifier : "node__circle"));
 
         // adds the text to the node
