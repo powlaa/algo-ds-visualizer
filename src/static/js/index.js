@@ -3,29 +3,27 @@ const navigateTo = (url) => {
     router();
 };
 
-const router = async () => {
-    const routes = [
-        { path: "/", template: "home-view" },
-        { path: "/heapsort", template: "heapsort-view" },
-        { path: "/dijkstra", template: "dijkstra-view" },
-        { path: "/linkedlist", template: "linked-list-view" },
-    ];
+const router = () => {
+    let template;
 
-    // Test each route for potential match
-    const potentialMatches = routes.map((route) => {
-        return {
-            route: route,
-            isMatch: location.pathname === route.path,
-        };
-    });
+    switch (window.location.pathname) {
+        case "/":
+            template = document.querySelector(`template#home-view`);
+            break;
+        case "/heapsort":
+            template = document.querySelector(`template#heapsort-view`);
+            break;
+        case "/dijkstra":
+            template = document.querySelector(`template#dijkstra-view`);
+            break;
+        case "/linkedlist":
+            template = document.querySelector(`template#linked-list-view`);
+            break;
+        default:
+            template = document.querySelector(`template#home-view`);
+            break;
+    }
 
-    let match = potentialMatches.find((potentialMatch) => potentialMatch.isMatch);
-
-    // define what happens when no route is matched
-    // default to starting route
-    if (!match) match = { route: routes[0], isMatch: true };
-
-    const template = document.querySelector(`template#${match.route.template}`);
     if (!template) return;
     const app = document.querySelector("#app");
     app.textContent = "";
