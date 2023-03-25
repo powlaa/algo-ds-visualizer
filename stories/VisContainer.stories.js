@@ -1,6 +1,7 @@
 import { VisContainer } from "../src/static/js/components/VisContainer";
 import { PopUp } from "../src/static/js/components/PopUp";
 import CodeIcon from "../src/static/img/code-icon.png";
+import HomeIcon from "../src/static/img/homepage-icon.png";
 import InformationIcon from "../src/static/img/information-mark.png";
 import { action } from "@storybook/addon-actions";
 
@@ -8,7 +9,7 @@ export default {
     title: "VisContainer",
 };
 
-const Template = ({ title, locked, arrayInput, startBtnName, codeIcon, informationIcon, headerBackgroundColor, headerColor }) =>
+const Template = ({ title, locked, arrayInput, startBtnName, codeIcon, homeIcon, informationIcon, headerBackgroundColor, headerColor }) =>
     `<vis-container
         style="${`--header-background-color: ${headerBackgroundColor}; --header-color: ${headerColor}`}"
         title="${title}"
@@ -16,6 +17,7 @@ const Template = ({ title, locked, arrayInput, startBtnName, codeIcon, informati
         ${arrayInput ? "array-input" : ""}
         start-btn-name="${startBtnName}"
         code-icon="${codeIcon}"
+        home-icon="${homeIcon}"
         information-icon="${informationIcon}"
     ></vis-container>`;
 
@@ -26,6 +28,7 @@ VisContainerStart.args = {
     locked: false,
     arrayInput: false,
     codeIcon: CodeIcon,
+    homeIcon: HomeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
     hederColor: "#000000",
@@ -38,6 +41,7 @@ VisContainerArrayInput.args = {
     locked: false,
     arrayInput: true,
     codeIcon: CodeIcon,
+    homeIcon: HomeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
     hederColor: "#000000",
@@ -50,6 +54,7 @@ VisContainerLocked.args = {
     locked: true,
     arrayInput: true,
     codeIcon: CodeIcon,
+    homeIcon: HomeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
     hederColor: "#000000",

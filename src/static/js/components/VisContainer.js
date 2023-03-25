@@ -126,6 +126,7 @@ class VisContainer extends HTMLElement {
                     this.hasAttribute("information-icon") ? this.getAttribute("information-icon") : "/static/img/information-mark.png"
                 } "
                 code-icon="${this.hasAttribute("code-icon") ? this.getAttribute("code-icon") : "/static/img/code-icon.png"} "
+                home-icon="${this.hasAttribute("home-icon") ? this.getAttribute("home-icon") : "/static/img/homepage-icon.png"} "
             ></header-element>
             <slot></slot>
             <progress-bar class="progress" ${this.hasAttribute("locked") ? "locked" : ""}></progress-bar>

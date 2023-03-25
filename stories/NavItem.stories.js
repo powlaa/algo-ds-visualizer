@@ -6,10 +6,11 @@ export default {
     title: "NavItem",
 };
 
-const Template = ({ title, img }) => `<nav-item img="${img}" title="${title}"></nav-item>`;
+const Template = ({ title, img, link }) => `<nav-item img="${img}" link="${link}" title="${title}"></nav-item>`;
 
 export const RegularNavItem = Template.bind({});
 RegularNavItem.args = {
     title: "Title",
     img: Heapsort,
+    link: "/",
 };

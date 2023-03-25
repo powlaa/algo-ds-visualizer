@@ -80,6 +80,11 @@ class Header extends HTMLElement {
                     white-space: nowrap;
                     margin: 5px 0 10px 0;
                 }
+                .link__image {
+                    margin: 15px 5px 6px 0;
+                    height: 1.8em;
+                    pointer-events: none;
+                }
                 .panel__button {
                     font-size: 1em;
                     text-align: center;
@@ -129,11 +134,12 @@ class Header extends HTMLElement {
                 }
             </style>
             <div class="container">
-                ${
-                    this.hasAttribute("title-big")
-                        ? `<div class="title">${this.getAttribute("title")}</div>`
-                        : `<div class="panel">
+            ${
+                this.hasAttribute("title-big")
+                    ? `<div class="title">${this.getAttribute("title")}</div>`
+                    : `<div class="panel">
                     <div class="panel__title">
+                        <a href="/" data-link><img class="link__image" src="${this.getAttribute("home-icon")}" /></a>
                         <h2>${this.getAttribute("title")}</h2>
                         <button id="information-btn" class="panel__button panel__button--icon">
                             <img class="button__image" src="${this.getAttribute("information-icon")}" />
@@ -163,7 +169,7 @@ class Header extends HTMLElement {
                     <h1 id="heading" class="explanations__heading"></h1>
                     <div id="description" class="explanations__description"></div>
                 </div>`
-                }
+            }
             </div>
         `;
     }

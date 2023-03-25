@@ -2,6 +2,7 @@ import "../src/static/css/index.css";
 import { Header } from "../src/static/js/components/Header";
 import { PopUp } from "../src/static/js/components/PopUp";
 import CodeIcon from "../src/static/img/code-icon.png";
+import HomeIcon from "../src/static/img/homepage-icon.png";
 import InformationIcon from "../src/static/img/information-mark.png";
 import { action } from "@storybook/addon-actions";
 
@@ -17,6 +18,7 @@ const Template = ({
     arrayInput,
     startBtnName,
     codeIcon,
+    homeIcon,
     informationIcon,
     headerBackgroundColor,
     headerColor,
@@ -25,7 +27,7 @@ const Template = ({
         titleBig ? "title-big" : ""
     } heading="${heading}" description="${description}" ${
         arrayInput ? "array-input" : ""
-    } start-btn-name="${startBtnName}" code-icon="${codeIcon}" information-icon="${informationIcon}"></header-element>`;
+    } start-btn-name="${startBtnName}" code-icon="${codeIcon}" home-icon="${homeIcon}" information-icon="${informationIcon}"></header-element>`;
 
 export const VisHeader = Template.bind({});
 VisHeader.args = {
@@ -34,6 +36,7 @@ VisHeader.args = {
     description: "This is the explanation description",
     startBtnName: "Start",
     codeIcon: CodeIcon,
+    homeIcon: HomeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
     hederColor: "#000000",
@@ -47,6 +50,7 @@ VisHeaderSort.args = {
     arrayInput: true,
     startBtnName: "Sort",
     codeIcon: CodeIcon,
+    homeIcon: HomeIcon,
     informationIcon: InformationIcon,
     headerBackgroundColor: "#ced0c1",
     hederColor: "#000000",
