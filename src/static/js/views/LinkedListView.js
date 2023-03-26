@@ -141,7 +141,7 @@ class LinkedListView extends HTMLElement {
     async _showStep(e) {
         const step = e.detail.step;
         this._linkedListVis.data = step.array;
-        this._pseudocodeMethods.code = this._PSEUDOCODE_METHODS.singly[step.method];
+        this._pseudocodeMethods.code = this._PSEUDOCODE_METHODS.singly[step.method] ?? [];
         this._linkedListVis.reset();
         await this._linkedListVis.updateLinkedList();
         if (step.codeLabel) this._pseudocodeMethods.highlightLine(...step.codeLabel);
@@ -169,7 +169,6 @@ class LinkedListView extends HTMLElement {
                     heading: "",
                     description: "",
                     array: this._linkedList.toArray(),
-                    method: "delete",
                     animation: () => {},
                 },
             ],
