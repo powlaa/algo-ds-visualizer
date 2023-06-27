@@ -38,6 +38,7 @@ class HomeView extends HTMLElement {
                         description="Sorting algorithms are algorithms that put a collection of items into a certain order."
                     >
                         <nav-item title="Heapsort" img="/static/img/heapsort.png" link="/heapsort"></nav-item>
+                        <nav-item title="Quicksort" img="/static/img/heapsort.png" link="/quicksort"></nav-item>
                     </category-card>
                     <category-card
                         class="category"
@@ -45,6 +46,7 @@ class HomeView extends HTMLElement {
                         description="Pathfinding algorithms are a set of techniques used to find the shortest path between two points in a graph or network."
                     >
                         <nav-item title="Dijkstra" img="/static/img/dijkstra.png" link="/dijkstra"></nav-item>
+                        <nav-item title="A*" img="/static/img/dijkstra.png" link="/astar"></nav-item>
                     </category-card>
                 </div>
                 <div slot="right" class="content__right">

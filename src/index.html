@@ -13,6 +13,8 @@
 
         <script src="/static/js/views/HeapsortView.js"></script>
         <script src="/static/js/views/DijkstraView.js"></script>
+        <script src="/static/js/views/QuickSortView.js"></script>
+        <script src="/static/js/views/AStarview.js"></script>
         <script src="/static/js/views/LinkedListView.js"></script>
         <script src="/static/js/views/HomeView.js"></script>
         <script src="/static/js/components/Header.js"></script>
@@ -41,6 +43,12 @@
         </template>
         <template id="dijkstra-view">
             <dijkstra-view popup-template-id="dijkstra-popup-content" control-template-id="graph-control-explanations"></dijkstra-view>
+        </template>
+        <template id="quicksort-view">
+            <quicksort-view popup-template-id="quicksort-popup-content" control-template-id="graph-control-explanations"></quicksort-view>
+        </template>
+        <template id="astar-view">
+            <astar-view popup-template-id="astar-popup-content" control-template-id="graph-control-explanations"></astar-view>
         </template>
         <template id="linked-list-view">
             <linked-list-view popup-template-id="linked-list-popup-content"></linked-list-view>
@@ -347,6 +355,14 @@
                 >
                 (last accessed: 20.03.2023)
             </p>
+        </template>
+
+        <template id="quicksort-popup-content">
+            <h2>Quicksort Visualization</h2>
+        </template>
+
+        <template id="astar-popup-content">
+            <h2>Quicksort Visualization</h2>
         </template>
 
         <template id="graph-control-explanations">
