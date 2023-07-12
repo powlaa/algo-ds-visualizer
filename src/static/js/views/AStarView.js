@@ -1,12 +1,40 @@
 class AStarView extends HTMLElement {
     _PSEUDOCODE = [
-        // TODO: Fill Code
+        { code: "<b>A* search</b>(Graph, source)", indent: 0, label: "a-star-search" },
+        { code: "<b>for each</b> node v in Graph", indent: 1, label: "for-each-node" },
+        { code: "dist[v] = infinity", indent: 2, label: "dist-infinity" },
+        { code: "prev[v] = undefined", indent: 2, label: "prev-undefined" },
+        { code: "openSet = {start}", indent: 1, label: "open-set" },
+        { code: "closedSet = {}", indent: 1, label: "closed-set" },
+        { code: "gScore = {start: 0}", indent: 1, label: "g-score" },
+        { code: "fScore = {start: heuristic_cost_estimate(start, goal)}", indent: 1, label: "f-score" },
+        { code: "<b>while</b> openSet is not empty", indent: 1, label: "while-open-set" },
+        { code: "current = node in openSet with lowest fScore", indent: 2, label: "current" },
+        { code: "<b>if</b> current == goal", indent: 2, label: "if-goal" },
+        { code: "path = reconstruct_path(cameFrom, current)", indent: 3, label: "path" },
+        { code: "<b>return</b> path", indent: 3, label: "return" },
+        { code: "openSet.remove(current)", indent: 2, label: "remove-current" },
+        { code: "closedSet.add(current)", indent: 2, label: "add-current" },
+        { code: "<b>for each</b> neighbor in neighbors(current)", indent: 2, label: "for-each-neighbor" },
+        { code: "<b>if</b> neighbor in closedSet", indent: 3, label: "if-neighbor-in-closed-set" },
+        { code: "continue", indent: 4, label: "continue" },
+        { code: "tentative_gScore = gScore[current] + dist_between(current, neighbor)", indent: 3, label: "tentative-g-score" },
+        { code: "<b>if</b> neighbor not in openSet", indent: 3, label: "if-neighbor-not-in-open-set" },
+        { code: "openSet.add(neighbor)", indent: 4, label: "add-neighbor" },
+        { code: "<b>else if</b> tentative_gScore >= gScore[neighbor]", indent: 3, label: "else-if-tentative-g-score" },
+        { code: "continue", indent: 4, label: "continue" },
+        { code: "cameFrom[neighbor] = current", indent: 3, label: "came-from" },
+        { code: "gScore[neighbor] = tentative_gScore", indent: 3, label: "update-g-score" },
+        { code: "fScore[neighbor] = gScore[neighbor] + heuristic_cost_estimate(neighbor, goal)", indent: 3, label: "update-f-score" },
+        { code: "<b>return</b> null", indent: 1, label: "return-null" },
     ];
+    
 
     _nodes = [];
     _edges = [];
 
     _selectedNode = null;
+    _endNode = null;
 
     constructor() {
         super();
@@ -21,19 +49,23 @@ class AStarView extends HTMLElement {
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
-        this._graphVis.addEventListener("node-selected", this._nodeSelected.bind(this));
+        this._graphVis.addEventListener("node-selected", (e) => (this._selectedNode = e.detail.node));
         this._graphVis.addEventListener("node-deselected", () => (this._selectedNode = null));
+
+        this._graphVis.addEventListener("end-selected", (e) => (this._endNode = e.detail.node));
+        this._graphVis.addEventListener("end-deselected", () => (this._endNode = null));
+
         this._graphVis.addEventListener("update-nodes", (e) => {
             this._nodes = e.detail.nodes;
-            this._resetDijkstra();
+            this._resetAStar();
         });
         this._graphVis.addEventListener("update-edges", (e) => {
             this._edges = e.detail.edges;
-            this._resetDijkstra();
+            this._resetAStar();
         });
         this._graphVis.addEventListener("error", (e) => alert(e.detail.message));
         this._graphVis.addEventListener("delete", () => {
-            this._resetDijkstra();
+            this._resetAStar();
             this._nodes = [];
             this._edges = [];
             this._graphVis.showGraph(this._nodes, this._edges);
@@ -41,8 +73,8 @@ class AStarView extends HTMLElement {
         this._graphVis.addEventListener("help", () => this._controlPopup.toggle());
 
         this._visContainer.addEventListener("start", () => {
-            if (this._selectedNode) this._runDijkstra(this._selectedNode.id);
-            else alert("Please select a node to start from in the graph");
+            if (this._selectedNode && this._endNode) this._runAStar(this._selectedNode.id, this._endNode.id);
+            else alert("Please select a node to start and a node to end from in the graph");
         });
 
         this._visContainer.addEventListener("show-step", (e) => {
@@ -53,7 +85,7 @@ class AStarView extends HTMLElement {
 
         this._showExampleGraph();
 
-        this._runDijkstra(this._nodes[0].id);
+        this._runAStar(this._nodes[0].id, this._nodes[this._nodes.length-1].id);
     }
 
     static get observedAttributes() {
@@ -71,16 +103,10 @@ class AStarView extends HTMLElement {
 
     _nodeSelected(e) {
         this._selectedNode = e.detail.node;
-        if (this._visContainer.currentStepIndex === this._visContainer.steps.length - 1) {
-            const path = this._tracePath(
-                this._visContainer.steps[this._visContainer.currentStepIndex].shortestDistances,
-                this._start,
-                this._selectedNode.id
-            );
+    }
 
-            this._showPathInTable(path, this._visContainer.steps, this._visContainer.currentStepIndex);
-            this._graphVis.highlightEdges(...path);
-        }
+    _endSelected(e) {
+        this._endNode = e.detail.node;
     }
 
     _showExampleGraph() {
@@ -237,13 +263,14 @@ class AStarView extends HTMLElement {
         this._updateTable(steps, currentStepIndex, highlights);
     }
 
-    _runDijkstra(start) {
+    _runAStar(start, end) {
         this._start = start;
+        this._end = end;
         this._showTable(start);
-        this._visContainer.updateSteps(this._astar(start), { locked: false, currentStep: 0 });
+        this._visContainer.updateSteps(this._astar(start, end), { locked: false, currentStep: 0 });
     }
 
-    _resetDijkstra() {
+    _resetAStar() {
         this._visContainer.updateSteps([], { locked: true });
         this._visContainer.reset();
         this._tableVis.reset();
@@ -251,7 +278,7 @@ class AStarView extends HTMLElement {
         this._highlightPseudocode();
     }
 
-    _astar(start) {
+    _astar(start, end) {
         var map = this._formatGraph(this._nodes, this._edges);
 
         var visited = [];
@@ -265,9 +292,9 @@ class AStarView extends HTMLElement {
             shortestDistances: { ...shortestDistances },
             currentNode: "INIT",
             visited: [],
-            heading: "Init Dijkstra Algorithm at start node " + this._getNodeTitle(start),
-            description: `Calculate the shortest distance from the start node to all other nodes in the graph`,
-            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "dist-source", "s-graph", "while-s", "u-min-dist", "remove-u"],
+            heading: "Init A* Algorithm at start node " + this._getNodeTitle(start) + " and end node " + this._getNodeTitle(end),
+            description: `Calculate the shortest distance from the start node to the end node`,
+            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "open-set", "closed-set"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
                 this._highlightPseudocode(steps[currentStepIndex].codeLabel);
@@ -365,8 +392,8 @@ class AStarView extends HTMLElement {
             shortestDistances: { ...shortestDistances },
             currentNode: steps[steps.length - 1].currentNode,
             visited: [...visited],
-            heading: "Dijkstra is done",
-            description: "Select a node to show the shortest path from the start node",
+            heading: "A* is done",
+            description: "",
             codeLabel: ["return"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
@@ -377,7 +404,8 @@ class AStarView extends HTMLElement {
         });
 
         this._graphVis.markNodes(start);
-
+        this._graphVis.markEnd(end);
+        
         return steps;
     }
 
@@ -443,7 +471,7 @@ class AStarView extends HTMLElement {
                 }
             </style>
 
-            <vis-container title="Dijkstra" locked popup-template-id="${this.getAttribute("popup-template-id")}">
+            <vis-container title="A*" locked popup-template-id="${this.getAttribute("popup-template-id")}">
                 <split-layout class="content" top-bottom-right>
                     <graph-creator class="content__graph-creator" slot="left" no-negative-edge-weights></graph-creator>
                     <table-display class="content__table-display" slot="top-right"></table-display>
