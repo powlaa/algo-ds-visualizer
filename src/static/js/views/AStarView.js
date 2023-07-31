@@ -288,6 +288,21 @@ class AStarView extends HTMLElement {
         var vertex;
         var steps = [];
 
+        // Calculate the heuristics for node to the end node
+        var calculateHeuristic = (node) => {
+            const dx = node.x - map.at(end).x;
+            const dy = node.y - map.at(end).y;
+            return Math.round(Math.sqrt(dx * dx + dy * dy));
+        };
+
+        var heuristics = {};
+        for (var node of map) {
+            console.log(node)
+            heuristics[node.id] = calculateHeuristic(node);
+        }
+
+        console.log(heuristics)
+
         steps.push({
             shortestDistances: { ...shortestDistances },
             currentNode: "INIT",

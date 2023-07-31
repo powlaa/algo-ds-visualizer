@@ -106,6 +106,7 @@ class GraphCreator extends HTMLElement {
         this.markEdges();
         this.highlightNodes();
         this.markNodes();
+        this.markEnd();
     }
 
     highlightEdges(...ids) {
@@ -363,6 +364,7 @@ class GraphCreator extends HTMLElement {
             this._dragLine.classed("hidden", true);
         }
         this._state.graphMouseDown = false;
+        this.dispatchEvent(this._updateNodes(this._nodes));
     }
 
     // keydown on main svg
