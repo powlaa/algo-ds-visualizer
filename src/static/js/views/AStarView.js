@@ -113,12 +113,12 @@ class AStarView extends HTMLElement {
         const xLoc = this._graphVis.xLoc;
         const yLoc = this._graphVis.yLoc;
         this._nodes = [
-            { title: "A", id: 0, x: xLoc - 200, y: yLoc + 100 },
+            { title: "A", id: 0, x: xLoc - 200, y: yLoc },
             { title: "B", id: 1, x: xLoc, y: yLoc },
             { title: "C", id: 2, x: xLoc, y: yLoc + 200 },
             { title: "D", id: 3, x: xLoc + 200, y: yLoc + 200 },
             { title: "E", id: 4, x: xLoc + 200, y: yLoc },
-            { title: "F", id: 5, x: xLoc + 400, y: yLoc + 100 },
+            { title: "F", id: 5, x: xLoc + 400, y: yLoc + 200 },
         ];
         this._edges = [
             { source: this._nodes[0], target: this._nodes[1], weight: 5 },
@@ -292,7 +292,7 @@ class AStarView extends HTMLElement {
         var calculateHeuristic = (node) => {
             const dx = node.x - map.at(end).x;
             const dy = node.y - map.at(end).y;
-            return Math.round(Math.sqrt(dx * dx + dy * dy));
+            return Math.round(Math.sqrt(dx * dx + dy * dy) / 100);
         };
 
         var heuristics = {};
