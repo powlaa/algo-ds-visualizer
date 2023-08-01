@@ -326,6 +326,7 @@ class GraphCreator extends HTMLElement {
             d.x += e.dx;
             d.y += e.dy;
             this._updateGraph();
+            this.dispatchEvent(this._updateNodes(this._nodes));
         }
     }
 
@@ -364,7 +365,6 @@ class GraphCreator extends HTMLElement {
             this._dragLine.classed("hidden", true);
         }
         this._state.graphMouseDown = false;
-        this.dispatchEvent(this._updateNodes(this._nodes));
     }
 
     // keydown on main svg
