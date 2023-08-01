@@ -80,7 +80,8 @@ class ProgressBar extends HTMLElement {
     }
 
     _updateStepDisplay(totalSteps) {
-        this.shadowRoot.querySelector("#step-display").innerHTML = this._slider.value + "/" + (totalSteps ?? this.totalSteps);
+        this.shadowRoot.querySelector("#step-display").innerHTML =
+            this._slider.value + "/" + (Number.isInteger(totalSteps) ? totalSteps : this.totalSteps);
         this._slider.style.setProperty("--value", this._slider.value);
     }
 
