@@ -52,8 +52,8 @@ html {
 
     --graph-mark-stroke: var(--green);
     --graph-mark-fill: var(--green-background);
-    --graph-highlight-stroke: var(--red);
-    --graph-highlight-fill: var(--red-background);
+    --graph-highlight-stroke: var(--primary-background-color-darker-darker);
+    --graph-highlight-fill: var(--primary-background-color-lighter);
     --graph-link-highlight: rgba(166, 20, 28, 0.7);
     --graph-link-mark: rgba(12, 166, 50, 0.7);
 
