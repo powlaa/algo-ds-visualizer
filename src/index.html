@@ -48,7 +48,7 @@
             <quicksort-view popup-template-id="quicksort-popup-content" control-template-id="graph-control-explanations"></quicksort-view>
         </template>
         <template id="astar-view">
-            <astar-view popup-template-id="astar-popup-content" control-template-id="graph-control-explanations"></astar-view>
+            <astar-view popup-template-id="astar-popup-content" control-template-id="aStar-control-explanations"></astar-view>
         </template>
         <template id="linked-list-view">
             <linked-list-view popup-template-id="linked-list-popup-content"></linked-list-view>
@@ -366,6 +366,45 @@
         </template>
 
         <template id="graph-control-explanations">
+            <style>
+                p {
+                    margin: 0 0 5px 0;
+                }
+                b {
+                    margin: 0 8px 5px 0;
+                }
+                kbd {
+                    background-color: #eee;
+                    border-radius: 3px;
+                    border: 1px solid #b4b4b4;
+                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+                    color: #333;
+                    display: inline-block;
+                    font-size: 0.85em;
+                    font-weight: 700;
+                    line-height: 1;
+                    padding: 2px 4px;
+                    white-space: nowrap;
+                }
+            </style>
+            <b>Select a startnode:</b>
+            <p>Click on a node until the color changes</p>
+            <b>Add a Node:</b>
+            <p>Hold <kbd>Shift</kbd> and click on the canvas</p>
+            <b>Delete a Node:</b>
+            <p>Select a node and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
+            <b>Add an Edge:</b>
+            <p>
+                Hold <kbd>Shift</kbd> and drag from one node to another node, to add an undirected edge add a second edge in the other direction
+                between the nodes
+            </p>
+            <b>Change Edge Weight:</b>
+            <p>Hold <kbd>Shift</kbd> and click on an edge</p>
+            <b>Delete an Edge:</b>
+            <p>Select an edge and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
+        </template>
+
+        <template id="aStar-control-explanations">
             <style>
                 p {
                     margin: 0 0 5px 0;

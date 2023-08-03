@@ -33,7 +33,7 @@ class AStarView extends HTMLElement {
     _nodes = [];
     _edges = [];
 
-    _selectedNode = null;
+    _startNode = null;
     _endNode = null;
 
     constructor() {
@@ -49,8 +49,8 @@ class AStarView extends HTMLElement {
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
-        this._graphVis.addEventListener("node-selected", (e) => (this._selectedNode = e.detail.node));
-        this._graphVis.addEventListener("node-deselected", () => (this._selectedNode = null));
+        this._graphVis.addEventListener("start-selected", (e) => (this._startNode = e.detail.node));
+        this._graphVis.addEventListener("start-deselected", () => (this._startNode = null));
 
         this._graphVis.addEventListener("end-selected", (e) => (this._endNode = e.detail.node));
         this._graphVis.addEventListener("end-deselected", () => (this._endNode = null));
@@ -73,7 +73,7 @@ class AStarView extends HTMLElement {
         this._graphVis.addEventListener("help", () => this._controlPopup.toggle());
 
         this._visContainer.addEventListener("start", () => {
-            if (this._selectedNode && this._endNode) this._runAStar(this._selectedNode.id, this._endNode.id);
+            if (this._startNode && this._endNode) this._runAStar(this._startNode.id, this._endNode.id);
             else alert("Please select a node to start and a node to end from in the graph");
         });
 
@@ -102,7 +102,7 @@ class AStarView extends HTMLElement {
     }
 
     _nodeSelected(e) {
-        this._selectedNode = e.detail.node;
+        this._startNode = e.detail.node;
     }
 
     _endSelected(e) {
@@ -288,21 +288,6 @@ class AStarView extends HTMLElement {
         var vertex;
         var steps = [];
 
-        // Calculate the heuristics for node to the end node
-        var calculateHeuristic = (node) => {
-            const dx = node.x - map.at(end).x;
-            const dy = node.y - map.at(end).y;
-            return Math.round(Math.sqrt(dx * dx + dy * dy) / 100);
-        };
-
-        var heuristics = {};
-        for (var node of map) {
-            console.log(node)
-            heuristics[node.id] = calculateHeuristic(node);
-        }
-
-        console.log(heuristics)
-
         steps.push({
             shortestDistances: { ...shortestDistances },
             currentNode: "INIT",
@@ -318,15 +303,47 @@ class AStarView extends HTMLElement {
             },
         });
 
+        // Calculate the heuristics for node to the end node
+        var calculateHeuristic = (node) => {
+            const dx = node.x - map.at(end).x;
+            const dy = node.y - map.at(end).y;
+            return Math.round(Math.sqrt(dx * dx + dy * dy) / 100);
+        };
+
+        var heuristics = {};
+        for (var node of map) {
+            heuristics[node.id] = calculateHeuristic(node);
+            console.log(node)
+        }
+
+        console.log(heuristics)
+
+        steps.push({
+            shortestDistances: { ...shortestDistances },
+            currentNode: "TEST",
+            visited: [],
+            heading: "Init A* Algorithm at start node " + this._getNodeTitle(start) + " and end node " + this._getNodeTitle(end),
+            description: `Calculate the shortest distance from the start node to the end node`,
+            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "open-set", "closed-set"],
+            animation: (steps, currentStepIndex) => {
+                this._updateTable(steps, currentStepIndex);
+                this._highlightPseudocode(steps[currentStepIndex].codeLabel);
+                this._graphVis.highlightNodes();
+                this._graphVis.highlightEdges();
+            },
+        });
+
         while (
             (vertex = unvisited
                 .sort((a, b) => {
-                    if (b && shortestDistances[a].cost > shortestDistances[b].cost) return 1;
-                    if (b && shortestDistances[a].cost < shortestDistances[b].cost) return -1;
-                    return 0;
+                    // Sort the unvisited nodes by the estimated total cost (heuristic + actual cost) to reach the end node
+                    var costA = shortestDistances[a].cost + heuristics[a];
+                    var costB = shortestDistances[b].cost + heuristics[b];
+                    return costA - costB;
                 })
                 .shift()) >= 0
         ) {
+            if (vertex === end) break;
             if (visited.includes(vertex)) continue;
             // Explore unvisited neighbors
             var neighbors = map.find((n) => n.id === vertex)?.edges.filter((n) => !visited.includes(n.vertex));

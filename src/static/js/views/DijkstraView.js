@@ -35,8 +35,8 @@ class DijkstraView extends HTMLElement {
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
-        this._graphVis.addEventListener("node-selected", this._nodeSelected.bind(this));
-        this._graphVis.addEventListener("node-deselected", () => (this._selectedNode = null));
+        this._graphVis.addEventListener("start-selected", this._nodeSelected.bind(this));
+        this._graphVis.addEventListener("start-deselected", () => (this._selectedNode = null));
         this._graphVis.addEventListener("update-nodes", (e) => {
             this._nodes = e.detail.nodes;
             this._resetDijkstra();

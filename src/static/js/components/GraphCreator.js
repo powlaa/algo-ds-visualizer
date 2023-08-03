@@ -5,7 +5,7 @@ Copyright (c) 2014 Colorado Reed
 
 class GraphCreator extends HTMLElement {
     _CONSTS = {
-        selectedClass: "selected",
+        selectedStartClass: "selectedStart",
         selectedEndClass: "selectedEnd",
         connectClass: "connect-node",
         circleGClass: "conceptG",
@@ -18,8 +18,8 @@ class GraphCreator extends HTMLElement {
     };
     _idct = 0;
 
-    _nodeSelected = (node) => new CustomEvent("node-selected", { detail: { node } });
-    _nodeDeselected = new CustomEvent("node-deselected");
+    _startSelected = (node) => new CustomEvent("start-selected", { detail: { node } });
+    _startDeselected = new CustomEvent("start-deselected");
     _endSelected = (node) => new CustomEvent("end-selected", { detail: { node } });
     _endDeselected = new CustomEvent("end-deselected");
     _updateNodes = (nodes) => new CustomEvent("update-nodes", { detail: { nodes } });
@@ -27,7 +27,7 @@ class GraphCreator extends HTMLElement {
     _error = (message) => new CustomEvent("error", { detail: { message } });
 
     _state = {
-        selectedNode: null,
+        startNode: null,
         endNode: null,
         selectedEdge: null,
         mouseDownNode: null,
@@ -373,19 +373,19 @@ class GraphCreator extends HTMLElement {
         if (this._state.lastKeyDown !== -1) return;
 
         this._state.lastKeyDown = e.keyCode;
-        var selectedNode = this._state.selectedNode,
+        var startNode = this._state.startNode,
             selectedEdge = this._state.selectedEdge;
 
         switch (e.keyCode) {
             case this._CONSTS.BACKSPACE_KEY:
             case this._CONSTS.DELETE_KEY:
                 e.preventDefault();
-                if (selectedNode) {
-                    this.nodes.splice(this.nodes.indexOf(selectedNode), 1);
-                    this._spliceLinksForNode(selectedNode);
+                if (startNode) {
+                    this.nodes.splice(this.nodes.indexOf(startNode), 1);
+                    this._spliceLinksForNode(startNode);
                     this.dispatchEvent(this._updateNodes(this._nodes));
                     this.dispatchEvent(this._updateEdges(this._edges));
-                    this._state.selectedNode = null;
+                    this._state.startNode = null;
                     this._updateGraph();
                 } else if (selectedEdge) {
                     this._edges.splice(this.edges.indexOf(selectedEdge), 1);
@@ -450,12 +450,12 @@ class GraphCreator extends HTMLElement {
                     if (this._state.selectedEdge) {
                         this._removeSelectFromEdge();
                     }
-                    var prevNode = this._state.selectedNode;
+                    var prevNode = this._state.startNode;
 
                     if (!prevNode || prevNode.id !== d.id) {
-                        this._replaceSelectNode(d3node, d);
+                        this._replaceStartNode(d3node, d);
                     } else {
-                        this._removeSelectFromNode(true);
+                        this._removeStartFromNode(true);
                     }
                 }
             }
@@ -494,8 +494,8 @@ class GraphCreator extends HTMLElement {
         this._state.mouseDownLink = d;
         e.stopPropagation();
 
-        if (this._state.selectedNode) {
-            this._removeSelectFromNode(true);
+        if (this._state.startNode) {
+            this._removeStartFromNode(true);
         }
 
         var prevEdge = this._state.selectedEdge;
@@ -562,13 +562,13 @@ class GraphCreator extends HTMLElement {
         this._state.selectedEdge = edgeData;
     }
 
-    _replaceSelectNode(d3Node, nodeData) {
-        d3Node.classed(this._CONSTS.selectedClass, true);
-        if (this._state.selectedNode) {
-            this._removeSelectFromNode(false);
+    _replaceStartNode(d3Node, nodeData) {
+        d3Node.classed(this._CONSTS.selectedStartClass, true);
+        if (this._state.startNode) {
+            this._removeStartFromNode(false);
         }
-        this._state.selectedNode = nodeData;
-        this.dispatchEvent(this._nodeSelected(nodeData));
+        this._state.startNode = nodeData;
+        this.dispatchEvent(this._startSelected(nodeData));
     }
 
     _replaceEndNode(d3Node, nodeData) {
@@ -580,16 +580,16 @@ class GraphCreator extends HTMLElement {
         this.dispatchEvent(this._endSelected(nodeData));
     }
 
-    _removeSelectFromNode(notify) {
-        this._circles.filter((cd) => cd.id === this._state.selectedNode.id).classed(this._CONSTS.selectedClass, false);
-        this._state.selectedNode = null;
-        if (notify) this.dispatchEvent(this._nodeDeselected);
+    _removeStartFromNode(notify) {
+        this._circles.filter((cd) => cd.id === this._state.startNode.id).classed(this._CONSTS.selectedStartClass, false);
+        this._state.startNode = null;
+        if (notify) this.dispatchEvent(this._startDeselected);
     }
 
     _removeEndFromNode(notify) {
         this._circles.filter((cd) => cd.id === this._state.endNode.id).classed(this._CONSTS.selectedEndClass, false);
         this._state.endNode = null;
-        if (notify) this.dispatchEvent(this._nodeDeselected);
+        if (notify) this.dispatchEvent(this._startDeselected);
     }
 
     _removeSelectFromEdge() {
@@ -784,7 +784,7 @@ class GraphCreator extends HTMLElement {
                     fill: #ddd;
                 }
 
-                g.selected circle {
+                g.selectedStart circle {
                     fill: #ccffcc;
                 }
 
