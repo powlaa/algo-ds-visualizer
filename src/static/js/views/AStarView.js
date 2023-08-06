@@ -4,7 +4,7 @@ class AStarView extends HTMLElement {
         { code: "<b>for each</b> node v in Graph", indent: 1, label: "for-each-node" },
         { code: "dist[v] = infinity", indent: 2, label: "dist-infinity" },
         { code: "prev[v] = undefined", indent: 2, label: "prev-undefined" },
-        { code: "heuristic[v] = euclidian_dist_between(v, target)", indent: 2, label: "prev-undefined" },
+        { code: "heuristic[v] = euclidian_dist_between(v, target)", indent: 2, label: "heuristic" },
         { code: "dist[source] = 0", indent: 1, label: "dist-source" },
         { code: "S = the set of all nodes in Graph", indent: 1, label: "s-graph" },
         { code: "<b>while</b> S is not empty", indent: 1, label: "while-s" },
@@ -21,6 +21,7 @@ class AStarView extends HTMLElement {
 
     _nodes = [];
     _edges = [];
+    heuristics = [];
 
     _startNode = null;
     _endNode = null;
@@ -149,12 +150,12 @@ class AStarView extends HTMLElement {
                         value = "{}";
                         break;
                     case "unvisited":
-                        value = `{${this._nodes.map((n) => n.title).toString()}}`;
+                        value = `{${this._nodes.map((n) => n.title.match(/^[^(]+/)[0]).toString()}}`;
                         break;
-                    default:
-                        value = row.shortestDistances[column.id]
-                            ? row.shortestDistances[column.id].cost + (this._getNodeTitle(row.shortestDistances[column.id].vertex).sub() ?? "")
-                            : "∞";
+                        default:
+                            value = row.shortestDistances[column.id]
+                                ? row.shortestDistances[column.id].cost + (this._getNodeTitle(row.shortestDistances[column.id].vertex).match(/^[^(]+/)[0].sub() ?? "")
+                                : "∞";                        
                 }
                 return {
                     column: column.id,
@@ -202,20 +203,20 @@ class AStarView extends HTMLElement {
                     case "visited":
                         if (row.visited && row.currentNode !== "INIT") {
                             if (row.visited.length > 0)
-                                value = `{${row.visited.map((n) => this._getNodeTitle(n) ?? n)},${
-                                    this._getNodeTitle(row.currentNode) ?? row.currentNode
+                                value = `{${row.visited.map((n) => this._getNodeTitle(n).match(/^[^(]+/) ?? n)},${
+                                    this._getNodeTitle(row.currentNode).match(/^[^(]+/) ?? row.currentNode
                                 }}`;
-                            else value = `{${this._getNodeTitle(row.currentNode) ?? row.currentNode}}`;
+                            else value = `{${this._getNodeTitle(row.currentNode).match(/^[^(]+/) ?? row.currentNode}}`;
                         } else value = "{}";
                         break;
                     case "unvisited":
                         value = `{${
-                            row.visited ? this._nodes.filter((n) => row.visited.indexOf(n.id) < 0 && n.id != row.currentNode).map((n) => n.title) : ""
+                            row.visited ? this._nodes.filter((n) => row.visited.indexOf(n.id) < 0 && n.id != row.currentNode).map((n) => n.title.match(/^[^(]+/)) : ""
                         }}`;
                         break;
                     default:
                         value = row.shortestDistances[column.id]
-                            ? row.shortestDistances[column.id].cost + (this._getNodeTitle(row.shortestDistances[column.id].vertex).sub() ?? "")
+                            ? row.shortestDistances[column.id].cost + "+(" + this.heuristics[column.id] + ")" + (this._getNodeTitle(row.shortestDistances[column.id].vertex).match(/^[^(]+/)[0].sub() ?? "")
                             : "∞";
                 }
                 return {
@@ -255,8 +256,8 @@ class AStarView extends HTMLElement {
     _runAStar(start, end) {
         this._start = start;
         this._end = end;
-        this._showTable(start);
         this._visContainer.updateSteps(this._astar(start, end), { locked: false, currentStep: 0 });
+        this._showTable(start);
     }
 
     _resetAStar() {
@@ -284,14 +285,14 @@ class AStarView extends HTMLElement {
             return Math.round(Math.sqrt(dx * dx + dy * dy) / 100);
         };
 
-        var heuristics = {};
         for (var node of map) {
-            heuristics[node.id] = calculateHeuristic(node);
-            node.title += "(" + heuristics[node.id] + ")"
+            this.heuristics[node.id] = calculateHeuristic(node);
+            node.title = node.title.match(/^[^(]+/)[0]
+            node.title += "(" + this.heuristics[node.id] + ")"
             console.log(node)
         }
 
-        console.log(heuristics)
+        console.log(this.heuristics)
 
         steps.push({
             shortestDistances: { ...shortestDistances },
@@ -299,7 +300,7 @@ class AStarView extends HTMLElement {
             visited: [],
             heading: "Init A* Algorithm at start node " + this._getNodeTitle(start) + " and end node " + this._getNodeTitle(end),
             description: `Calculate the shortest distance from the start node to the end node. The number in brackets shows the euclidian distance to the end node`,
-            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "open-set", "closed-set"],
+            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "heuristic", "dist-source", "s-graph", "while-s", "u-min-dist", "remove-u"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
                 this._highlightPseudocode(steps[currentStepIndex].codeLabel);
@@ -312,8 +313,8 @@ class AStarView extends HTMLElement {
             (vertex = unvisited
                 .sort((a, b) => {
                     // Sort the unvisited nodes by the estimated total cost (heuristic + actual cost) to reach the end node
-                    var costA = shortestDistances[a].cost + heuristics[a];
-                    var costB = shortestDistances[b].cost + heuristics[b];
+                    var costA = shortestDistances[a].cost + this.heuristics[a];
+                    var costB = shortestDistances[b].cost + this.heuristics[b];
                     return costA - costB;
                 })
                 .shift()) >= 0
@@ -335,7 +336,7 @@ class AStarView extends HTMLElement {
                     currentNode: vertex,
                     visited: [...visited],
                     heading: "Choose next node: " + vertexName,
-                    description: `The next node is the one with the smallest cost, which is ${vertexName} with a cost of ${costToVertex}`,
+                    description: `The next node is the one with the smallest total cost, which is ${vertexName.match(/^[^(]+/)} with a cost of ${costToVertex} + a heuristic distance of ${this.heuristics[vertex]} = total cost of ${costToVertex + this.heuristics[vertex]}`,
                     codeLabel: ["while-s", "u-min-dist", "remove-u"],
                     animation: (steps, currentStepIndex) => {
                         this._updateTable(steps, currentStepIndex, [
@@ -400,15 +401,17 @@ class AStarView extends HTMLElement {
             currentNode: steps[steps.length - 1].currentNode,
             visited: [...visited],
             heading: "A* is done",
-            description: "",
+            description: "The shortest path from " + this._getNodeTitle(start).match(/^[^(]+/) + " to " + this._getNodeTitle(end).match(/^[^(]+/)[0] + " has a total cost of " + shortestDistances[end].cost ,
             codeLabel: ["return"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
                 this._graphVis.highlightNodes();
-                this._graphVis.highlightEdges();
+                //this._graphVis.highlightEdges(...this._tracePath({ ...shortestDistances }, start, steps[currentStepIndex].currentNode, to));
                 this._highlightPseudocode(steps[currentStepIndex].codeLabel);
             },
         });
+
+        console.log(shortestDistances)
 
         this._graphVis.markNodes(start);
         this._graphVis.markEnd(end);
