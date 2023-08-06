@@ -1,32 +1,21 @@
 class AStarView extends HTMLElement {
     _PSEUDOCODE = [
-        { code: "<b>A* search</b>(Graph, source)", indent: 0, label: "a-star-search" },
+        { code: "<b>A* search</b>(Graph, source, target)", indent: 0, label: "a-star-search" },
         { code: "<b>for each</b> node v in Graph", indent: 1, label: "for-each-node" },
         { code: "dist[v] = infinity", indent: 2, label: "dist-infinity" },
         { code: "prev[v] = undefined", indent: 2, label: "prev-undefined" },
-        { code: "openSet = {start}", indent: 1, label: "open-set" },
-        { code: "closedSet = {}", indent: 1, label: "closed-set" },
-        { code: "gScore = {start: 0}", indent: 1, label: "g-score" },
-        { code: "fScore = {start: heuristic_cost_estimate(start, goal)}", indent: 1, label: "f-score" },
-        { code: "<b>while</b> openSet is not empty", indent: 1, label: "while-open-set" },
-        { code: "current = node in openSet with lowest fScore", indent: 2, label: "current" },
-        { code: "<b>if</b> current == goal", indent: 2, label: "if-goal" },
-        { code: "path = reconstruct_path(cameFrom, current)", indent: 3, label: "path" },
-        { code: "<b>return</b> path", indent: 3, label: "return" },
-        { code: "openSet.remove(current)", indent: 2, label: "remove-current" },
-        { code: "closedSet.add(current)", indent: 2, label: "add-current" },
-        { code: "<b>for each</b> neighbor in neighbors(current)", indent: 2, label: "for-each-neighbor" },
-        { code: "<b>if</b> neighbor in closedSet", indent: 3, label: "if-neighbor-in-closed-set" },
-        { code: "continue", indent: 4, label: "continue" },
-        { code: "tentative_gScore = gScore[current] + dist_between(current, neighbor)", indent: 3, label: "tentative-g-score" },
-        { code: "<b>if</b> neighbor not in openSet", indent: 3, label: "if-neighbor-not-in-open-set" },
-        { code: "openSet.add(neighbor)", indent: 4, label: "add-neighbor" },
-        { code: "<b>else if</b> tentative_gScore >= gScore[neighbor]", indent: 3, label: "else-if-tentative-g-score" },
-        { code: "continue", indent: 4, label: "continue" },
-        { code: "cameFrom[neighbor] = current", indent: 3, label: "came-from" },
-        { code: "gScore[neighbor] = tentative_gScore", indent: 3, label: "update-g-score" },
-        { code: "fScore[neighbor] = gScore[neighbor] + heuristic_cost_estimate(neighbor, goal)", indent: 3, label: "update-f-score" },
-        { code: "<b>return</b> null", indent: 1, label: "return-null" },
+        { code: "heuristic[v] = euclidian_dist_between(v, target)", indent: 2, label: "prev-undefined" },
+        { code: "dist[source] = 0", indent: 1, label: "dist-source" },
+        { code: "S = the set of all nodes in Graph", indent: 1, label: "s-graph" },
+        { code: "<b>while</b> S is not empty", indent: 1, label: "while-s" },
+        { code: "u = node in S with min (dist[u] + heuristic[u])", indent: 2, label: "u-min-dist" },
+        { code: "remove u from S", indent: 2, label: "remove-u" },
+        { code: "<b>for each</b> neighbor v of u", indent: 2, label: "for-each-neighbor" },
+        { code: "cost = dist[u] + dist_between(u, v)", indent: 3, label: "cost" },
+        { code: "<b>if</b> cost < dist[v]", indent: 3, label: "if-cost" },
+        { code: "dist[v] = cost", indent: 4, label: "dist-cost" },
+        { code: "prev[v] = u", indent: 4, label: "prev-u" },
+        { code: "<b>return</b> prev[]", indent: 1, label: "return" },
     ];
     
 
@@ -288,21 +277,6 @@ class AStarView extends HTMLElement {
         var vertex;
         var steps = [];
 
-        steps.push({
-            shortestDistances: { ...shortestDistances },
-            currentNode: "INIT",
-            visited: [],
-            heading: "Init A* Algorithm at start node " + this._getNodeTitle(start) + " and end node " + this._getNodeTitle(end),
-            description: `Calculate the shortest distance from the start node to the end node`,
-            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "open-set", "closed-set"],
-            animation: (steps, currentStepIndex) => {
-                this._updateTable(steps, currentStepIndex);
-                this._highlightPseudocode(steps[currentStepIndex].codeLabel);
-                this._graphVis.highlightNodes();
-                this._graphVis.highlightEdges();
-            },
-        });
-
         // Calculate the heuristics for node to the end node
         var calculateHeuristic = (node) => {
             const dx = node.x - map.at(end).x;
@@ -313,6 +287,7 @@ class AStarView extends HTMLElement {
         var heuristics = {};
         for (var node of map) {
             heuristics[node.id] = calculateHeuristic(node);
+            node.title += "(" + heuristics[node.id] + ")"
             console.log(node)
         }
 
@@ -320,10 +295,10 @@ class AStarView extends HTMLElement {
 
         steps.push({
             shortestDistances: { ...shortestDistances },
-            currentNode: "TEST",
+            currentNode: "INIT",
             visited: [],
             heading: "Init A* Algorithm at start node " + this._getNodeTitle(start) + " and end node " + this._getNodeTitle(end),
-            description: `Calculate the shortest distance from the start node to the end node`,
+            description: `Calculate the shortest distance from the start node to the end node. The number in brackets shows the euclidian distance to the end node`,
             codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "open-set", "closed-set"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
