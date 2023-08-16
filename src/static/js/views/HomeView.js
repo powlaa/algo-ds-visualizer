@@ -38,7 +38,7 @@ class HomeView extends HTMLElement {
                         description="Sorting algorithms are algorithms that put a collection of items into a certain order."
                     >
                         <nav-item title="Heapsort" img="/static/img/heapsort.png" link="/heapsort"></nav-item>
-                        <nav-item title="Quicksort" img="/static/img/heapsort.png" link="/quicksort"></nav-item>
+                        <nav-item title="Quicksort" img="/static/img/quicksort.png" link="/quicksort"></nav-item>
                     </category-card>
                     <category-card
                         class="category"
