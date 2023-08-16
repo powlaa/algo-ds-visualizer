@@ -46,7 +46,7 @@ class HomeView extends HTMLElement {
                         description="Pathfinding algorithms are a set of techniques used to find the shortest path between two points in a graph or network."
                     >
                         <nav-item title="Dijkstra" img="/static/img/dijkstra.png" link="/dijkstra"></nav-item>
-                        <nav-item title="A*" img="/static/img/dijkstra.png" link="/astar"></nav-item>
+                        <nav-item title="A*" img="/static/img/astar.png" link="/astar"></nav-item>
                     </category-card>
                 </div>
                 <div slot="right" class="content__right">
