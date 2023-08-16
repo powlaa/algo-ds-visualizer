@@ -139,7 +139,7 @@ class QuickSortView extends HTMLElement {
                     data: [...arr],
                     sortCount,
                     heading: `Partition the array around the pivot ${pivot}`,
-                    description: `low = ${low}; high = ${high}`,
+                    description: `All elements higher than the pivot go on its right side. The lower elements go on its left side.`,
                     codeLabel: ["partition", "pivot"],
                     animation: (step) => this._highlightPivot(step, low, high, length),
                 }
