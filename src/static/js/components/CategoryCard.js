@@ -31,6 +31,7 @@ class CategoryCard extends HTMLElement {
                     margin-top: 15px;
                     display: grid;
                     grid-template-columns: 1fr 1fr 1fr;
+                    gap: 1rem;
                 }
             </style>
             <div class="container">
