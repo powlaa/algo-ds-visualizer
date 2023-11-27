@@ -1,13 +1,14 @@
-class DijkstraView extends HTMLElement {
+class AStarView extends HTMLElement {
     _PSEUDOCODE = [
-        { code: "<b>Dijkstra</b>(Graph, source)", indent: 0, label: "dijkstra" },
+        { code: "<b>A* search</b>(Graph, source, target)", indent: 0, label: "a-star-search" },
         { code: "<b>for each</b> node v in Graph", indent: 1, label: "for-each-node" },
         { code: "dist[v] = infinity", indent: 2, label: "dist-infinity" },
         { code: "prev[v] = undefined", indent: 2, label: "prev-undefined" },
+        { code: "heuristic[v] = euclidian_dist_between(v, target)", indent: 2, label: "heuristic" },
         { code: "dist[source] = 0", indent: 1, label: "dist-source" },
         { code: "S = the set of all nodes in Graph", indent: 1, label: "s-graph" },
         { code: "<b>while</b> S is not empty", indent: 1, label: "while-s" },
-        { code: "u = node in S with min dist[u]", indent: 2, label: "u-min-dist" },
+        { code: "u = node in S with min (dist[u] + heuristic[u])", indent: 2, label: "u-min-dist" },
         { code: "remove u from S", indent: 2, label: "remove-u" },
         { code: "<b>for each</b> neighbor v of u", indent: 2, label: "for-each-neighbor" },
         { code: "cost = dist[u] + dist_between(u, v)", indent: 3, label: "cost" },
@@ -16,11 +17,14 @@ class DijkstraView extends HTMLElement {
         { code: "prev[v] = u", indent: 4, label: "prev-u" },
         { code: "<b>return</b> prev[]", indent: 1, label: "return" },
     ];
+    
 
     _nodes = [];
     _edges = [];
+    heuristics = [];
 
-    _selectedNode = null;
+    _startNode = null;
+    _endNode = null;
 
     constructor() {
         super();
@@ -35,19 +39,23 @@ class DijkstraView extends HTMLElement {
         this._pseudocodeDisplay = this.shadowRoot.querySelector("pseudocode-display");
         this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
-        this._graphVis.addEventListener("start-selected", this._nodeSelected.bind(this));
-        this._graphVis.addEventListener("start-deselected", () => (this._selectedNode = null));
+        this._graphVis.addEventListener("start-selected", (e) => (this._startNode = e.detail.node));
+        this._graphVis.addEventListener("start-deselected", () => (this._startNode = null));
+
+        this._graphVis.addEventListener("end-selected", (e) => (this._endNode = e.detail.node));
+        this._graphVis.addEventListener("end-deselected", () => (this._endNode = null));
+
         this._graphVis.addEventListener("update-nodes", (e) => {
             this._nodes = e.detail.nodes;
-            this._resetDijkstra();
+            this._resetAStar();
         });
         this._graphVis.addEventListener("update-edges", (e) => {
             this._edges = e.detail.edges;
-            this._resetDijkstra();
+            this._resetAStar();
         });
         this._graphVis.addEventListener("error", (e) => alert(e.detail.message));
         this._graphVis.addEventListener("delete", () => {
-            this._resetDijkstra();
+            this._resetAStar();
             this._nodes = [];
             this._edges = [];
             this._graphVis.showGraph(this._nodes, this._edges);
@@ -55,8 +63,8 @@ class DijkstraView extends HTMLElement {
         this._graphVis.addEventListener("help", () => this._controlPopup.toggle());
 
         this._visContainer.addEventListener("start", () => {
-            if (this._selectedNode) this._runDijkstra(this._selectedNode.id);
-            else alert("Please select a node to start from in the graph");
+            if (this._startNode && this._endNode) this._runAStar(this._startNode.id, this._endNode.id);
+            else alert("Please select a node to start and a node to end from in the graph");
         });
 
         this._visContainer.addEventListener("show-step", (e) => {
@@ -67,7 +75,7 @@ class DijkstraView extends HTMLElement {
 
         this._showExampleGraph();
 
-        this._runDijkstra(this._nodes[0].id);
+        this._runAStar(this._nodes[0].id, this._nodes[this._nodes.length-1].id);
     }
 
     static get observedAttributes() {
@@ -84,29 +92,23 @@ class DijkstraView extends HTMLElement {
     }
 
     _nodeSelected(e) {
-        this._selectedNode = e.detail.node;
-        if (this._visContainer.currentStepIndex === this._visContainer.steps.length - 1) {
-            const path = this._tracePath(
-                this._visContainer.steps[this._visContainer.currentStepIndex].shortestDistances,
-                this._start,
-                this._selectedNode.id
-            );
+        this._startNode = e.detail.node;
+    }
 
-            this._showPathInTable(path, this._visContainer.steps, this._visContainer.currentStepIndex);
-            this._graphVis.highlightEdges(...path);
-        }
+    _endSelected(e) {
+        this._endNode = e.detail.node;
     }
 
     _showExampleGraph() {
         const xLoc = this._graphVis.xLoc;
         const yLoc = this._graphVis.yLoc;
         this._nodes = [
-            { title: "A", id: 0, x: xLoc - 200, y: yLoc + 100 },
+            { title: "A", id: 0, x: xLoc - 200, y: yLoc },
             { title: "B", id: 1, x: xLoc, y: yLoc },
             { title: "C", id: 2, x: xLoc, y: yLoc + 200 },
             { title: "D", id: 3, x: xLoc + 200, y: yLoc + 200 },
             { title: "E", id: 4, x: xLoc + 200, y: yLoc },
-            { title: "F", id: 5, x: xLoc + 400, y: yLoc + 100 },
+            { title: "F", id: 5, x: xLoc + 400, y: yLoc + 200 },
         ];
         this._edges = [
             { source: this._nodes[0], target: this._nodes[1], weight: 5 },
@@ -148,12 +150,12 @@ class DijkstraView extends HTMLElement {
                         value = "{}";
                         break;
                     case "unvisited":
-                        value = `{${this._nodes.map((n) => n.title).toString()}}`;
+                        value = `{${this._nodes.map((n) => n.title.match(/^[^(]+/)[0]).toString()}}`;
                         break;
-                    default:
-                        value = row.shortestDistances[column.id]
-                            ? row.shortestDistances[column.id].cost + (this._getNodeTitle(row.shortestDistances[column.id].vertex).sub() ?? "")
-                            : "∞";
+                        default:
+                            value = row.shortestDistances[column.id]
+                                ? row.shortestDistances[column.id].cost + (this._getNodeTitle(row.shortestDistances[column.id].vertex).match(/^[^(]+/)[0].sub() ?? "")
+                                : "∞";                        
                 }
                 return {
                     column: column.id,
@@ -201,20 +203,20 @@ class DijkstraView extends HTMLElement {
                     case "visited":
                         if (row.visited && row.currentNode !== "INIT") {
                             if (row.visited.length > 0)
-                                value = `{${row.visited.map((n) => this._getNodeTitle(n) ?? n)},${
-                                    this._getNodeTitle(row.currentNode) ?? row.currentNode
+                                value = `{${row.visited.map((n) => this._getNodeTitle(n).match(/^[^(]+/) ?? n)},${
+                                    this._getNodeTitle(row.currentNode).match(/^[^(]+/) ?? row.currentNode
                                 }}`;
-                            else value = `{${this._getNodeTitle(row.currentNode) ?? row.currentNode}}`;
+                            else value = `{${this._getNodeTitle(row.currentNode).match(/^[^(]+/) ?? row.currentNode}}`;
                         } else value = "{}";
                         break;
                     case "unvisited":
                         value = `{${
-                            row.visited ? this._nodes.filter((n) => row.visited.indexOf(n.id) < 0 && n.id != row.currentNode).map((n) => n.title) : ""
+                            row.visited ? this._nodes.filter((n) => row.visited.indexOf(n.id) < 0 && n.id != row.currentNode).map((n) => n.title.match(/^[^(]+/)) : ""
                         }}`;
                         break;
                     default:
                         value = row.shortestDistances[column.id]
-                            ? row.shortestDistances[column.id].cost + (this._getNodeTitle(row.shortestDistances[column.id].vertex).sub() ?? "")
+                            ? row.shortestDistances[column.id].cost + "+(" + this.heuristics[column.id] + ")" + (this._getNodeTitle(row.shortestDistances[column.id].vertex).match(/^[^(]+/)[0].sub() ?? "")
                             : "∞";
                 }
                 return {
@@ -251,13 +253,14 @@ class DijkstraView extends HTMLElement {
         this._updateTable(steps, currentStepIndex, highlights);
     }
 
-    _runDijkstra(start) {
+    _runAStar(start, end) {
         this._start = start;
+        this._end = end;
+        this._visContainer.updateSteps(this._astar(start, end), { locked: false, currentStep: 0 });
         this._showTable(start);
-        this._visContainer.updateSteps(this._dijkstra(start), { locked: false, currentStep: 0 });
     }
 
-    _resetDijkstra() {
+    _resetAStar() {
         this._visContainer.updateSteps([], { locked: true });
         this._visContainer.reset();
         this._tableVis.reset();
@@ -265,7 +268,7 @@ class DijkstraView extends HTMLElement {
         this._highlightPseudocode();
     }
 
-    _dijkstra(start) {
+    _astar(start, end) {
         var map = this._formatGraph(this._nodes, this._edges);
 
         var visited = [];
@@ -275,13 +278,29 @@ class DijkstraView extends HTMLElement {
         var vertex;
         var steps = [];
 
+        // Calculate the heuristics for node to the end node
+        var calculateHeuristic = (node) => {
+            const dx = node.x - map.at(end).x;
+            const dy = node.y - map.at(end).y;
+            return Math.round(Math.sqrt(dx * dx + dy * dy) / 100);
+        };
+
+        for (var node of map) {
+            this.heuristics[node.id] = calculateHeuristic(node);
+            node.title = node.title.match(/^[^(]+/)[0]
+            node.title += "(" + this.heuristics[node.id] + ")"
+            console.log(node)
+        }
+
+        console.log(this.heuristics)
+
         steps.push({
             shortestDistances: { ...shortestDistances },
             currentNode: "INIT",
             visited: [],
-            heading: "Init Dijkstra Algorithm at start node " + this._getNodeTitle(start),
-            description: `Calculate the shortest distance from the start node to all other nodes in the graph`,
-            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "dist-source", "s-graph", "while-s", "u-min-dist", "remove-u"],
+            heading: "Init A* Algorithm at start node " + this._getNodeTitle(start) + " and end node " + this._getNodeTitle(end),
+            description: `Calculate the shortest distance from the start node to the end node. The number in brackets shows the euclidian distance to the end node`,
+            codeLabel: ["for-each-node", "dist-infinity", "prev-undefined", "heuristic", "dist-source", "s-graph", "while-s", "u-min-dist", "remove-u"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
                 this._highlightPseudocode(steps[currentStepIndex].codeLabel);
@@ -293,12 +312,14 @@ class DijkstraView extends HTMLElement {
         while (
             (vertex = unvisited
                 .sort((a, b) => {
-                    if (b && shortestDistances[a].cost > shortestDistances[b].cost) return 1;
-                    if (b && shortestDistances[a].cost < shortestDistances[b].cost) return -1;
-                    return 0;
+                    // Sort the unvisited nodes by the estimated total cost (heuristic + actual cost) to reach the end node
+                    var costA = shortestDistances[a].cost + this.heuristics[a];
+                    var costB = shortestDistances[b].cost + this.heuristics[b];
+                    return costA - costB;
                 })
                 .shift()) >= 0
         ) {
+            if (vertex === end) break;
             if (visited.includes(vertex)) continue;
             // Explore unvisited neighbors
             var neighbors = map.find((n) => n.id === vertex)?.edges.filter((n) => !visited.includes(n.vertex));
@@ -315,7 +336,7 @@ class DijkstraView extends HTMLElement {
                     currentNode: vertex,
                     visited: [...visited],
                     heading: "Choose next node: " + vertexName,
-                    description: `The next node is the one with the smallest cost, which is ${vertexName} with a cost of ${costToVertex}`,
+                    description: `The next node is the one with the smallest total cost, which is ${vertexName.match(/^[^(]+/)} with a cost of ${costToVertex} + a heuristic distance of ${this.heuristics[vertex]} = total cost of ${costToVertex + this.heuristics[vertex]}`,
                     codeLabel: ["while-s", "u-min-dist", "remove-u"],
                     animation: (steps, currentStepIndex) => {
                         this._updateTable(steps, currentStepIndex, [
@@ -379,19 +400,22 @@ class DijkstraView extends HTMLElement {
             shortestDistances: { ...shortestDistances },
             currentNode: steps[steps.length - 1].currentNode,
             visited: [...visited],
-            heading: "Dijkstra is done",
-            description: "Select a node to show the shortest path from the start node",
+            heading: "A* is done",
+            description: "The shortest path from " + this._getNodeTitle(start).match(/^[^(]+/) + " to " + this._getNodeTitle(end).match(/^[^(]+/)[0] + " has a total cost of " + shortestDistances[end].cost ,
             codeLabel: ["return"],
             animation: (steps, currentStepIndex) => {
                 this._updateTable(steps, currentStepIndex);
                 this._graphVis.highlightNodes();
-                this._graphVis.highlightEdges();
+                //this._graphVis.highlightEdges(...this._tracePath({ ...shortestDistances }, start, steps[currentStepIndex].currentNode, to));
                 this._highlightPseudocode(steps[currentStepIndex].codeLabel);
             },
         });
 
-        this._graphVis.markNodes(start);
+        console.log(shortestDistances)
 
+        this._graphVis.markNodes(start);
+        this._graphVis.markEnd(end);
+        
         return steps;
     }
 
@@ -457,7 +481,7 @@ class DijkstraView extends HTMLElement {
                 }
             </style>
 
-            <vis-container title="Dijkstra" locked popup-template-id="${this.getAttribute("popup-template-id")}">
+            <vis-container title="A*" locked popup-template-id="${this.getAttribute("popup-template-id")}">
                 <split-layout class="content" top-bottom-right>
                     <graph-creator class="content__graph-creator" slot="left" no-negative-edge-weights></graph-creator>
                     <table-display class="content__table-display" slot="top-right"></table-display>
@@ -469,4 +493,4 @@ class DijkstraView extends HTMLElement {
     }
 }
 
-customElements.define("dijkstra-view", DijkstraView);
+customElements.define("astar-view", AStarView);

@@ -5,7 +5,8 @@ Copyright (c) 2014 Colorado Reed
 
 class GraphCreator extends HTMLElement {
     _CONSTS = {
-        selectedClass: "selected",
+        selectedStartClass: "selectedStart",
+        selectedEndClass: "selectedEnd",
         connectClass: "connect-node",
         circleGClass: "conceptG",
         graphClass: "graph",
@@ -17,14 +18,17 @@ class GraphCreator extends HTMLElement {
     };
     _idct = 0;
 
-    _nodeSelected = (node) => new CustomEvent("node-selected", { detail: { node } });
-    _nodeDeselected = new CustomEvent("node-deselected");
+    _startSelected = (node) => new CustomEvent("start-selected", { detail: { node } });
+    _startDeselected = new CustomEvent("start-deselected");
+    _endSelected = (node) => new CustomEvent("end-selected", { detail: { node } });
+    _endDeselected = new CustomEvent("end-deselected");
     _updateNodes = (nodes) => new CustomEvent("update-nodes", { detail: { nodes } });
     _updateEdges = (edges) => new CustomEvent("update-edges", { detail: { edges } });
     _error = (message) => new CustomEvent("error", { detail: { message } });
 
     _state = {
-        selectedNode: null,
+        startNode: null,
+        endNode: null,
         selectedEdge: null,
         mouseDownNode: null,
         mouseDownLink: null,
@@ -102,6 +106,7 @@ class GraphCreator extends HTMLElement {
         this.markEdges();
         this.highlightNodes();
         this.markNodes();
+        this.markEnd();
     }
 
     highlightEdges(...ids) {
@@ -118,6 +123,7 @@ class GraphCreator extends HTMLElement {
         this._circles.classed("highlight", (d, index, circles) => {
             if (ids.indexOf(d.id) < 0) return false;
             d3.select(circles[index]).classed("mark", false);
+            d3.select(circles[index]).classed("markEnd", false);
             return true;
         });
     }
@@ -135,6 +141,16 @@ class GraphCreator extends HTMLElement {
         this._circles.classed("mark", (d, index, circles) => {
             if (ids.indexOf(d.id) < 0) return false;
             d3.select(circles[index]).classed("highlight", false);
+            d3.select(circles[index]).classed("markEnd", false);
+            return true;
+        });
+    }
+
+    markEnd(...ids) {
+        this._circles.classed("markEnd", (d, index, circles) => {
+            if (ids.indexOf(d.id) < 0) return false;
+            d3.select(circles[index]).classed("highlight", false);
+            d3.select(circles[index]).classed("mark", false);
             return true;
         });
     }
@@ -288,6 +304,10 @@ class GraphCreator extends HTMLElement {
             .on("click", (e, d) => {
                 this._circleMouseUp(d3.select(e.currentTarget), e, d);
             })
+            .on("contextmenu", (e, d) => {
+                e.preventDefault(); // Verhindert das Standard-Kontextmenü
+                this._circleRightClick(d3.select(e.currentTarget), e, d);
+            })
             .call(this._drag);
         this._circles.append("circle").attr("r", String(this._CONSTS.nodeRadius));
         this._circles.each((d, i, nodes) => {
@@ -306,6 +326,7 @@ class GraphCreator extends HTMLElement {
             d.x += e.dx;
             d.y += e.dy;
             this._updateGraph();
+            this.dispatchEvent(this._updateNodes(this._nodes));
         }
     }
 
@@ -352,19 +373,19 @@ class GraphCreator extends HTMLElement {
         if (this._state.lastKeyDown !== -1) return;
 
         this._state.lastKeyDown = e.keyCode;
-        var selectedNode = this._state.selectedNode,
+        var startNode = this._state.startNode,
             selectedEdge = this._state.selectedEdge;
 
         switch (e.keyCode) {
             case this._CONSTS.BACKSPACE_KEY:
             case this._CONSTS.DELETE_KEY:
                 e.preventDefault();
-                if (selectedNode) {
-                    this.nodes.splice(this.nodes.indexOf(selectedNode), 1);
-                    this._spliceLinksForNode(selectedNode);
+                if (startNode) {
+                    this.nodes.splice(this.nodes.indexOf(startNode), 1);
+                    this._spliceLinksForNode(startNode);
                     this.dispatchEvent(this._updateNodes(this._nodes));
                     this.dispatchEvent(this._updateEdges(this._edges));
-                    this._state.selectedNode = null;
+                    this._state.startNode = null;
                     this._updateGraph();
                 } else if (selectedEdge) {
                     this._edges.splice(this.edges.indexOf(selectedEdge), 1);
@@ -429,18 +450,31 @@ class GraphCreator extends HTMLElement {
                     if (this._state.selectedEdge) {
                         this._removeSelectFromEdge();
                     }
-                    var prevNode = this._state.selectedNode;
+                    var prevNode = this._state.startNode;
 
                     if (!prevNode || prevNode.id !== d.id) {
-                        this._replaceSelectNode(d3node, d);
+                        this._replaceStartNode(d3node, d);
                     } else {
-                        this._removeSelectFromNode(true);
+                        this._removeStartFromNode(true);
                     }
                 }
             }
         }
         this._state.mouseDownNode = null;
         return;
+    }
+
+    _circleRightClick(d3node, e, d){
+        if (this._state.selectedEdge) {
+            this._removeSelectFromEdge();
+        }
+        var prevNode = this._state.endNode;
+
+        if (!prevNode || prevNode.id !== d.id) {
+            this._replaceEndNode(d3node, d);
+        } else {
+            this._removeEndFromNode(true);
+        }
     }
 
     _pathMouseUp(d3path, e, d) {
@@ -460,8 +494,8 @@ class GraphCreator extends HTMLElement {
         this._state.mouseDownLink = d;
         e.stopPropagation();
 
-        if (this._state.selectedNode) {
-            this._removeSelectFromNode(true);
+        if (this._state.startNode) {
+            this._removeStartFromNode(true);
         }
 
         var prevEdge = this._state.selectedEdge;
@@ -528,19 +562,34 @@ class GraphCreator extends HTMLElement {
         this._state.selectedEdge = edgeData;
     }
 
-    _replaceSelectNode(d3Node, nodeData) {
-        d3Node.classed(this._CONSTS.selectedClass, true);
-        if (this._state.selectedNode) {
-            this._removeSelectFromNode(false);
+    _replaceStartNode(d3Node, nodeData) {
+        d3Node.classed(this._CONSTS.selectedStartClass, true);
+        if (this._state.startNode) {
+            this._removeStartFromNode(false);
         }
-        this._state.selectedNode = nodeData;
-        this.dispatchEvent(this._nodeSelected(nodeData));
+        this._state.startNode = nodeData;
+        this.dispatchEvent(this._startSelected(nodeData));
     }
 
-    _removeSelectFromNode(notify) {
-        this._circles.filter((cd) => cd.id === this._state.selectedNode.id).classed(this._CONSTS.selectedClass, false);
-        this._state.selectedNode = null;
-        if (notify) this.dispatchEvent(this._nodeDeselected);
+    _replaceEndNode(d3Node, nodeData) {
+        d3Node.classed(this._CONSTS.selectedEndClass, true);
+        if (this._state.endNode) {
+            this._removeEndFromNode(false);
+        }
+        this._state.endNode = nodeData;
+        this.dispatchEvent(this._endSelected(nodeData));
+    }
+
+    _removeStartFromNode(notify) {
+        this._circles.filter((cd) => cd.id === this._state.startNode.id).classed(this._CONSTS.selectedStartClass, false);
+        this._state.startNode = null;
+        if (notify) this.dispatchEvent(this._startDeselected);
+    }
+
+    _removeEndFromNode(notify) {
+        this._circles.filter((cd) => cd.id === this._state.endNode.id).classed(this._CONSTS.selectedEndClass, false);
+        this._state.endNode = null;
+        if (notify) this.dispatchEvent(this._startDeselected);
     }
 
     _removeSelectFromEdge() {
@@ -725,14 +774,24 @@ class GraphCreator extends HTMLElement {
                     stroke: var(--graph-mark-stroke, #0ca632);
                     fill: var(--graph-mark-fill, #85d298);
                 }
+                
+                g.conceptG.markEnd circle {
+                    stroke: var(--graph-markEnd-stroke, #a6141c);
+                    fill: var(--graph-markEnd-fill, #d2898d);
+                }
 
                 g.conceptG:hover circle {
                     fill: #ddd;
                 }
 
-                g.selected circle {
-                    fill: #b0e2d9;
+                g.selectedStart circle {
+                    fill: #ccffcc;
                 }
+
+                g.selectedEnd circle {
+                    fill: #ffcccc;
+                }
+
                 g.selected:hover circle {
                     fill: #a7d8cf;
                 }

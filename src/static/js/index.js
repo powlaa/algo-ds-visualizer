@@ -19,6 +19,12 @@ const router = () => {
         case "/linkedlist":
             template = document.querySelector(`template#linked-list-view`);
             break;
+        case "/quicksort":
+            template = document.querySelector(`template#quicksort-view`);
+            break;
+        case "/astar":
+            template = document.querySelector(`template#astar-view`);
+            break;
         default:
             template = document.querySelector(`template#home-view`);
             break;

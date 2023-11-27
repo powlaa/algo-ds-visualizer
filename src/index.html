@@ -13,6 +13,8 @@
 
         <script src="/static/js/views/HeapsortView.js"></script>
         <script src="/static/js/views/DijkstraView.js"></script>
+        <script src="/static/js/views/QuickSortView.js"></script>
+        <script src="/static/js/views/AStarview.js"></script>
         <script src="/static/js/views/LinkedListView.js"></script>
         <script src="/static/js/views/HomeView.js"></script>
         <script src="/static/js/components/Header.js"></script>
@@ -41,6 +43,12 @@
         </template>
         <template id="dijkstra-view">
             <dijkstra-view popup-template-id="dijkstra-popup-content" control-template-id="graph-control-explanations"></dijkstra-view>
+        </template>
+        <template id="quicksort-view">
+            <quicksort-view popup-template-id="quicksort-popup-content" control-template-id="graph-control-explanations"></quicksort-view>
+        </template>
+        <template id="astar-view">
+            <astar-view popup-template-id="astar-popup-content" control-template-id="aStar-control-explanations"></astar-view>
         </template>
         <template id="linked-list-view">
             <linked-list-view popup-template-id="linked-list-popup-content"></linked-list-view>
@@ -349,6 +357,200 @@
             </p>
         </template>
 
+        <template id="quicksort-popup-content">
+            <h2>Quicksort Visualization</h2>
+            <p>
+                This is an interactive visualization of the Quicksort Algorithm. On the left side is the representation of the array. It can be changed
+                by entering new data in the input field at the top left (e.g. 5,3,7,11,9,4,2). On the right, the pseudocode for the algorithm is shown
+                and the corresponding lines will be highlighted while stepping through the algorithm. <br />
+                The slider and the buttons at the bottom as well as the arrow keys can be used to step through the algorithm.
+            </p>
+            <h4>General Information <sup>1</sup></h4>
+            <p>
+                QuickSort is a sorting algorithm based on the Divide and Conquer algorithm that picks an element as a pivot and partitions the given array
+                around the picked pivot by placing the pivot in its correct position in the sorted array.
+            </p>
+            <h4>Steps </h4>
+            <ul>
+                <li>Select a pivot element from the array.</li>
+                <li>Rearrange the array so that elements smaller than the pivot are on the left, and elements larger than the pivot are on the right.</li>
+                <li>Apply Quicksort recursively to the left and right partitions and combine the sorted partitions to get the final sorted array.</li>
+            </ul>
+            <h4>How does the partitioning work? <sup>1</sup></h4>
+            <p>
+                The target of partitions is to place the pivot (any element can be chosen to be a pivot) at its correct position in the sorted array and put 
+                all smaller elements to the left of the pivot, and all greater elements to the right of the pivot. <br> <br>
+                There are different choices for picking pivots, which can result in different effiencies depending on the input data. 
+                <ul>
+                    <li>Always pick the last element as a pivot (implemented here)</li>
+                    <li>Always pick the first element as a pivot</li>
+                    <li>Pick a random element as a pivot.</li>
+                    <li>Pick the middle as the pivot.</li>
+                </ul>
+            </p>
+            <h4>Time Complexity <sup>2</sup></h4>
+            <ul>
+                <li>
+                    <b>Best case:  O(n*logn) </b><br>
+                    This happens if we pick the median of the array as the pivot element every time. The size of subarrays will be half the size of the 
+                    original array.
+                </li>
+                <li>
+                    <b>Worst case:  O(n^2) </b><br>
+                    This happens if we pick the largest or the smallest element of the array as the pivot element every time. The size of the subarray 
+                    after partitioning will be n-1 and 1.
+                </li>
+                <li>
+                    <b>Average case: O(n*logn) </b><br>
+                    This is the average time taken for all n! permutations of n elements.
+                </li>
+            </ul>
+            <h4>Advantages of Quicksort <sup>1</sup></h4>
+            <ul>
+                <li>
+                    <b>Easier to solve problems</b>, because it is a divide-and-conquer algorithm
+                </li>
+                <li>
+                    <b>Efficient</b> on <b>large</b> data sets
+                </li>
+                <li>
+                    <b>Low overhead</b>, as it only requires a small amount of memory to function
+                </li>
+            </ul>
+            <h4>Disadvantages of Quicksort <sup>1</sup></h4>
+            <ul>
+                <li> <b>Worst-case time complexity of O(N<sup>2</sup>)</b>, which occurs when the pivot is chosen poorly </li>
+                <li> <b>Inefficient</b> on <b>small</b> data sets </li>
+                <li> 
+                    <b>Not stable</b>, meaning that if two elements have the same key, their relative order will not be preserved in the sorted output 
+                    in case of quick sort, because here we are swapping elements according to the pivot's position (without considering their original positions)
+                </li>
+            </ul>
+            <p style="color: rgba(0, 0, 0, 0)">.</p>
+            <p>
+                <sup>1</sup> Explanations in this section are from: Quicksort. (2023, August 09). GeeksforGeeks.
+                <a href="https://www.geeksforgeeks.org/quick-sort/">https://www.geeksforgeeks.org/quick-sort/</a> (last accessed: 16.08.2023)
+            </p>
+            <p>
+                <sup>2</sup> Explanations in this section are from: Quick Sort Algorithm: Explanation, Implementation, and Complexity. (2023, August 08).
+                Interview Kickstart.
+                <a href="https://www.interviewkickstart.com/learn/quick-sort">https://www.interviewkickstart.com/learn/quick-sort</a> (last accessed:
+                16.08.2023)
+            </p>
+        </template>
+
+        <template id="astar-popup-content">
+            <h2>A* Visualization</h2>
+            <h3>General</h3>
+            <p>
+                This is an interactive visualization of the A* Algorithm. On the left side is the graph which can be altered by adding and
+                deleting nodes and edges. To start the algorithm, left click on a node to select a starting node, right click on a node to 
+                select and ending Node and press the start button. <br />
+                The algorithm will then run and the table on the right side will be updated with the current shortest path to each node and 
+                its corresponding heuristic, which is both are used to determine the next node to visit. The pseudocode shown below the table 
+                will highlight the corresponding lines of code. <br />
+                The slider and the buttons at the bottom as well as the arrow keys can be used to step through the algorithm.
+            </p>
+            <h3>The A* Algorithm</h3>
+            <h4>Purpose and Use Cases <sup>1</sup></h4>
+            <p>
+                A* is a searching algorithm that is used to find the shortest path between a start and an end node. It is an extension of Dijkstra's 
+                shortest path algorithm. The extension here is that we use a heuristic function that provides additional information regarding how far 
+                away from the goal node we are. The A* algorithm is widely used in various domains for pathfinding and optimization problems. It has 
+                applications in robotics, video games, route planning, logistics, and artificial intelligence. In robotics, A* helps robots navigate 
+                obstacles and find optimal paths. In video games, it enables NPCs to navigate game environments intelligently. Route planning applications 
+                use A* to find the shortest or fastest routes between locations. Logistics industries utilize A* for vehicle routing and scheduling. A* is 
+                also employed in AI systems, such as natural language processing and machine learning, to optimize decision-making processes.
+            </p>
+            <h4>Basics <sup>1</sup></h4>
+            <ul>
+                <li>
+                    A* basically starts at the node that you choose (the start node) and it analyzes the graph to find the shortest
+                    path between that node and the end node.
+                </li>
+                <li>
+                    The algorithm keeps track of the currently known shortest distance from each node to the start node and it updates these values
+                    if it finds a shorter path.
+                </li>
+                <li>
+                    At each step, it picks the node with the smallest value of f (the sum of g and h) and processes that node.
+                </li>
+                <li>
+                    g and h are defined as:
+                </li>
+                <ul>
+                    <li>
+                        g is the the currently known shortest distance from a node to the start node and the value gets updated if the algorithm finds 
+                        a shorter path.
+                    </li>
+                    <li>
+                        h is the heuristic, which is the estimation of the distance from a node to the end node. This implementation uses the euclidian 
+                        distance, which is used very commonly, as well as the manhattan distance.
+                    </li>
+                </ul>
+                <li>
+                    Processing the node means, that the Algorithm calculates the cost to all of the nodes immediate neighboring nodes and chooses the one 
+                    incurring the least cost.
+                </li>
+                <li>
+                    The process continues until we have reached the end node, so that we have found the shortest path to it or at least the path with the 
+                    lowest cost.
+                </li>
+            </ul>
+            <h4>Requirements <sup>2</sup></h4>
+            <p>
+                A*'s Algorithm can only work with graphs that have positive weights. This is because, during the process, the weights of the
+                edges have to be added to find the shortest path. If there is a negative weight in the graph, then the algorithm will not work
+                properly. Once a node has been marked as "visited", the current path to that node is marked as the shortest path to reach that node.
+                And negative weights can alter this if the total weight can be decremented after this step has occurred.
+            </p>
+            <h4>Time Complexity</h4>
+            <p>
+                The time complexity of the A* algorithm is influenced by several factors, including the characteristics of the graph, the heuristics 
+                used, and the data structures employed. In its worst-case scenario, A* has a time complexity of <b>O(V<sup>2</sup>)</b>, where V is 
+                the number of vertices in the graph. This can be explained as follows:
+            </p>
+            <ol>
+                <li>
+                    First, we need to find the unvisited vertex with the smallest estimated total cost (heuristic + actual cost) to reach the end node. 
+                    This requires sorting the unvisited vertices based on their estimated total cost, which takes <b>O(V log V)</b> time using efficient 
+                    data structures like binary heaps.
+                </li>
+                <li>
+                    For each selected vertex, we need to relax its neighbors, updating their shortest distance and total cost values. This involves 
+                    iterating through the neighbors and performing constant-time updates, which takes <b>O(V)</b> time.
+                </li>
+            </ol>
+            <p>Considering the above conditions, we get:</p>
+            <ul>
+                <li>Time for selecting the vertex with the smallest estimated total cost <b>= O(V log V)</b></li>
+                <li>Time required for relaxing neighbors for each selected vertex <b>= O(V)</b></li>
+                <li>Overall time complexity <b>= O(V log V) * O(V) = O(V<sup>2</sup> log V)</b></li>
+            </ul>
+            <p>
+                However, in practice, with proper data structures and effective heuristics, the A* algorithm can often achieve significantly better 
+                performance than its worst-case time complexity suggests.
+            </p>
+            Please note that the provided code snippet is not an exact match for the pseudocode you mentioned earlier, so I've provided a general 
+            explanation of the time complexity that fits the A* algorithm logic in your code.           
+            <p style="color: rgba(0, 0, 0, 0)">.</p>
+            <p>
+                <sup>1</sup> Explanations in this section are from: Ravikiran A S (2023, August 9). A* Algorithm Concepts and Implementation
+                <a href="https://www.simplilearn.com/tutorials/artificial-intelligence-tutorial/a-star-algorithm"
+                    >https://www.simplilearn.com/tutorials/artificial-intelligence-tutorial/a-star-algorithm</a
+                >
+                (last accessed: 10.08.2023)
+            </p>
+            <p>
+                <sup>2</sup> Explanations in this section are from: Navone, E. C. (2020, September 28). Dijkstra’s Shortest Path Algorithm—A Detailed
+                and Visual Introduction. FreeCodeCamp.Org.
+                <a href="https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/"
+                    >https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/</a
+                >
+                (last accessed: 10.08.2023)
+            </p>
+        </template>
+
         <template id="graph-control-explanations">
             <style>
                 p {
@@ -371,8 +573,49 @@
                     white-space: nowrap;
                 }
             </style>
-            <b>Select a Node:</b>
+            <b>Select a startnode:</b>
             <p>Click on a node until the color changes</p>
+            <b>Add a Node:</b>
+            <p>Hold <kbd>Shift</kbd> and click on the canvas</p>
+            <b>Delete a Node:</b>
+            <p>Select a node and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
+            <b>Add an Edge:</b>
+            <p>
+                Hold <kbd>Shift</kbd> and drag from one node to another node, to add an undirected edge add a second edge in the other direction
+                between the nodes
+            </p>
+            <b>Change Edge Weight:</b>
+            <p>Hold <kbd>Shift</kbd> and click on an edge</p>
+            <b>Delete an Edge:</b>
+            <p>Select an edge and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
+        </template>
+
+        <template id="aStar-control-explanations">
+            <style>
+                p {
+                    margin: 0 0 5px 0;
+                }
+                b {
+                    margin: 0 8px 5px 0;
+                }
+                kbd {
+                    background-color: #eee;
+                    border-radius: 3px;
+                    border: 1px solid #b4b4b4;
+                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 2px 0 0 rgba(255, 255, 255, 0.7) inset;
+                    color: #333;
+                    display: inline-block;
+                    font-size: 0.85em;
+                    font-weight: 700;
+                    line-height: 1;
+                    padding: 2px 4px;
+                    white-space: nowrap;
+                }
+            </style>
+            <b>Select a startnode:</b>
+            <p>Click on a node until the color changes</p>
+            <b>Select an endnode:</b>
+            <p>Right click on a node until the color changes</p>
             <b>Add a Node:</b>
             <p>Hold <kbd>Shift</kbd> and click on the canvas</p>
             <b>Delete a Node:</b>
