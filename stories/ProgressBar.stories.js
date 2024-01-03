@@ -1,12 +1,19 @@
 import "../src/static/css/index.css";
-import { ProgressBar } from "../src/static/js/components/ProgressBar";
-import { action } from "@storybook/addon-actions";
+import {
+    ProgressBar
+} from "../src/static/code/components/ProgressBar";
+import {
+    action
+} from "@storybook/addon-actions";
 
 export default {
     title: "ProgressBar",
 };
 
-const Template = ({ totalSteps, locked }) => `<progress-bar ${locked ? "locked" : ""} total-steps="${totalSteps}"></progress-bar>`;
+const Template = ({
+    totalSteps,
+    locked
+}) => `<progress-bar ${locked ? "locked" : ""} total-steps="${totalSteps}"></progress-bar>`;
 
 export const ProgressBarActive = Template.bind({});
 ProgressBarActive.args = {

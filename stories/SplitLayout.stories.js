@@ -1,10 +1,17 @@
-import { SplitLayout } from "../src/static/js/components/SplitLayout";
+import {
+    SplitLayout
+} from "../src/static/code/components/SplitLayout";
 
 export default {
     title: "SplitLayout",
 };
 
-const Template = ({ splitLayoutResizerBorder, splitLayoutWidthLeft, topBottomRight, topBottomLeft }) =>
+const Template = ({
+        splitLayoutResizerBorder,
+        splitLayoutWidthLeft,
+        topBottomRight,
+        topBottomLeft
+    }) =>
     `<split-layout style="--split-layout-resizer-border: ${splitLayoutResizerBorder}; --split-layout-initial-width-left: ${splitLayoutWidthLeft};" ${
         topBottomRight ? "top-bottom-right" : ""
     } ${topBottomLeft ? "top-bottom-left" : ""}></split-layout>`;

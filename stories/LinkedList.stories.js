@@ -1,4 +1,4 @@
-import { LinkedList } from "../src/static/js/components/LinkedList";
+import { LinkedList } from "../src/static/code/components/LinkedList";
 import CenterIcon from "../src/static/img/center-icon.png";
 
 export default {

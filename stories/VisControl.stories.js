@@ -1,15 +1,25 @@
 import "../src/static/css/index.css";
-import { VisControl } from "../src/static/js/components/VisControl";
+import {
+    VisControl
+} from "../src/static/code/components/VisControl";
 import CenterIcon from "../src/static/img/center-icon.png";
 import DeleteIcon from "../src/static/img/delete-icon.png";
 import HelpIcon from "../src/static/img/question-mark.png";
-import { action } from "@storybook/addon-actions";
+import {
+    action
+} from "@storybook/addon-actions";
 
 export default {
     title: "VisControl",
 };
 
-const Template = ({ help, del, deleteIcon, helpIcon, centerIcon }) =>
+const Template = ({
+        help,
+        del,
+        deleteIcon,
+        helpIcon,
+        centerIcon
+    }) =>
     `<vis-control center-icon="${centerIcon}" help-icon="${helpIcon}" delete-icon="${deleteIcon}" ${del ? "del" : ""} ${
         help ? "help" : ""
     }></vis-control>`;

@@ -1,11 +1,18 @@
 import "../src/static/css/index.css";
-import { PopUp } from "../src/static/js/components/PopUp";
+import {
+    PopUp
+} from "../src/static/code/components/PopUp";
 
 export default {
     title: "PopUp",
 };
 
-const Template = ({ popupWidth, popupMinWidth, popupHeight, overlay }) =>
+const Template = ({
+        popupWidth,
+        popupMinWidth,
+        popupHeight,
+        overlay
+    }) =>
     `<pop-up style="--popup-width: ${popupWidth}; --popup-min-width: ${popupMinWidth}; --popup-height: ${popupHeight};" ${
         overlay ? "overlay" : ""
     }></pop-up>`;

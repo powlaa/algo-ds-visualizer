@@ -1,4 +1,4 @@
-import { BinaryTree } from "../src/static/js/components/BinaryTree";
+import { BinaryTree } from "../src/static/code/components/BinaryTree";
 import CenterIcon from "../src/static/img/center-icon.png";
 
 export default {

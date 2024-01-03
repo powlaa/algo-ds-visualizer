@@ -3,7 +3,9 @@ class ArrayDisplay extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({
+            mode: "open"
+        });
         this._render();
     }
 
@@ -56,7 +58,7 @@ class ArrayDisplay extends HTMLElement {
         this._renderCounter++;
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="/static/css/index.css" />
-            <script src="/static/js/mixins/wait-mixin.js"></script>
+            <script src="/static/code/mixins/wait-mixin.js"></script>
             <style>
                 :host {
                     display: inline-block;
