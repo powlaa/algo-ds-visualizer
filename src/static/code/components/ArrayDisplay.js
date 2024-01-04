@@ -1,3 +1,8 @@
+import {
+    waitMixin
+} from '../mixins/wait-mixin';
+
+
 class ArrayDisplay extends HTMLElement {
     _renderCounter = 0;
 
@@ -58,7 +63,6 @@ class ArrayDisplay extends HTMLElement {
         this._renderCounter++;
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="/static/css/index.css" />
-            <script src="/static/code/mixins/wait-mixin.js"></script>
             <style>
                 :host {
                     display: inline-block;

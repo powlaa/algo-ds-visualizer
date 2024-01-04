@@ -1,108 +1,360 @@
+import {
+    waitMixin
+} from '../mixins/wait-mixin';
+
 class LinkedListView extends HTMLElement {
     _ANIMATION_DURATION = 1000;
     _EXAMPLE_DATA = [5, 3, 7, 11];
     _PSEUDOCODE_CLASSES = {
-        singly: [
-            { code: "<b>class</b> Node", indent: 0, label: "node-class" },
-            { code: "data: String", indent: 1, label: "node-data" },
-            { code: "next: Node", indent: 1, label: "node-next" },
-            { code: "<b>constructor</b>(given_data)", indent: 1, label: "node-init" },
-            { code: "data = given_data", indent: 2, label: "node-set-data" },
-            { code: "next = null", indent: 2, label: "node-set-next" },
-            { code: "", indent: 0, label: "empty" },
-            { code: "<b>class</b> SinglyLinkedList", indent: 0, label: "singlylinkedlist-class" },
-            { code: "head: Node", indent: 1, label: "singlylinkedlist-head" },
-            { code: "<b>constructor</b>()", indent: 1, label: "singlylinkedlist-init" },
-            { code: "head = null", indent: 2, label: "singlylinkedlist-set-head" },
-            { code: "", indent: 0, label: "empty" },
-            { code: "list = new SinglyLinkedList()", indent: 0, label: "singlylinkedlist-instantiation" },
+        singly: [{
+                code: "<b>class</b> Node",
+                indent: 0,
+                label: "node-class"
+            },
+            {
+                code: "data: String",
+                indent: 1,
+                label: "node-data"
+            },
+            {
+                code: "next: Node",
+                indent: 1,
+                label: "node-next"
+            },
+            {
+                code: "<b>constructor</b>(given_data)",
+                indent: 1,
+                label: "node-init"
+            },
+            {
+                code: "data = given_data",
+                indent: 2,
+                label: "node-set-data"
+            },
+            {
+                code: "next = null",
+                indent: 2,
+                label: "node-set-next"
+            },
+            {
+                code: "",
+                indent: 0,
+                label: "empty"
+            },
+            {
+                code: "<b>class</b> SinglyLinkedList",
+                indent: 0,
+                label: "singlylinkedlist-class"
+            },
+            {
+                code: "head: Node",
+                indent: 1,
+                label: "singlylinkedlist-head"
+            },
+            {
+                code: "<b>constructor</b>()",
+                indent: 1,
+                label: "singlylinkedlist-init"
+            },
+            {
+                code: "head = null",
+                indent: 2,
+                label: "singlylinkedlist-set-head"
+            },
+            {
+                code: "",
+                indent: 0,
+                label: "empty"
+            },
+            {
+                code: "list = new SinglyLinkedList()",
+                indent: 0,
+                label: "singlylinkedlist-instantiation"
+            },
         ],
     };
 
     _PSEUDOCODE_METHODS = {
         singly: {
-            delete: [
-                { code: "<b>function</b> <b>delete</b>(data)", indent: 1, label: "delete" },
-                { code: "<b>if</b> head.data == data", indent: 2, label: "delete-if-head-data" },
-                { code: "head = head.next", indent: 3, label: "delete-set-head" },
-                { code: "return", indent: 3, label: "delete-return" },
-                { code: "current = head", indent: 2, label: "delete-current-head" },
-                { code: "<b>while</b> current.next != null", indent: 2, label: "delete-while" },
-                { code: "<b>if</b> current.next.data == data", indent: 3, label: "delete-current-data" },
-                { code: "current.next = current.next.next", indent: 4, label: "delete-set-current" },
-                { code: "current = current.next", indent: 3, label: "delete-current-next" },
+            delete: [{
+                    code: "<b>function</b> <b>delete</b>(data)",
+                    indent: 1,
+                    label: "delete"
+                },
+                {
+                    code: "<b>if</b> head.data == data",
+                    indent: 2,
+                    label: "delete-if-head-data"
+                },
+                {
+                    code: "head = head.next",
+                    indent: 3,
+                    label: "delete-set-head"
+                },
+                {
+                    code: "return",
+                    indent: 3,
+                    label: "delete-return"
+                },
+                {
+                    code: "current = head",
+                    indent: 2,
+                    label: "delete-current-head"
+                },
+                {
+                    code: "<b>while</b> current.next != null",
+                    indent: 2,
+                    label: "delete-while"
+                },
+                {
+                    code: "<b>if</b> current.next.data == data",
+                    indent: 3,
+                    label: "delete-current-data"
+                },
+                {
+                    code: "current.next = current.next.next",
+                    indent: 4,
+                    label: "delete-set-current"
+                },
+                {
+                    code: "current = current.next",
+                    indent: 3,
+                    label: "delete-current-next"
+                },
             ],
-            contains: [
-                { code: "<b>function</b> <b>contains</b>(data)", indent: 1, label: "contains" },
-                { code: "<b>if</b> head.data == data", indent: 2, label: "contains-if-head-data" },
-                { code: "return true", indent: 3, label: "contains-return" },
-                { code: "current = head", indent: 2, label: "contains-current-head" },
-                { code: "<b>while</b> current.next != null", indent: 2, label: "contains-while" },
-                { code: "<b>if</b> current.next.data == data", indent: 3, label: "contains-current-data" },
-                { code: "return true", indent: 4, label: "contains-found" },
-                { code: "current = current.next", indent: 3, label: "contains-current-next" },
-                { code: "return false", indent: 2, label: "contains-not-found" },
+            contains: [{
+                    code: "<b>function</b> <b>contains</b>(data)",
+                    indent: 1,
+                    label: "contains"
+                },
+                {
+                    code: "<b>if</b> head.data == data",
+                    indent: 2,
+                    label: "contains-if-head-data"
+                },
+                {
+                    code: "return true",
+                    indent: 3,
+                    label: "contains-return"
+                },
+                {
+                    code: "current = head",
+                    indent: 2,
+                    label: "contains-current-head"
+                },
+                {
+                    code: "<b>while</b> current.next != null",
+                    indent: 2,
+                    label: "contains-while"
+                },
+                {
+                    code: "<b>if</b> current.next.data == data",
+                    indent: 3,
+                    label: "contains-current-data"
+                },
+                {
+                    code: "return true",
+                    indent: 4,
+                    label: "contains-found"
+                },
+                {
+                    code: "current = current.next",
+                    indent: 3,
+                    label: "contains-current-next"
+                },
+                {
+                    code: "return false",
+                    indent: 2,
+                    label: "contains-not-found"
+                },
             ],
-            get: [
-                { code: "<b>function</b> <b>get</b>(index)", indent: 1, label: "get" },
-                { code: "<b>if</b> index == 0", indent: 2, label: "get-if-head-index" },
-                { code: "return head", indent: 3, label: "get-return" },
-                { code: "currentIndex = 0", indent: 2, label: "get-set-current-index" },
-                { code: "current = head", indent: 2, label: "get-current-head" },
-                { code: "<b>while</b> current.next != null", indent: 2, label: "get-while" },
-                { code: "<b>if</b> currentIndex + 1 == index", indent: 3, label: "get-if-index" },
-                { code: "return current.next", indent: 4, label: "get-found" },
-                { code: "currentIndex ++", indent: 3, label: "get-increment-current-index" },
-                { code: "current = current.next", indent: 3, label: "get-current-next" },
-                { code: "return null", indent: 2, label: "get-not-found" },
+            get: [{
+                    code: "<b>function</b> <b>get</b>(index)",
+                    indent: 1,
+                    label: "get"
+                },
+                {
+                    code: "<b>if</b> index == 0",
+                    indent: 2,
+                    label: "get-if-head-index"
+                },
+                {
+                    code: "return head",
+                    indent: 3,
+                    label: "get-return"
+                },
+                {
+                    code: "currentIndex = 0",
+                    indent: 2,
+                    label: "get-set-current-index"
+                },
+                {
+                    code: "current = head",
+                    indent: 2,
+                    label: "get-current-head"
+                },
+                {
+                    code: "<b>while</b> current.next != null",
+                    indent: 2,
+                    label: "get-while"
+                },
+                {
+                    code: "<b>if</b> currentIndex + 1 == index",
+                    indent: 3,
+                    label: "get-if-index"
+                },
+                {
+                    code: "return current.next",
+                    indent: 4,
+                    label: "get-found"
+                },
+                {
+                    code: "currentIndex ++",
+                    indent: 3,
+                    label: "get-increment-current-index"
+                },
+                {
+                    code: "current = current.next",
+                    indent: 3,
+                    label: "get-current-next"
+                },
+                {
+                    code: "return null",
+                    indent: 2,
+                    label: "get-not-found"
+                },
             ],
-            add: [
-                { code: "<b>function</b> <b>add</b>(data, index)", indent: 1, label: "add" },
-                { code: "newNode = new Node(data)", indent: 2, label: "add-new-node" },
-                { code: "<b>if</b> head == null", indent: 2, label: "add-if-head" },
-                { code: "head = newNode", indent: 3, label: "add-first" },
-                { code: "return", indent: 3, label: "add-first-return" },
-                { code: "<b>if</b> index === 0", indent: 2, label: "add-if-zero" },
-                { code: "newNode.next = head.next", indent: 3, label: "add-next-head" },
-                { code: "head = newNode", indent: 3, label: "add-head-new" },
-                { code: "return", indent: 3, label: "add-head-return" },
-                { code: "currentIndex = 0", indent: 2, label: "add-set-current-index" },
-                { code: "current = head", indent: 2, label: "add-current-head" },
-                { code: "<b>while</b> current.next != null && currentIndex + 1 != index", indent: 2, label: "add-while" },
-                { code: "currentIndex ++", indent: 3, label: "add-increment-current-index" },
-                { code: "current = current.next", indent: 3, label: "add-current-next" },
-                { code: "newNode.next = current.next", indent: 2, label: "add-next-current" },
-                { code: "current.next = newNode", indent: 2, label: "add-current-new" },
+            add: [{
+                    code: "<b>function</b> <b>add</b>(data, index)",
+                    indent: 1,
+                    label: "add"
+                },
+                {
+                    code: "newNode = new Node(data)",
+                    indent: 2,
+                    label: "add-new-node"
+                },
+                {
+                    code: "<b>if</b> head == null",
+                    indent: 2,
+                    label: "add-if-head"
+                },
+                {
+                    code: "head = newNode",
+                    indent: 3,
+                    label: "add-first"
+                },
+                {
+                    code: "return",
+                    indent: 3,
+                    label: "add-first-return"
+                },
+                {
+                    code: "<b>if</b> index === 0",
+                    indent: 2,
+                    label: "add-if-zero"
+                },
+                {
+                    code: "newNode.next = head.next",
+                    indent: 3,
+                    label: "add-next-head"
+                },
+                {
+                    code: "head = newNode",
+                    indent: 3,
+                    label: "add-head-new"
+                },
+                {
+                    code: "return",
+                    indent: 3,
+                    label: "add-head-return"
+                },
+                {
+                    code: "currentIndex = 0",
+                    indent: 2,
+                    label: "add-set-current-index"
+                },
+                {
+                    code: "current = head",
+                    indent: 2,
+                    label: "add-current-head"
+                },
+                {
+                    code: "<b>while</b> current.next != null && currentIndex + 1 != index",
+                    indent: 2,
+                    label: "add-while"
+                },
+                {
+                    code: "currentIndex ++",
+                    indent: 3,
+                    label: "add-increment-current-index"
+                },
+                {
+                    code: "current = current.next",
+                    indent: 3,
+                    label: "add-current-next"
+                },
+                {
+                    code: "newNode.next = current.next",
+                    indent: 2,
+                    label: "add-next-current"
+                },
+                {
+                    code: "current.next = newNode",
+                    indent: 2,
+                    label: "add-current-new"
+                },
             ],
         },
-        empty: [{ code: "", indent: 0, label: "empty" }],
+        empty: [{
+            code: "",
+            indent: 0,
+            label: "empty"
+        }],
     };
 
-    _CONTROL_PANEL_METHODS = [
-        {
+    _CONTROL_PANEL_METHODS = [{
             name: "add",
-            parameters: [
-                { name: "index", type: "number", min: 0 },
-                { name: "data", type: "text" },
+            parameters: [{
+                    name: "index",
+                    type: "number",
+                    min: 0
+                },
+                {
+                    name: "data",
+                    type: "text"
+                },
             ],
         },
         {
             name: "delete",
-            parameters: [{ name: "data", type: "text" }],
+            parameters: [{
+                name: "data",
+                type: "text"
+            }],
         },
         {
             name: "contains",
-            parameters: [{ name: "data", type: "text" }],
+            parameters: [{
+                name: "data",
+                type: "text"
+            }],
         },
         {
             name: "get",
-            parameters: [{ name: "index", type: "number", min: 0 }],
+            parameters: [{
+                name: "index",
+                type: "number",
+                min: 0
+            }],
         },
     ];
 
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({
+            mode: "open"
+        });
         this._render();
 
         this._visContainer = this.shadowRoot.querySelector("vis-container");
@@ -118,7 +370,9 @@ class LinkedListView extends HTMLElement {
 
         this._visContainer.addEventListener("code", this._toggleCode.bind(this));
 
-        this._controlPanel.addEventListener("call-method", ({ detail }) => {
+        this._controlPanel.addEventListener("call-method", ({
+            detail
+        }) => {
             switch (detail.method) {
                 case "add":
                     this._addNode(detail.params);
@@ -164,15 +418,14 @@ class LinkedListView extends HTMLElement {
         this._linkedList.add("22", 0);
         this._linkedList.add("15", 0);
         this._visContainer.updateSteps(
-            [
-                {
-                    heading: "",
-                    description: "",
-                    array: this._linkedList.toArray(),
-                    animation: () => {},
-                },
-            ],
-            { currentStep: 0 }
+            [{
+                heading: "",
+                description: "",
+                array: this._linkedList.toArray(),
+                animation: () => {},
+            }, ], {
+                currentStep: 0
+            }
         );
         this._linkedListVis.data = this._linkedList.toArray();
         this._linkedListVis.updateLinkedList();
@@ -275,7 +528,11 @@ class SinglyLinkedList {
         const newNode = new SinglyNode(data, this.idct++);
         if (this.head == null) index = 0;
 
-        var { node, steps, index: nodeIndex } = this.getNodeBeforeIndex(index, `Add new Node at Index ${index}`, "add");
+        var {
+            node,
+            steps,
+            index: nodeIndex
+        } = this.getNodeBeforeIndex(index, `Add new Node at Index ${index}`, "add");
 
         if (index === 0) {
             //show new node, set next to head
@@ -321,7 +578,10 @@ class SinglyLinkedList {
                 codeLabel: ["add-next-current"],
                 animation: (linkedListVis, duration, step) => {
                     linkedListVis.setCurrentPointer(step._index - 1, 0, true);
-                    linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
+                    linkedListVis.highlightLinks({
+                        source: step._index - 1,
+                        target: step._index
+                    });
                     linkedListVis.addElement(data, newNode.id, step._index, duration);
                 },
             });
@@ -334,7 +594,10 @@ class SinglyLinkedList {
                 codeLabel: ["add-current-new"],
                 animation: async (linkedListVis, duration, step) => {
                     linkedListVis.setCurrentPointer(step._index - 1, 0, true);
-                    linkedListVis.highlightLinks({ source: step._index - 1, target: step._index });
+                    linkedListVis.highlightLinks({
+                        source: step._index - 1,
+                        target: step._index
+                    });
                     await linkedListVis.addElement(data, newNode.id, step._index);
                     await linkedListVis.updateLinkedList(duration / 2);
                     linkedListVis.data = linkedListVis.data;
@@ -349,7 +612,11 @@ class SinglyLinkedList {
 
     delete(data) {
         if (this.head === null) return [];
-        var { node, steps, index } = this.getNodeBefore(data, `Delete Node "${data}"`, "delete");
+        var {
+            node,
+            steps,
+            index
+        } = this.getNodeBefore(data, `Delete Node "${data}"`, "delete");
 
         if ((node === this.head) & (index === null)) {
             //data is in the head
@@ -360,7 +627,11 @@ class SinglyLinkedList {
                 codeLabel: ["delete-if-head-data", "delete-set-head"],
                 animation: async (linkedListVis, duration) => {
                     linkedListVis.highlightElements(0);
-                    await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 }, duration);
+                    await linkedListVis.moveLink({
+                        source: "head",
+                        target: 0,
+                        newTarget: 1
+                    }, duration);
                 },
             });
 
@@ -370,7 +641,11 @@ class SinglyLinkedList {
                 description: `"${data}" is removed because no Node is pointing to it anymore`,
                 codeLabel: ["delete-return"],
                 animation: async (linkedListVis, duration) => {
-                    await linkedListVis.moveLink({ source: "head", target: 0, newTarget: 1 });
+                    await linkedListVis.moveLink({
+                        source: "head",
+                        target: 0,
+                        newTarget: 1
+                    });
                     linkedListVis.reset();
                     linkedListVis.data = linkedListVis.data.filter((el, index) => index !== 0);
                     await linkedListVis.updateLinkedList(duration);
@@ -388,9 +663,16 @@ class SinglyLinkedList {
                 codeLabel: ["delete-set-current"],
                 animation: async (linkedListVis, duration, step) => {
                     await linkedListVis.setCurrentPointer(step._index);
-                    linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                    linkedListVis.highlightLinks({
+                        source: step._index,
+                        target: step._index + 1
+                    });
                     linkedListVis.highlightElements(step._index + 1);
-                    await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, duration);
+                    await linkedListVis.moveLink({
+                        source: step._index,
+                        target: step._index + 1,
+                        newTarget: step._index + 2
+                    }, duration);
                 },
             });
 
@@ -401,7 +683,11 @@ class SinglyLinkedList {
                 _index: index,
                 codeLabel: [],
                 animation: async (linkedListVis, duration, step) => {
-                    await linkedListVis.moveLink({ source: step._index, target: step._index + 1, newTarget: step._index + 2 }, 1);
+                    await linkedListVis.moveLink({
+                        source: step._index,
+                        target: step._index + 1,
+                        newTarget: step._index + 2
+                    }, 1);
                     linkedListVis.reset();
                     linkedListVis.data = linkedListVis.data.filter((el, index) => index !== step._index + 1);
                     await linkedListVis.updateLinkedList(duration);
@@ -416,7 +702,11 @@ class SinglyLinkedList {
 
     contains(data) {
         if (this.head === null) return [];
-        var { node, steps, index } = this.getNodeBefore(data, `Contains "${data}"`, "contains");
+        var {
+            node,
+            steps,
+            index
+        } = this.getNodeBefore(data, `Contains "${data}"`, "contains");
 
         if ((node === this.head) & (index === null)) {
             steps.push({
@@ -426,7 +716,10 @@ class SinglyLinkedList {
                 codeLabel: ["contains-if-head-data", "contains-return"],
                 animation: async (linkedListVis) => {
                     linkedListVis.highlightElements(0);
-                    linkedListVis.highlightLinks({ source: "head", target: 0 });
+                    linkedListVis.highlightLinks({
+                        source: "head",
+                        target: 0
+                    });
                 },
             });
         }
@@ -435,7 +728,10 @@ class SinglyLinkedList {
 
     get(index) {
         if (this.head === null || index < 0) return [];
-        var { node, steps } = this.getNodeBeforeIndex(index, `Get Node with index ${index}`, "get");
+        var {
+            node,
+            steps
+        } = this.getNodeBeforeIndex(index, `Get Node with index ${index}`, "get");
 
         if ((node === this.head) & (index === 0)) {
             steps.push({
@@ -445,7 +741,10 @@ class SinglyLinkedList {
                 codeLabel: ["get-if-head-index", "get-return"],
                 animation: async (linkedListVis) => {
                     linkedListVis.highlightElements(0);
-                    linkedListVis.highlightLinks({ source: "head", target: 0 });
+                    linkedListVis.highlightLinks({
+                        source: "head",
+                        target: 0
+                    });
                 },
             });
         }
@@ -454,9 +753,17 @@ class SinglyLinkedList {
 
     getNodeBefore(data, heading, codeLabelPrefix) {
         var steps = [];
-        if (this.head == null) return { node: null, index: null, steps };
+        if (this.head == null) return {
+            node: null,
+            index: null,
+            steps
+        };
 
-        if (this.head.data == data) return { node: this.head, index: null, steps };
+        if (this.head.data == data) return {
+            node: this.head,
+            index: null,
+            steps
+        };
 
         let current = this.head;
         let index = 0;
@@ -468,7 +775,10 @@ class SinglyLinkedList {
             _index: index,
             codeLabel: [`${codeLabelPrefix}-current-head`],
             animation: async (linkedListVis, duration, step) => {
-                linkedListVis.highlightLinks({ source: "head", target: step._index });
+                linkedListVis.highlightLinks({
+                    source: "head",
+                    target: step._index
+                });
                 linkedListVis.setCurrentPointer(step._index, duration);
             },
         });
@@ -489,11 +799,18 @@ class SinglyLinkedList {
                             await linkedListVis.setCurrentPointer(step._index, duration);
                         }
                         if (stepCounter != visContainer.stepCounter) return;
-                        linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                        linkedListVis.highlightLinks({
+                            source: step._index,
+                            target: step._index + 1
+                        });
                         linkedListVis.highlightElements(step._index + 1);
                     },
                 });
-                return { node: current, index, steps };
+                return {
+                    node: current,
+                    index,
+                    steps
+                };
             }
             steps.push({
                 array: this.toArray(),
@@ -509,7 +826,10 @@ class SinglyLinkedList {
                         await linkedListVis.setCurrentPointer(step._index, duration);
                     }
                     if (stepCounter != visContainer.stepCounter) return;
-                    linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                    linkedListVis.highlightLinks({
+                        source: step._index,
+                        target: step._index + 1
+                    });
                 },
             });
             index++;
@@ -530,17 +850,32 @@ class SinglyLinkedList {
                     await linkedListVis.setCurrentPointer(step._index, duration);
                 }
                 if (stepCounter != visContainer.stepCounter) return;
-                linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                linkedListVis.highlightLinks({
+                    source: step._index,
+                    target: step._index + 1
+                });
             },
         });
-        return { node: null, index: null, steps };
+        return {
+            node: null,
+            index: null,
+            steps
+        };
     }
 
     getNodeBeforeIndex(index, heading, codeLabelPrefix) {
         var steps = [];
-        if (this.head == null) return { node: null, index: null, steps };
+        if (this.head == null) return {
+            node: null,
+            index: null,
+            steps
+        };
 
-        if (index === 0) return { node: this.head, index: null, steps };
+        if (index === 0) return {
+            node: this.head,
+            index: null,
+            steps
+        };
 
         let current = this.head;
         let currentIndex = 0;
@@ -553,7 +888,10 @@ class SinglyLinkedList {
             _index: currentIndex,
             codeLabel: [`${codeLabelPrefix}-set-current-index`, `${codeLabelPrefix}-current-head`],
             animation: async (linkedListVis, duration, step) => {
-                linkedListVis.highlightLinks({ source: "head", target: step._index });
+                linkedListVis.highlightLinks({
+                    source: "head",
+                    target: step._index
+                });
                 linkedListVis.setCurrentPointer(step._index, duration, true);
             },
         });
@@ -574,11 +912,18 @@ class SinglyLinkedList {
                             await linkedListVis.setCurrentPointer(step._index, duration, true);
                         }
                         if (stepCounter != visContainer.stepCounter) return;
-                        linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                        linkedListVis.highlightLinks({
+                            source: step._index,
+                            target: step._index + 1
+                        });
                         linkedListVis.highlightElements(step._index + 1);
                     },
                 });
-                return { node: current, index: currentIndex, steps };
+                return {
+                    node: current,
+                    index: currentIndex,
+                    steps
+                };
             }
             steps.push({
                 array: this.toArray(),
@@ -594,7 +939,10 @@ class SinglyLinkedList {
                         await linkedListVis.setCurrentPointer(step._index, duration, true);
                     }
                     if (stepCounter != visContainer.stepCounter) return;
-                    linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                    linkedListVis.highlightLinks({
+                        source: step._index,
+                        target: step._index + 1
+                    });
                 },
             });
             currentIndex++;
@@ -615,17 +963,27 @@ class SinglyLinkedList {
                     await linkedListVis.setCurrentPointer(step._index, duration, true);
                 }
                 if (stepCounter != visContainer.stepCounter) return;
-                linkedListVis.highlightLinks({ source: step._index, target: step._index + 1 });
+                linkedListVis.highlightLinks({
+                    source: step._index,
+                    target: step._index + 1
+                });
             },
         });
-        return { node: current, index: currentIndex, steps };
+        return {
+            node: current,
+            index: currentIndex,
+            steps
+        };
     }
 
     toArray() {
         const array = [];
         let current = this.head;
         while (current != null) {
-            array.push({ data: current.data, id: current.id });
+            array.push({
+                data: current.data,
+                id: current.id
+            });
             current = current.next;
         }
         return array;

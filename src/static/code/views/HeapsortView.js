@@ -1,34 +1,127 @@
+import {
+    waitMixin
+} from '../mixins/wait-mixin';
+
 class HeapsortView extends HTMLElement {
     _ANIMATION_DURATION = 1000;
     _EXAMPLE_DATA = [5, 3, 7, 11, 9, 4, 2];
-    _PSEUDOCODE = [
-        { code: "<b>Heapsort</b>(A as array)", indent: 0, label: "heapsort" },
-        { code: "<b>BuildMaxHeap</b>(A)", indent: 1, label: "heapsort-build-max-heap" },
-        { code: "<b>for</b> i = A.length - 1 to 0", indent: 1, label: "heapsort-for-loop" },
-        { code: "swap A[0] and A[i]", indent: 2, label: "heapsort-swap" },
-        { code: "<b>Heapify</b>(A, 0)", indent: 2, label: "heapsort-heapify" },
-        { code: "", indent: 0, label: "empty" },
-        { code: "<b>BuildMaxHeap</b>(A as array)", indent: 0, label: "build-max-heap" },
-        { code: "<b>for</b> i = floor(A.length / 2) to 0", indent: 1, label: "build-max-heap-for-loop" },
-        { code: "<b>Heapify</b>(A, i)", indent: 2, label: "build-max-heap-heapify" },
-        { code: "", indent: 0, label: "empty" },
-        { code: "<b>Heapify</b>(A as array, i as int)", indent: 0, label: "heapify" },
-        { code: "l = 2 * i + 1", indent: 1, label: "heapify-l" },
-        { code: "r = 2 * i + 2", indent: 1, label: "heapify-r" },
-        { code: "<b>if</b> l < A.length and A[l] > A[i]", indent: 1, label: "heapify-if-l" },
-        { code: "max = l", indent: 2, label: "heapify-max-l" },
-        { code: "<b>else</b>", indent: 1, label: "heapify-else-i" },
-        { code: "max = i", indent: 2, label: "heapify-max-i" },
-        { code: "<b>if</b> r < A.length and A[r] > A[max]", indent: 1, label: "heapify-if-r" },
-        { code: "max = r", indent: 2, label: "heapify-max-r" },
-        { code: "<b>if</b> max != i", indent: 1, label: "heapify-if-max" },
-        { code: "swap A[i] and A[max]", indent: 2, label: "heapify-swap" },
-        { code: "<b>Heapify</b>(A, max)", indent: 2, label: "heapify-heapify" },
+    _PSEUDOCODE = [{
+            code: "<b>Heapsort</b>(A as array)",
+            indent: 0,
+            label: "heapsort"
+        },
+        {
+            code: "<b>BuildMaxHeap</b>(A)",
+            indent: 1,
+            label: "heapsort-build-max-heap"
+        },
+        {
+            code: "<b>for</b> i = A.length - 1 to 0",
+            indent: 1,
+            label: "heapsort-for-loop"
+        },
+        {
+            code: "swap A[0] and A[i]",
+            indent: 2,
+            label: "heapsort-swap"
+        },
+        {
+            code: "<b>Heapify</b>(A, 0)",
+            indent: 2,
+            label: "heapsort-heapify"
+        },
+        {
+            code: "",
+            indent: 0,
+            label: "empty"
+        },
+        {
+            code: "<b>BuildMaxHeap</b>(A as array)",
+            indent: 0,
+            label: "build-max-heap"
+        },
+        {
+            code: "<b>for</b> i = floor(A.length / 2) to 0",
+            indent: 1,
+            label: "build-max-heap-for-loop"
+        },
+        {
+            code: "<b>Heapify</b>(A, i)",
+            indent: 2,
+            label: "build-max-heap-heapify"
+        },
+        {
+            code: "",
+            indent: 0,
+            label: "empty"
+        },
+        {
+            code: "<b>Heapify</b>(A as array, i as int)",
+            indent: 0,
+            label: "heapify"
+        },
+        {
+            code: "l = 2 * i + 1",
+            indent: 1,
+            label: "heapify-l"
+        },
+        {
+            code: "r = 2 * i + 2",
+            indent: 1,
+            label: "heapify-r"
+        },
+        {
+            code: "<b>if</b> l < A.length and A[l] > A[i]",
+            indent: 1,
+            label: "heapify-if-l"
+        },
+        {
+            code: "max = l",
+            indent: 2,
+            label: "heapify-max-l"
+        },
+        {
+            code: "<b>else</b>",
+            indent: 1,
+            label: "heapify-else-i"
+        },
+        {
+            code: "max = i",
+            indent: 2,
+            label: "heapify-max-i"
+        },
+        {
+            code: "<b>if</b> r < A.length and A[r] > A[max]",
+            indent: 1,
+            label: "heapify-if-r"
+        },
+        {
+            code: "max = r",
+            indent: 2,
+            label: "heapify-max-r"
+        },
+        {
+            code: "<b>if</b> max != i",
+            indent: 1,
+            label: "heapify-if-max"
+        },
+        {
+            code: "swap A[i] and A[max]",
+            indent: 2,
+            label: "heapify-swap"
+        },
+        {
+            code: "<b>Heapify</b>(A, max)",
+            indent: 2,
+            label: "heapify-heapify"
+        },
     ];
 
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({
+            mode: "open"
+        });
         this._render();
 
         this._splitLayout = this.shadowRoot.querySelector("split-layout");
@@ -55,7 +148,10 @@ class HeapsortView extends HTMLElement {
 
     _updateVis(step, ...markers) {
         const dataWithModifiers = step.data.map((el, index) => {
-            return { value: el, modifier: index < step.data.length - step.sortCount ? (markers.includes(index) ? "mark" : "") : "lock" };
+            return {
+                value: el,
+                modifier: index < step.data.length - step.sortCount ? (markers.includes(index) ? "mark" : "") : "lock"
+            };
         });
         this._binaryTreeVis.data = dataWithModifiers;
         this._arrayVis.data = dataWithModifiers;
@@ -74,8 +170,11 @@ class HeapsortView extends HTMLElement {
 
         if (stepCounter != this._visContainer.stepCounter) return;
         if (this._visContainer.steps[stepIndex + 1].sortCount > step.sortCount) {
-            this._updateVis(
-                { ...this._visContainer.steps[stepIndex + 1], codeLabel: step.codeLabel, sortCount: step.sortCount + 1 },
+            this._updateVis({
+                    ...this._visContainer.steps[stepIndex + 1],
+                    codeLabel: step.codeLabel,
+                    sortCount: step.sortCount + 1
+                },
                 index_A,
                 index_B
             );
@@ -131,7 +230,9 @@ class HeapsortView extends HTMLElement {
         else if (data.length > 15) this._binaryTreeVis.setAttribute("node-radius", 20);
         else this._binaryTreeVis.setAttribute("node-radius", 30);
 
-        this._visContainer.updateSteps(this._heapSort(data), { currentStep: 0 });
+        this._visContainer.updateSteps(this._heapSort(data), {
+            currentStep: 0
+        });
     }
 
     _heapSort(data) {
@@ -139,16 +240,14 @@ class HeapsortView extends HTMLElement {
         let length = data.length;
 
         //First step shows how array is put into binary tree
-        let stepOrder = [
-            {
-                data: [...data],
-                sortCount,
-                heading: "Represent array in binary tree",
-                description: `The first element of the array is the root, the second is the first child, the third is the second child, ...`,
-                codeLabel: ["heapsort"],
-                animation: (step) => this._updateVis(step),
-            },
-        ];
+        let stepOrder = [{
+            data: [...data],
+            sortCount,
+            heading: "Represent array in binary tree",
+            description: `The first element of the array is the root, the second is the first child, the third is the second child, ...`,
+            codeLabel: ["heapsort"],
+            animation: (step) => this._updateVis(step),
+        }, ];
 
         for (let i = Math.floor(length / 2) - 1; i >= 0; i--) {
             //building the max heap
@@ -180,23 +279,20 @@ class HeapsortView extends HTMLElement {
         for (let i = length - 1; i >= 0; i--) {
             if (i != 0) {
                 const stepIndex = stepOrder.length;
-                stepOrder.push(
-                    {
-                        data: [...data],
-                        sortCount,
-                        heading: "Max Heap is complete",
-                        description: `Every node is greater than its children and the root node is the largest element in the graph`,
-                        animation: (step) => this._updateVis(step),
-                    },
-                    {
-                        data: [...data],
-                        sortCount,
-                        heading: "Exchange root with last element",
-                        description: `Swap ${data[0]} with ${data[i]} because ${data[0]} is the largest element in the graph and can be inserted at the next free spot at the end`,
-                        codeLabel: ["heapsort-swap"],
-                        animation: (step) => this._swapNodes(step, 0, i, stepIndex + 1),
-                    }
-                );
+                stepOrder.push({
+                    data: [...data],
+                    sortCount,
+                    heading: "Max Heap is complete",
+                    description: `Every node is greater than its children and the root node is the largest element in the graph`,
+                    animation: (step) => this._updateVis(step),
+                }, {
+                    data: [...data],
+                    sortCount,
+                    heading: "Exchange root with last element",
+                    description: `Swap ${data[0]} with ${data[i]} because ${data[0]} is the largest element in the graph and can be inserted at the next free spot at the end`,
+                    codeLabel: ["heapsort-swap"],
+                    animation: (step) => this._swapNodes(step, 0, i, stepIndex + 1),
+                });
             }
             this._swap(data, 0, i); //delete the root element
             sortCount++;

@@ -1,13 +1,23 @@
+import {
+    waitMixin
+} from '../mixins/wait-mixin';
+
 class VisContainer extends HTMLElement {
     _stepCounter = 0;
     _steps = [];
     _currentStepIndex = 0;
 
-    _showStep = (step) => new CustomEvent("show-step", { detail: { step } });
+    _showStep = (step) => new CustomEvent("show-step", {
+        detail: {
+            step
+        }
+    });
 
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({
+            mode: "open"
+        });
         this._render();
 
         this._header = this.shadowRoot.querySelector("header-element");
@@ -44,7 +54,11 @@ class VisContainer extends HTMLElement {
         return this._steps;
     }
 
-    async updateSteps(steps, { currentStep, locked, nextStep }) {
+    async updateSteps(steps, {
+        currentStep,
+        locked,
+        nextStep
+    }) {
         this._steps = steps;
         this._stepCounter = 0;
         this._progressBar.setAttribute("total-steps", this._steps.length - 1);

@@ -1,5 +1,14 @@
+import {
+    waitMixin
+} from '../mixins/wait-mixin';
+
 class BinaryTree extends HTMLElement {
-    _MARGIN = { top: 50, right: 20, bottom: 30, left: 20 };
+    _MARGIN = {
+        top: 50,
+        right: 20,
+        bottom: 30,
+        left: 20
+    };
     _WIDTH = window.innerWidth - this._MARGIN.left - this._MARGIN.right;
     _HEIGHT = window.innerHeight - this._MARGIN.top - this._MARGIN.bottom;
 
@@ -12,7 +21,9 @@ class BinaryTree extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({
+            mode: "open"
+        });
         this._render();
 
         this.shadowRoot.querySelector("vis-control").addEventListener("center", () => this.center(400));
@@ -77,7 +88,10 @@ class BinaryTree extends HTMLElement {
         const nodeA = this._nodes.descendants().find((node) => node.data.index === index_A);
         const nodeB = this._nodes.descendants().find((node) => node.data.index === index_B);
 
-        const temp = { x: nodeA.x, y: nodeA.y };
+        const temp = {
+            x: nodeA.x,
+            y: nodeA.y
+        };
         nodeA.x = nodeB.x;
         nodeA.y = nodeB.y;
         nodeB.x = temp.x;
@@ -94,9 +108,22 @@ class BinaryTree extends HTMLElement {
     }
 
     _update() {
-        this.data.forEach(({ value, modifier }, index) => {
-            if (index === 0) this._treeData = { value, modifier, index, children: [] };
-            else this._findParent(index).children.push({ value, modifier, index, children: [] });
+        this.data.forEach(({
+            value,
+            modifier
+        }, index) => {
+            if (index === 0) this._treeData = {
+                value,
+                modifier,
+                index,
+                children: []
+            };
+            else this._findParent(index).children.push({
+                value,
+                modifier,
+                index,
+                children: []
+            });
         });
 
         //  assigns the data to a hierarchy using parent-child relationships

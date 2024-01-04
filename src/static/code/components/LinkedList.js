@@ -1,5 +1,11 @@
+import {
+    waitMixin
+} from '../mixins/wait-mixin';
+
 class LinkedList extends HTMLElement {
-    _E_WIDTH = { singly: 75 };
+    _E_WIDTH = {
+        singly: 75
+    };
     _E_HEIGHT = 50;
     _SPACING = 30;
     _Y_OFFSET = 130;
@@ -8,7 +14,9 @@ class LinkedList extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({
+            mode: "open"
+        });
         this._render();
 
         this.shadowRoot.querySelector("vis-control").addEventListener("center", () => this.center(400));
@@ -37,7 +45,10 @@ class LinkedList extends HTMLElement {
 
     highlightLinks(...indices) {
         this._g.selectAll(".link--highlight").attr("marker-end", "url(#arrow)").classed("link--highlight", false);
-        indices.forEach(({ source, target }) =>
+        indices.forEach(({
+                source,
+                target
+            }) =>
             this._g.select(`#link-${source}-${target}`).attr("marker-end", "url(#arrow-highlight)").classed("link--highlight", true)
         );
     }
@@ -160,7 +171,10 @@ class LinkedList extends HTMLElement {
             })
             .end();
 
-        this._linkedList.splice(index, 0, { data, id });
+        this._linkedList.splice(index, 0, {
+            data,
+            id
+        });
         this._linkedList = this._addCoordinatesToLinkedList(this._linkedList);
         this._linkedList[index].y = this._linkedList[index].y - this._E_HEIGHT * 0.75;
         //add new element
@@ -170,67 +184,71 @@ class LinkedList extends HTMLElement {
         await this._updateLinks(this._linkedList, duration / 2, [index]);
     }
 
-    async moveLink({ source, target, newTarget }, duration) {
+    async moveLink({
+        source,
+        target,
+        newTarget
+    }, duration) {
         const link = this._svg.select(`path#link-${source}-${target}`);
 
         if (newTarget < this._linkedList.length) {
             const targetElement = this._linkedList[newTarget];
             if (source === "head" || target === "head")
                 await link
-                    .transition()
-                    .duration(duration)
-                    .attr("d", (d) =>
-                        d3.line()([
-                            [d.x, d.y],
-                            [this._X_OFFSET + this._SPACING * 2 + this._E_WIDTH.singly, this._linkedList[0].y - this._E_HEIGHT / 2],
-                        ])
-                    )
-                    .end();
+                .transition()
+                .duration(duration)
+                .attr("d", (d) =>
+                    d3.line()([
+                        [d.x, d.y],
+                        [this._X_OFFSET + this._SPACING * 2 + this._E_WIDTH.singly, this._linkedList[0].y - this._E_HEIGHT / 2],
+                    ])
+                )
+                .end();
             else
                 await link
-                    .transition()
-                    .duration(duration)
-                    .attrTween("d", (d, i, paths) => {
-                        const previous = d3.select(paths[i]).attr("d");
-                        const current = d3.line()([
-                            [d.x + this._E_WIDTH.singly / 2, d.y],
-                            [d.x + this._E_WIDTH.singly, d.y - this._E_HEIGHT],
-                            [targetElement.x - (5 * this._E_WIDTH.singly) / 6, d.y - this._E_HEIGHT],
-                            [targetElement.x - this._E_WIDTH.singly / 3, targetElement.y - 5],
-                        ]);
-                        return d3.interpolatePath(previous, current);
-                    })
-                    .end();
+                .transition()
+                .duration(duration)
+                .attrTween("d", (d, i, paths) => {
+                    const previous = d3.select(paths[i]).attr("d");
+                    const current = d3.line()([
+                        [d.x + this._E_WIDTH.singly / 2, d.y],
+                        [d.x + this._E_WIDTH.singly, d.y - this._E_HEIGHT],
+                        [targetElement.x - (5 * this._E_WIDTH.singly) / 6, d.y - this._E_HEIGHT],
+                        [targetElement.x - this._E_WIDTH.singly / 3, targetElement.y - 5],
+                    ]);
+                    return d3.interpolatePath(previous, current);
+                })
+                .end();
         } else {
             //newTarget is nullElement
             if (source === "head" || target === "head")
                 await link
-                    .transition()
-                    .duration(duration)
-                    .attrTween("d", (d, i, paths) => {
-                        const previous = d3.select(paths[i]).attr("d");
-                        const current = d3.line()([
-                            [d.x, d.y],
-                            [this._nullElement.attr("x") - 3, this._nullElement.attr("y") - 27],
-                        ]);
-                        return d3.interpolatePath(previous, current);
-                    })
-                    .end();
+                .transition()
+                .duration(duration)
+                .attrTween("d", (d, i, paths) => {
+                    const previous = d3.select(paths[i]).attr("d");
+                    const current = d3.line()([
+                        [d.x, d.y],
+                        [this._nullElement.attr("x") - 3, this._nullElement.attr("y") - 27],
+                    ]);
+                    return d3.interpolatePath(previous, current);
+                })
+                .end();
             else
                 await link
-                    .transition()
-                    .duration(duration)
-                    .attrTween("d", (d, i, paths) => {
-                        const previous = d3.select(paths[i]).attr("d");
-                        const current = d3.line()([
-                            [d.x + this._E_WIDTH.singly / 2, d.y],
-                            [d.x + this._E_WIDTH.singly, d.y - this._E_HEIGHT],
-                            [this._nullElement.attr("x") - (5 * this._E_WIDTH.singly) / 6, d.y - this._E_HEIGHT],
-                            [this._nullElement.attr("x") - 15, this._nullElement.attr("y") - 15],
-                        ]);
-                        return d3.interpolatePath(previous, current);
-                    })
-                    .end();
+                .transition()
+                .duration(duration)
+                .attrTween("d", (d, i, paths) => {
+                    const previous = d3.select(paths[i]).attr("d");
+                    const current = d3.line()([
+                        [d.x + this._E_WIDTH.singly / 2, d.y],
+                        [d.x + this._E_WIDTH.singly, d.y - this._E_HEIGHT],
+                        [this._nullElement.attr("x") - (5 * this._E_WIDTH.singly) / 6, d.y - this._E_HEIGHT],
+                        [this._nullElement.attr("x") - 15, this._nullElement.attr("y") - 15],
+                    ]);
+                    return d3.interpolatePath(previous, current);
+                })
+                .end();
         }
     }
 
@@ -377,12 +395,17 @@ class LinkedList extends HTMLElement {
         let target = [this._X_OFFSET + this._SPACING, this._Y_OFFSET - 18];
         if (linkedList.length > 0) target = [this._X_OFFSET + this._SPACING, linkedList[0].y - this._E_HEIGHT / 2];
         await this._headLink
-            .data([{ x: this._X_OFFSET + this._SPACING, y: this._E_HEIGHT + 5 }])
+            .data([{
+                x: this._X_OFFSET + this._SPACING,
+                y: this._E_HEIGHT + 5
+            }])
             .transition()
             .duration(duration)
             .attrTween("d", (d, i, paths) => {
                 const previous = d3.select(paths[i]).attr("d");
-                const current = d3.line()([[d.x, d.y], target]);
+                const current = d3.line()([
+                    [d.x, d.y], target
+                ]);
                 return d3.interpolatePath(previous, current);
             })
             .end();
@@ -417,7 +440,10 @@ class LinkedList extends HTMLElement {
             })
             .end();
 
-        this._linkedList.unshift({ data, id });
+        this._linkedList.unshift({
+            data,
+            id
+        });
         this._linkedList = this._addCoordinatesToLinkedList(this._linkedList);
         //add new element
         this._updateElements(this._linkedList);
@@ -430,14 +456,24 @@ class LinkedList extends HTMLElement {
 
     _addCoordinatesToLinkedList(linkedList) {
         return linkedList.map((element, index) => {
-            return { ...element, y: this._Y_OFFSET, x: this._X_OFFSET + index * this._E_WIDTH.singly + this._SPACING * (index + 1) };
+            return {
+                ...element,
+                y: this._Y_OFFSET,
+                x: this._X_OFFSET + index * this._E_WIDTH.singly + this._SPACING * (index + 1)
+            };
         });
     }
 
     _getNullElementPosition(linkedList) {
         const lastIndex = linkedList.length - 1;
-        if (linkedList.length === 0) return { x: this._X_OFFSET + this._SPACING, y: this._Y_OFFSET + 9 };
-        return { x: linkedList[lastIndex].x + this._SPACING + this._E_WIDTH.singly - 10, y: this._Y_OFFSET + 9 };
+        if (linkedList.length === 0) return {
+            x: this._X_OFFSET + this._SPACING,
+            y: this._Y_OFFSET + 9
+        };
+        return {
+            x: linkedList[lastIndex].x + this._SPACING + this._E_WIDTH.singly - 10,
+            y: this._Y_OFFSET + 9
+        };
     }
 
     _render() {
