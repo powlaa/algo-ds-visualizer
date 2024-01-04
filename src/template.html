@@ -5,34 +5,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Algorithm Visualizer</title>
-
-    <script src="/static/code/mixins/wait-mixin.js"></script>
+    <title><%= htmlWebpackPlugin.options.title %></title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-interpolate-path@2.3.0/build/d3-interpolate-path.js"></script>
-    <link rel="stylesheet" href="/static/css/index.css" />
-
-    <script src="/static/code/views/HeapsortView.js"></script>
-    <script src="/static/code/views/DijkstraView.js"></script>
-    <script src="/static/code/views/QuickSortView.js"></script>
-    <script src="/static/code/views/AStarview.js"></script>
-    <script src="/static/code/views/LinkedListView.js"></script>
-    <script src="/static/code/views/HomeView.js"></script>
-    <script src="/static/code/components/Header.js"></script>
-    <script src="/static/code/components/ProgressBar.js"></script>
-    <script src="/static/code/components/ArrayDisplay.js"></script>
-    <script src="/static/code/components/BinaryTree.js"></script>
-    <script src="/static/code/components/PopUp.js"></script>
-    <script src="/static/code/components/TableDisplay.js"></script>
-    <script src="/static/code/components/PseudocodeDisplay.js"></script>
-    <script src="/static/code/components/GraphCreator.js"></script>
-    <script src="/static/code/components/LinkedList.js"></script>
-    <script src="/static/code/components/SplitLayout.js"></script>
-    <script src="/static/code/components/VisContainer.js"></script>
-    <script src="/static/code/components/ControlPanel.js"></script>
-    <script src="/static/code/components/CategoryCard.js"></script>
-    <script src="/static/code/components/NavItem.js"></script>
-    <script src="/static/code/components/VisControl.js"></script>
+    <!-- <link rel="stylesheet" href="/static/css/index.css" /> -->
 </head>
 
 <body>
@@ -751,9 +727,6 @@
         <b>Delete an Edge:</b>
         <p>Select an edge and press <kbd>← Backspace</kbd> or <kbd>Delete</kbd></p>
     </template>
-
-    <!-- js entrypoint -->
-    <script type="module" src="/static/code/router.js"></script>
 </body>
 
 </html>
