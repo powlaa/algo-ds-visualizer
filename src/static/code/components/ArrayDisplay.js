@@ -1,7 +1,7 @@
 import {
     waitMixin
 } from '../mixins/wait-mixin';
-
+import cssFile from '../../css/index.css';
 
 class ArrayDisplay extends HTMLElement {
     _renderCounter = 0;
@@ -62,7 +62,7 @@ class ArrayDisplay extends HTMLElement {
     _render() {
         this._renderCounter++;
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/index.css" />
+            <link rel="stylesheet" href=${cssFile} />
             <style>
                 :host {
                     display: inline-block;

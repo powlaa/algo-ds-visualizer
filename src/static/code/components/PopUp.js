@@ -1,3 +1,5 @@
+import cssFile from '../../css/index.css';
+
 class PopUp extends HTMLElement {
     constructor() {
         super();
@@ -45,7 +47,7 @@ class PopUp extends HTMLElement {
 
     _render() {
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/index.css" />
+            <link rel="stylesheet" href=${cssFile}/>
             <style>
                 :host {
                     display: inline-block;
