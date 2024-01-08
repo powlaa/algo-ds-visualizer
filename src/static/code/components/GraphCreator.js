@@ -3,6 +3,10 @@ Parts of this code were taken and adapted from Colorado Reed's directed-graph-cr
 Copyright (c) 2014 Colorado Reed
 */
 
+import centerIcon from '../../img/center-icon.png';
+import deleteIcon from '../../img/delete-icon.png';
+import helpIcon from '../../img/question-mark.png';
+
 class GraphCreator extends HTMLElement {
     _CONSTS = {
         selectedStartClass: "selectedStart",
@@ -829,9 +833,9 @@ class GraphCreator extends HTMLElement {
             <vis-control
                 del
                 help
-                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
-                delete-icon="${this.hasAttribute("delete-icon") ? this.getAttribute("delete-icon") : "/static/img/delete-icon.png"}"
-                help-icon="${this.hasAttribute("help-icon") ? this.getAttribute("help-icon") : "/static/img/question-mark.png"}"
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : centerIcon}"
+                delete-icon="${this.hasAttribute("delete-icon") ? this.getAttribute("delete-icon") : deleteIcon}"
+                help-icon="${this.hasAttribute("help-icon") ? this.getAttribute("help-icon") : helpIcon}"
             ></vis-control>
         `;
     }

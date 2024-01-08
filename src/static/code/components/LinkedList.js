@@ -1,6 +1,7 @@
 import {
     waitMixin
 } from '../mixins/wait-mixin';
+import centerIcon from '../../img/center-icon.png';
 
 class LinkedList extends HTMLElement {
     _E_WIDTH = {
@@ -532,7 +533,7 @@ class LinkedList extends HTMLElement {
             </style>
             <div id="container" class="container"></div>
             <vis-control
-                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : centerIcon}"
             ></vis-control>
         `;
     }
