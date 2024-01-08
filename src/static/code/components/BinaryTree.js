@@ -1,6 +1,8 @@
 import {
     waitMixin
 } from '../mixins/wait-mixin';
+import centerIcon from '../../img/center-icon.png';
+import cssFile from '../../css/index.css';
 
 class BinaryTree extends HTMLElement {
     _MARGIN = {
@@ -188,7 +190,7 @@ class BinaryTree extends HTMLElement {
 
     _render() {
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="/static/css/index.css" />
+            <link rel="stylesheet" href=${cssFile}/>
             <style>
                 :host {
                     display: inline-block;
@@ -239,7 +241,7 @@ class BinaryTree extends HTMLElement {
             </style>
             <div id="container"></div>
             <vis-control
-                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : "/static/img/center-icon.png"}"
+                center-icon="${this.hasAttribute("center-icon") ? this.getAttribute("center-icon") : centerIcon}"
             ></vis-control>
         `;
     }
