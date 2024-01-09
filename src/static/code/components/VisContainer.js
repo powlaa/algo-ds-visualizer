@@ -1,11 +1,10 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
+import wait from '../util/wait';
 import informationMark from '../../img/information-mark.png';
 import codeIcon from '../../img/code-icon.png';
 import homeIcon from '../../img/homepage-icon.png';
 
 class VisContainer extends HTMLElement {
+    _wait = wait;
     _stepCounter = 0;
     _steps = [];
     _currentStepIndex = 0;
@@ -149,6 +148,6 @@ class VisContainer extends HTMLElement {
     }
 }
 
-Object.assign(VisContainer.prototype, waitMixin);
+Object.assign(VisContainer.prototype);
 
 customElements.define("vis-container", VisContainer);

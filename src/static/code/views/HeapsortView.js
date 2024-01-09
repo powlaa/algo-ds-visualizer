@@ -1,8 +1,7 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
+import wait from "../util/wait";
 
 class HeapsortView extends HTMLElement {
+    _wait = wait;
     _ANIMATION_DURATION = 1000;
     _EXAMPLE_DATA = [5, 3, 7, 11, 9, 4, 2];
     _PSEUDOCODE = [{
@@ -402,6 +401,6 @@ class HeapsortView extends HTMLElement {
     }
 }
 
-Object.assign(HeapsortView.prototype, waitMixin);
+Object.assign(HeapsortView.prototype);
 
 customElements.define("heapsort-view", HeapsortView);

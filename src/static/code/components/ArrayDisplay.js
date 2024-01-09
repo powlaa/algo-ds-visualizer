@@ -1,9 +1,8 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
 import cssFile from '../../css/index.css';
+import wait from '../util/wait';
 
 class ArrayDisplay extends HTMLElement {
+    _wait = wait;
     _renderCounter = 0;
 
     constructor() {
@@ -104,6 +103,6 @@ class ArrayDisplay extends HTMLElement {
     }
 }
 
-Object.assign(ArrayDisplay.prototype, waitMixin);
+Object.assign(ArrayDisplay.prototype);
 
 customElements.define("array-display", ArrayDisplay);

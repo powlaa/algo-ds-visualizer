@@ -1,8 +1,7 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
+import wait from "../util/wait";
 
 class QuickSortView extends HTMLElement {
+    _wait = wait;
     _ANIMATION_DURATION = 1000;
     _EXAMPLE_DATA = [5, 3, 7, 11, 9, 4, 2];
     _PSEUDOCODE = [{
@@ -356,6 +355,6 @@ class QuickSortView extends HTMLElement {
     }
 }
 
-Object.assign(QuickSortView.prototype, waitMixin);
+Object.assign(QuickSortView.prototype);
 
 customElements.define("quicksort-view", QuickSortView);

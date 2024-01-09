@@ -1,9 +1,8 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
+import wait from '../util/wait';
 import centerIcon from '../../img/center-icon.png';
 
 class LinkedList extends HTMLElement {
+    _wait = wait;
     _E_WIDTH = {
         singly: 75
     };
@@ -539,6 +538,6 @@ class LinkedList extends HTMLElement {
     }
 }
 
-Object.assign(LinkedList.prototype, waitMixin);
+Object.assign(LinkedList.prototype);
 
 customElements.define("linked-list", LinkedList);

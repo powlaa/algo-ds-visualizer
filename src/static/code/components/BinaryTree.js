@@ -1,10 +1,9 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
+import wait from '../util/wait';
 import centerIcon from '../../img/center-icon.png';
 import cssFile from '../../css/index.css';
 
 class BinaryTree extends HTMLElement {
+    _wait = wait;
     _MARGIN = {
         top: 50,
         right: 20,
@@ -247,6 +246,6 @@ class BinaryTree extends HTMLElement {
     }
 }
 
-Object.assign(BinaryTree.prototype, waitMixin);
+Object.assign(BinaryTree.prototype);
 
 customElements.define("binary-tree", BinaryTree);

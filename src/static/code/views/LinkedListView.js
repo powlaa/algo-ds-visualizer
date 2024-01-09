@@ -1,8 +1,7 @@
-import {
-    waitMixin
-} from '../mixins/wait-mixin';
+import wait from "../util/wait";
 
 class LinkedListView extends HTMLElement {
+    _wait = wait;
     _ANIMATION_DURATION = 1000;
     _EXAMPLE_DATA = [5, 3, 7, 11];
     _PSEUDOCODE_CLASSES = {
@@ -506,7 +505,7 @@ class LinkedListView extends HTMLElement {
     }
 }
 
-Object.assign(LinkedListView.prototype, waitMixin);
+Object.assign(LinkedListView.prototype);
 
 customElements.define("linked-list-view", LinkedListView);
 
