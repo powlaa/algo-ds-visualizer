@@ -10,6 +10,9 @@ const router = () => {
         case "/":
             template = document.querySelector(`template#home-view`);
             break;
+        case "/sample":
+            template = document.querySelector(`template#sample-view`);
+            break;
         case "/heapsort":
             template = document.querySelector(`template#heapsort-view`);
             break;
