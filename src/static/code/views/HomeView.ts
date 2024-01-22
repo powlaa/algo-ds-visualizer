@@ -5,14 +5,14 @@ import dijkstra from "../../img/dijkstra.png";
 import aStar from "../../img/astar.png";
 
 class HomeView extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        this._render();
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._render();
+  }
 
-    _render() {
-        this.shadowRoot.innerHTML = `
+  _render() {
+    this.shadowRoot!.innerHTML = `
             <style>
                 .layout {
                     --split-layout-justify-content-left: none;
@@ -66,7 +66,7 @@ class HomeView extends HTMLElement {
                 </div>
             </split-layout>
         `;
-    }
+  }
 }
 
 customElements.define("home-view", HomeView);
