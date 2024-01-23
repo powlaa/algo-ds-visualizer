@@ -1,7 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { watch } = require("fs");
 
 module.exports = {
+    watch: true,
     entry: "./src/app.ts",
     mode: "development",
     module: {
