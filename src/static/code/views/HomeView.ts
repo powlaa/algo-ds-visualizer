@@ -5,14 +5,16 @@ import dijkstra from "../../img/dijkstra.png";
 import aStar from "../../img/astar.png";
 
 class HomeView extends HTMLElement {
+  private _shadow: ShadowRoot;
+
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this._shadow = this.attachShadow({ mode: "open" });
     this._render();
   }
 
   _render() {
-    this.shadowRoot!.innerHTML = `
+    this._shadow.innerHTML = `
             <style>
                 .layout {
                     --split-layout-justify-content-left: none;
