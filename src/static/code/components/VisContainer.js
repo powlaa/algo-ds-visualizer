@@ -3,7 +3,7 @@ import informationMark from '../../img/information-mark.png';
 import codeIcon from '../../img/code-icon.png';
 import homeIcon from '../../img/homepage-icon.png';
 
-class VisContainer extends HTMLElement {
+export class VisContainer extends HTMLElement {
     _wait = wait;
     _stepCounter = 0;
     _steps = [];
