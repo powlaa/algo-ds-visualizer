@@ -1,11 +1,14 @@
+import { PseudocodeDisplay } from "../components/PseudocodeDisplay";
 import { TableDisplay } from "../components/TableDisplay";
-import { Pseudocode } from "./types";
+import { Pseudocode } from "../types";
+import { VisContainer } from "../components/VisContainer";
 
 /**
  * View to visualize recursion.
  */
 class RecursionView extends HTMLElement {
   private _shadow: ShadowRoot;
+  private _visContainer: VisContainer | null;
   private _pseudocodeDisplay: PseudocodeDisplay | null;
   private _tableDisplay: TableDisplay | null;
   private readonly _PSEUDOCODE: Pseudocode[] = [
@@ -27,6 +30,9 @@ class RecursionView extends HTMLElement {
     this._shadow = this.attachShadow({ mode: "open" });
     this._render();
 
+    this._visContainer = this._shadow.querySelector(
+      "vis-container"
+    ) as VisContainer;
     this._tableDisplay = this._shadow.querySelector(
       "table-display"
     ) as TableDisplay;
@@ -36,7 +42,7 @@ class RecursionView extends HTMLElement {
     this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
     // Create dummy data for the table.
-    const columnsData = [{ id: "1", title: "Column 1" }];
+    const columnsData = [{ id: "1", title: "Call Stack" }];
     const rowsData = [
       [{ column: "1", value: "Row 1", row: "1" }],
       [{ column: "1", value: "Row 2", row: "2" }],
