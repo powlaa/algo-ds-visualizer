@@ -70,7 +70,7 @@ export class TableDisplay extends HTMLElement {
     // Create a cell in each row for each column.
     rows
       .selectAll("td")
-      .data(rowsData.flat())
+      .data((d) => d)
       .enter()
       .append("td")
       .html((d) => d.value);
