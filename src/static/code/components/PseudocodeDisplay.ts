@@ -1,34 +1,55 @@
-class PseudocodeDisplay extends HTMLElement {
-    _code = [];
-    _currentStyle = "block";
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        this._render();
-    }
+import { Pseudocode } from "../types";
 
-    set code(code) {
-        this._code = code;
-        this._render();
-    }
+export class PseudocodeDisplay extends HTMLElement {
+  private _shadow: ShadowRoot;
+  private _code: Pseudocode[] = [];
+  private _currentStyle = "block";
 
-    get code() {
-        return this._code;
-    }
+  constructor() {
+    super();
+    this._shadow = this.attachShadow({ mode: "open" });
+    this._render();
+  }
 
-    highlightLine(...labels) {
-        this.shadowRoot.querySelectorAll(`.code__line--highlighted`).forEach((e) => e.classList.remove("code__line--highlighted"));
-        labels.forEach((label) => this.shadowRoot.querySelector(`#${label}`)?.classList.add("code__line--highlighted"));
-    }
+  set code(code) {
+    this._code = code;
+    this._render();
+  }
 
-    toggleCode() {
-        this._currentStyle = this._currentStyle === "none" ? "block" : "none";
-        this.shadowRoot.querySelector("#code-container").style.display = this._currentStyle;
-        return this._currentStyle === "block";
-    }
+  get code() {
+    return this._code;
+  }
 
-    _render() {
-        this.shadowRoot.innerHTML = `
+  /**
+   * Highlights the lines of code with the given labels.
+   * @param labels - The labels of the lines to highlight.
+   */
+  highlightLine(...labels: string[]) {
+    this._shadow
+      .querySelectorAll(`.code__line--highlighted`)
+      .forEach((e) => e.classList.remove("code__line--highlighted"));
+    labels.forEach((label) =>
+      this._shadow
+        .querySelector(`#${label}`)
+        ?.classList.add("code__line--highlighted")
+    );
+  }
+
+  /**
+   * Toggles the visibility of the code.
+   * @returns True if the code is visible, false otherwise.
+   */
+  toggleCode() {
+    this._currentStyle = this._currentStyle === "none" ? "block" : "none";
+    const codeContainer = this._shadow.querySelector(
+      "#code-container"
+    ) as HTMLElement;
+    codeContainer.style.display = this._currentStyle;
+    return this._currentStyle === "block";
+  }
+
+  _render() {
+    this._shadow.innerHTML = `
             <style>
                 :host {
                     display: block;
@@ -85,17 +106,19 @@ class PseudocodeDisplay extends HTMLElement {
                     margin-left: 6em;
                 }
             </style>
-            <div id="code-container" class="code" style="display:${this._currentStyle}">
+            <div id="code-container" class="code" style="display:${
+              this._currentStyle
+            }">
                 ${this._code
-                    .map(({ indent, code, label }, index) => {
-                        return `<div id="${label}" class="code__line"><code class="code__number">${
-                            index + 1
-                        }</code><code class="code__text code__text--indent-${indent}">${code}</code></div>`;
-                    })
-                    .join("")}
+                  .map(({ indent, code, label }, index) => {
+                    return `<div id="${label}" class="code__line"><code class="code__number">${
+                      index + 1
+                    }</code><code class="code__text code__text--indent-${indent}">${code}</code></div>`;
+                  })
+                  .join("")}
             </div>
         `;
-    }
+  }
 }
 
 customElements.define("pseudocode-display", PseudocodeDisplay);
