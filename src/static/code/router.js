@@ -13,6 +13,9 @@ const router = () => {
         case "/sample":
             template = document.querySelector(`template#sample-view`);
             break;
+        case "/recursion":
+            template = document.querySelector(`template#recursion-view`);
+            break;
         case "/heapsort":
             template = document.querySelector(`template#heapsort-view`);
             break;
