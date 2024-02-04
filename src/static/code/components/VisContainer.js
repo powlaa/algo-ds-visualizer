@@ -58,8 +58,8 @@ export class VisContainer extends HTMLElement {
 
     async updateSteps(steps, {
         currentStep,
-        locked,
-        nextStep
+        locked = undefined,
+        nextStep = undefined
     }) {
         this._steps = steps;
         this._stepCounter = 0;
