@@ -100,9 +100,9 @@ class RecursionView extends HTMLElement {
 		this._pseudocodeDisplay.code = this._PSEUDOCODE;
 
 		// Add event listeners.
-		this._visContainer.addEventListener(
-			"code",
-			this._toggleCode.bind(this)
+		this._visContainer.addEventListener("code", () => this._toggleCode());
+		this._visContainer.addEventListener("show-step", (e) =>
+			this._showStep(e as CustomEvent<{ step: Step }>)
 		);
 
 		// Create dummy data for the table.
@@ -122,10 +122,19 @@ class RecursionView extends HTMLElement {
 	}
 
 	/**
+	 * Shows a specific step in the visualization.
+	 * @param e - The event.
+	 */
+	private _showStep(e: CustomEvent<{ step: Step }>) {
+		const step = e.detail.step as Step;
+		step.animation(step);
+	}
+
+	/**
 	 * Starts the visualization.
 	 * @param data - The number to calculate the factorial of.
 	 */
-	_recurse(data: number = 3): void {
+	private _recurse(data: number = 3): void {
 		this._visContainer.updateSteps(this._recursiveFactorial(data), {
 			currentStep: 0,
 		});
@@ -135,7 +144,7 @@ class RecursionView extends HTMLElement {
 	 * Starts the visualization.
 	 * @param n - The number to calculate the factorial of.
 	 */
-	_recursiveFactorial(data: number): Step[] {
+	private _recursiveFactorial(data: number): Step[] {
 		let stepOrder: Step[] = [
 			{
 				data: [data],
@@ -204,7 +213,9 @@ class RecursionView extends HTMLElement {
 				data: [n],
 				heading: `Factorial(${n}) returns ${result} and is popped from the call stack`,
 				description:
-					n === data ? "" : "The result can be multiplied by n now.",
+					n === data
+						? ""
+						: `The result can be multiplied by ${n} now.`,
 				codeLabel: ["recursive-call"],
 				animation: (step) => this._updateVis(step),
 			});
@@ -229,14 +240,21 @@ class RecursionView extends HTMLElement {
 		return stepOrder;
 	}
 
-	_updateVis(step: Step) {
+	/**
+	 * Updates the visualization.
+	 * @param step - The step to show.
+	 */
+	private _updateVis(step: Step) {
 		// Update the visualization.
+		if (step.codeLabel)
+			this._pseudocodeDisplay.highlightLine(...step.codeLabel);
+		else this._pseudocodeDisplay.highlightLine();
 	}
 
 	/**
 	 * Toggles the code display.
 	 */
-	_toggleCode() {
+	private _toggleCode() {
 		this._pseudocodeDisplay.toggleCode();
 		this._splitLayout.toggleLeftResizerVertical();
 		this._splitLayout.setTopLeftHeight(50);
@@ -263,7 +281,7 @@ class RecursionView extends HTMLElement {
 		// HTML of the view.
 		this._shadow.innerHTML =
 			`
-			<vis-container title="Recursion" no-start-btn>
+			<vis-container title="Recursion" start-btn-name="Start" array-input>
 				<!-- Default layout  -->
 				<split-layout class="content">
 					<!-- <callstack-display slot="left" class="content__callstack-display"></callstack-display> -->
