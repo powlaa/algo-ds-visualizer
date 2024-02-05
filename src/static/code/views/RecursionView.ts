@@ -104,6 +104,9 @@ class RecursionView extends HTMLElement {
 		this._visContainer.addEventListener("show-step", (e) =>
 			this._showStep(e as CustomEvent<{ step: Step }>)
 		);
+		this._visContainer.addEventListener("start", (e) => {
+			this._recurse(e as CustomEvent<{ array: number[] }>);
+		});
 
 		// Create dummy data for the table.
 		const columnsData = [{ id: "1", title: "Call Stack" }];
@@ -132,10 +135,12 @@ class RecursionView extends HTMLElement {
 
 	/**
 	 * Starts the visualization.
-	 * @param data - The number to calculate the factorial of.
+	 * @param e - This event is triggered when the start button is clicked.
 	 */
-	private _recurse(data: number = 3): void {
-		this._visContainer.updateSteps(this._recursiveFactorial(data), {
+	private _recurse(e?: CustomEvent<{ array: number[] }>): void {
+		// Take the first element of the array or default to 3.
+		const n = e ? e.detail.array[0] : 3;
+		this._visContainer.updateSteps(this._recursiveFactorial(n), {
 			currentStep: 0,
 		});
 	}
@@ -145,7 +150,15 @@ class RecursionView extends HTMLElement {
 	 * @param n - The number to calculate the factorial of.
 	 */
 	private _recursiveFactorial(data: number): Step[] {
+		// The order of steps.
 		let stepOrder: Step[] = [
+			{
+				data: [data],
+				heading: `Calculate the factorial`,
+				description: "",
+				codeLabel: [],
+				animation: (step) => this._updateVis(step),
+			},
 			{
 				data: [data],
 				heading: `Calculate the factorial of n = ${data} with the help of the Factorial function`,
