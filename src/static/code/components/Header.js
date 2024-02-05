@@ -154,7 +154,7 @@ class Header extends HTMLElement {
                             type="text"
                             id="array-input"
                             style="display: ${this.getAttribute("array-input") ?? "none"}"
-                            placeholder="e.g. 5,3,7,11,9,4,2"
+                            placeholder="${this.getAttribute("title") === "Recursion" ? "e.g. 3" : "e.g. 5,3,7,11,9,4,2"}"
                         />
                         ${
                             this.hasAttribute("no-start-btn")
