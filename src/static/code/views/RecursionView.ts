@@ -313,21 +313,21 @@ class RecursionView extends HTMLElement {
 	private _render = () => {
 		// Style of the view.
 		const style = `
-		<style>
-			.content {
-				width: 100%;
-				--split-layout-height: calc(100% - 190px);
-			}
-			.content__table-display {
-				overflow: auto;
-				text-align: center;
-			}
+			<style>
+				.content {
+					width: 100%;
+					--split-layout-height: calc(100% - 190px);
+				}
+				.content__table-display {
+					overflow: auto;
+					text-align: center;
+				}
 
-			.content__pseudocode {
-				width: 100%;
-			}
-		</style>
-	`;
+				.content__pseudocode {
+					width: 100%;
+				}
+			</style>
+		`;
 
 		// HTML of the view.
 		this._shadow.innerHTML =
