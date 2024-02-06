@@ -1,116 +1,118 @@
 import { Selection, select } from "d3";
 
 interface ColumnData {
-    id: string;
-    title: string;
+	id: string;
+	title: string;
 }
 
 interface RowData {
-    column: string;
-    value: string;
-    row: string;
+	column: string;
+	value: string;
+	row: string;
 }
 
 interface Highlight {
-    row: string;
-    column: string;
+	row: string;
+	column: string;
 }
 
 export class TableDisplay extends HTMLElement {
-    private _shadow: ShadowRoot;
+	private _shadow: ShadowRoot;
 
-    private _tbody: Selection<
-        HTMLTableSectionElement,
-        unknown,
-        null,
-        undefined
-    > | null = null;
+	private _tbody: Selection<
+		HTMLTableSectionElement,
+		unknown,
+		null,
+		undefined
+	> | null = null;
 
-    constructor() {
-        super();
-        this._shadow = this.attachShadow({ mode: "open" });
-        this._render();
-    }
+	constructor() {
+		super();
+		this._shadow = this.attachShadow({ mode: "open" });
+		this._render();
+	}
 
-    public reset() {
-        select(this._shadow.querySelector("#container > table")).remove();
-    }
+	public reset() {
+		select(this._shadow.querySelector("#container > table")).remove();
+	}
 
-    /**
-     * Displays a table in the component.
-     * @param columnsData - An array of objects representing columns, each having a 'title' property.
-     * @param rowsData - An array of arrays of objects representing rows, each having a 'value' property.
-     */
-    public showTable(columnsData: ColumnData[], rowsData: RowData[][]) {
-        // Remove previous table.
-        select(this._shadow.querySelector("#container > table")).remove();
-        // Append new table and thead to the container.
-        const table = select(this._shadow.querySelector("#container"))
-                .append("table")
-                .attr("style", "margin-left: 250px"),
-            thead = table.append("thead");
-        this._tbody = table.append("tbody");
+	/**
+	 * Displays a table in the component.
+	 * @param columnsData - An array of objects representing columns, each having a 'title' property.
+	 * @param rowsData - An array of arrays of objects representing rows, each having a 'value' property.
+	 */
+	public showTable(columnsData: ColumnData[], rowsData?: RowData[][]) {
+		// Remove previous table.
+		select(this._shadow.querySelector("#container > table")).remove();
+		// Append new table and thead to the container.
+		const table = select(this._shadow.querySelector("#container"))
+				.append("table")
+				.attr("style", "margin-left: 250px"),
+			thead = table.append("thead");
+		this._tbody = table.append("tbody");
 
-        // Append the header row.
-        thead
-            .append("tr")
-            .selectAll("th")
-            .data(columnsData)
-            .enter()
-            .append("th")
-            .text((column) => column.title);
+		// Append the header row.
+		thead
+			.append("tr")
+			.selectAll("th")
+			.data(columnsData)
+			.enter()
+			.append("th")
+			.text((column) => column.title);
 
-        // Create a row for each object in the data.
-        const rows = this._tbody
-            .selectAll("tr")
-            .data(rowsData)
-            .enter()
-            .append("tr");
+		if (!rowsData) return;
 
-        // Create a cell in each row for each column.
-        rows.selectAll("td")
-            .data((d) => d)
-            .enter()
-            .append("td")
-            .html((d) => d.value);
-    }
+		// Create a row for each object in the data.
+		const rows = this._tbody
+			.selectAll("tr")
+			.data(rowsData)
+			.enter()
+			.append("tr");
 
-    /**
-     * Updates the rows of the table with the option to highlight.
-     * @param rowsData - The new rows data.
-     * @param highlights - The highlights to be applied to the rows.
-     */
-    public updateRows(rowsData: RowData[][], highlights?: Highlight[]) {
-        if (!this._tbody) {
-            throw new Error("Tbody is null.");
-        }
-        this._tbody.selectAll("tr").remove();
+		// Create a cell in each row for each column.
+		rows.selectAll("td")
+			.data((d) => d)
+			.enter()
+			.append("td")
+			.html((d) => d.value);
+	}
 
-        // Create a row for each object in the data.
-        const rows = this._tbody
-            .selectAll("tr")
-            .data(rowsData)
-            .enter()
-            .append("tr");
+	/**
+	 * Updates the rows of the table with the option to highlight.
+	 * @param rowsData - The new rows data.
+	 * @param highlights - The highlights to be applied to the rows.
+	 */
+	public updateRows(rowsData: RowData[][], highlights?: Highlight[]) {
+		if (!this._tbody) {
+			throw new Error("Tbody is null.");
+		}
+		this._tbody.selectAll("tr").remove();
 
-        // Create a cell in each row for each column.
-        rows.selectAll("td")
-            .data((d) => d)
-            .enter()
-            .append("td")
-            .classed("highlight", (d) =>
-                // False if highlights is undefined.
-                Boolean(
-                    highlights?.find(
-                        (h) => h.row === d.row && h.column === d.column
-                    )
-                )
-            )
-            .html((d) => d.value);
-    }
+		// Create a row for each object in the data.
+		const rows = this._tbody
+			.selectAll("tr")
+			.data(rowsData)
+			.enter()
+			.append("tr");
 
-    private _render() {
-        const style = `
+		// Create a cell in each row for each column.
+		rows.selectAll("td")
+			.data((d) => d)
+			.enter()
+			.append("td")
+			.classed("highlight", (d) =>
+				// False if highlights is undefined.
+				Boolean(
+					highlights?.find(
+						(h) => h.row === d.row && h.column === d.column
+					)
+				)
+			)
+			.html((d) => d.value);
+	}
+
+	private _render() {
+		const style = `
         <style>
             .container {
                 margin: 40px;
@@ -147,9 +149,9 @@ export class TableDisplay extends HTMLElement {
         </style>
 	`;
 
-        this._shadow.innerHTML =
-            `<div id="container" class="container"></div>` + style;
-    }
+		this._shadow.innerHTML =
+			`<div id="container" class="container"></div>` + style;
+	}
 }
 
 customElements.define("table-display", TableDisplay);
