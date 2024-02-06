@@ -15,3 +15,18 @@ export interface Pseudocode {
 	 */
 	label: string;
 }
+/**
+ * Represents a column in a table.
+ */
+export interface ColumnData {
+	id: string;
+	title: string;
+}
+/**
+ * Represents a row section in a table.
+ */
+export interface RowData {
+	column: string;
+	value: string;
+	row: string;
+}

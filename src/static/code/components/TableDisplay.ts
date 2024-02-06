@@ -1,15 +1,5 @@
 import { Selection, select } from "d3";
-
-interface ColumnData {
-	id: string;
-	title: string;
-}
-
-interface RowData {
-	column: string;
-	value: string;
-	row: string;
-}
+import { ColumnData, RowData } from "../types";
 
 interface Highlight {
 	row: string;
