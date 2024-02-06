@@ -1,6 +1,6 @@
 import { PseudocodeDisplay } from "../components/PseudocodeDisplay";
 import { TableDisplay } from "../components/TableDisplay";
-import { Pseudocode } from "../types";
+import { ColumnData, Pseudocode, RowData } from "../types";
 import { VisContainer } from "../components/VisContainer";
 
 /**
@@ -74,6 +74,8 @@ class RecursionView extends HTMLElement {
 			label: "recursive-call",
 		},
 	];
+	// The number to calculate the factorial of.
+	private _n = 3;
 
 	constructor() {
 		super();
@@ -105,23 +107,11 @@ class RecursionView extends HTMLElement {
 			this._showStep(e as CustomEvent<{ step: Step }>)
 		);
 		this._visContainer.addEventListener("start", (e) => {
-			this._recurse(e as CustomEvent<{ array: number[] }>);
+			this._runRecursion(e as CustomEvent<{ array: number[] }>);
 		});
 
-		// Create dummy data for the table.
-		const columnsData = [{ id: "1", title: "Call Stack" }];
-		const rowsData = [
-			[{ column: "1", value: "Row 1", row: "1" }],
-			[{ column: "1", value: "Row 2", row: "2" }],
-		];
-
-		// Show the dummy table.
-		if (this._tableDisplay) {
-			this._tableDisplay.showTable(columnsData, rowsData);
-		}
-
 		// Start the visualization.
-		this._recurse();
+		this._runRecursion();
 	}
 
 	/**
@@ -129,7 +119,7 @@ class RecursionView extends HTMLElement {
 	 * @param e - The event.
 	 */
 	private _showStep(e: CustomEvent<{ step: Step }>) {
-		const step = e.detail.step as Step;
+		const step = e.detail.step;
 		step.animation(step);
 	}
 
@@ -137,31 +127,40 @@ class RecursionView extends HTMLElement {
 	 * Starts the visualization.
 	 * @param e - This event is triggered when the start button is clicked.
 	 */
-	private _recurse(e?: CustomEvent<{ array: number[] }>): void {
-		// Take the first element of the array or default to 3.
-		const n = e ? e.detail.array[0] : 3;
-		this._visContainer.updateSteps(this._recursiveFactorial(n), {
+	private _runRecursion(e?: CustomEvent<{ array: number[] }>): void {
+		// Get the input from the event if it was triggered.
+		if (e) {
+			this._n = e.detail.array[0];
+
+			// Adjust pseudocode in first line to match the input.
+			this._PSEUDOCODE[0].code = `n = ${this._n}`;
+			this._pseudocodeDisplay.code = this._PSEUDOCODE;
+		}
+
+		// Show the table.
+		this._showTable();
+
+		this._visContainer.updateSteps(this._recursiveFactorial(), {
 			currentStep: 0,
 		});
 	}
 
 	/**
 	 * Starts the visualization.
-	 * @param n - The number to calculate the factorial of.
 	 */
-	private _recursiveFactorial(data: number): Step[] {
+	private _recursiveFactorial(): Step[] {
 		// The order of steps.
 		let stepOrder: Step[] = [
 			{
-				data: [data],
+				data: [],
 				heading: `Calculate the factorial`,
 				description: "",
 				codeLabel: [],
 				animation: (step) => this._updateVis(step),
 			},
 			{
-				data: [data],
-				heading: `Calculate the factorial of n = ${data} with the help of the Factorial function`,
+				data: [],
+				heading: `Calculate the factorial of n = ${this._n} with the help of the Factorial function`,
 				description: "",
 				codeLabel: ["variable", "function-call"],
 				animation: (step) => this._updateVis(step),
@@ -170,65 +169,79 @@ class RecursionView extends HTMLElement {
 
 		// First function call with n.
 		stepOrder.push({
-			data: [data],
-			heading: `Factorial(${data}) is invoked`,
-			description: `Factorial(${data}) is added to the call stack.`,
+			data: [this._n],
+			heading: `Factorial(${this._n}) is invoked`,
+			description: `Factorial(${this._n}) is added to the call stack.`,
 			codeLabel: ["function"],
 			animation: (step) => this._updateVis(step),
 		});
 
 		// Start the factorial recursion and build the order of steps.
-		const buildSteps = (n: number): number => {
-			const isBaseCase = n === 0; // Indicate if the base case is reached.
-
+		const data: number[] = [this._n];
+		const buildSteps = (data: number[]): number => {
+			const n = data[0];
 			// Base case check.
+			const isBaseCase = n === 0;
+
 			stepOrder.push({
-				data: [n],
+				data: [...data],
 				heading: "Check if n is 0",
 				description: `n is currently ${n}, so the statement is ${isBaseCase}.`,
 				codeLabel: ["if"],
 				animation: (step) => this._updateVis(step),
 			});
 
+			// Base case.
 			if (n === 0) {
-				// Base case.
 				stepOrder.push({
-					data: [n],
+					data: [...data],
 					heading: "Return 1 because the base case is reached",
 					description: "",
 					codeLabel: ["last-return"],
 					animation: (step) => this._updateVis(step),
 				});
+				data.shift();
+				// Pop the call stack.
+				stepOrder.push({
+					data: [...data],
+					heading:
+						"Factorial(0) returns 1 and is popped from the call stack.",
+					description: "The result can be multiplied by 1 now.",
+					codeLabel: ["recursive-call"],
+					animation: (step) => this._updateVis(step),
+				});
 
 				return 1;
 			}
-
-			// Recursive call.
+			// Recursive case.
 			stepOrder.push({
-				data: [n],
+				data: [...data],
 				heading: `Recursively call Factorial(${n - 1})`,
 				description: `The result will be multiplied by ${n}.`,
 				codeLabel: ["recursive-call"],
 				animation: (step) => this._updateVis(step),
 			});
+
+			data.unshift(n - 1);
 			stepOrder.push({
-				data: [n],
+				data: [...data],
 				heading: `Invoke Factorial(${n - 1})`,
 				description: `Add Factorial(${n - 1}) to the call stack.`,
 				codeLabel: ["function"],
 				animation: (step) => this._updateVis(step),
 			});
 
-			const result = n * buildSteps(n - 1);
+			const result = n * buildSteps(data);
+			data.shift();
 
 			// Pop the call stack.
 			stepOrder.push({
-				data: [n],
+				data: [...data],
 				heading: `Factorial(${n}) returns ${result} and is popped from the call stack`,
 				description:
-					n === data
+					n === this._n
 						? ""
-						: `The result can be multiplied by ${n} now.`,
+						: `The result can be multiplied by ${n + 1} now.`,
 				codeLabel: ["recursive-call"],
 				animation: (step) => this._updateVis(step),
 			});
@@ -239,11 +252,9 @@ class RecursionView extends HTMLElement {
 		// Start the factorial recursion and build the order of steps.
 		const factorial = buildSteps(data);
 
-		console.log("Factorial of 3", factorial);
-
 		// Last step.
 		stepOrder.push({
-			data: [data],
+			data: [],
 			heading: `All done! The factorial of n is ${factorial}`,
 			description: "",
 			codeLabel: ["function-call"],
@@ -262,6 +273,32 @@ class RecursionView extends HTMLElement {
 		if (step.codeLabel)
 			this._pseudocodeDisplay.highlightLine(...step.codeLabel);
 		else this._pseudocodeDisplay.highlightLine();
+
+		// Update the table.
+		this._updateTable(step.data);
+	}
+
+	/**
+	 * Shows the table.
+	 */
+	private _showTable() {
+		// Add one column with the title "Call Stack".
+		const columnsData: ColumnData[] = [{ id: "1", title: "Call Stack" }];
+		this._tableDisplay.showTable(columnsData);
+	}
+
+	/**
+	 * Updates the table, so a new row is added on top to show the most recent function call, e.g. Factorial(3)
+	 * @param tableData - The data to show in the table.
+	 */
+	private _updateTable(tableData: number[]) {
+		// Add the data to the table.
+		const rowsData: RowData[][] = tableData.map((value, index) => [
+			{ column: "1", value: `Factorial(${value})`, row: `${index + 1}` },
+		]);
+
+		// Update the table.
+		this._tableDisplay.updateRows(rowsData);
 	}
 
 	/**
@@ -282,9 +319,10 @@ class RecursionView extends HTMLElement {
 				--split-layout-height: calc(100% - 190px);
 			}
 			.content__table-display {
-				width: 50%;
 				overflow: auto;
+				text-align: center;
 			}
+
 			.content__pseudocode {
 				width: 100%;
 			}
@@ -297,7 +335,6 @@ class RecursionView extends HTMLElement {
 			<vis-container title="Recursion" start-btn-name="Start" array-input>
 				<!-- Default layout  -->
 				<split-layout class="content">
-					<!-- <callstack-display slot="left" class="content__callstack-display"></callstack-display> -->
 					<table-display slot="left" class="content__table-display"></table-display>
 					<pseudocode-display slot="right" class="content__pseudocode"></pseudocode-display>
 				</split-layout>
