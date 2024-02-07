@@ -1,6 +1,6 @@
 import { PseudocodeDisplay } from "../components/PseudocodeDisplay";
 import { TableDisplay } from "../components/TableDisplay";
-import { ColumnData, Pseudocode, RowData } from "../types";
+import { ColumnData, Pseudocode, RowData, TableHighlight } from "../types";
 import { VisContainer } from "../components/VisContainer";
 
 /**
@@ -292,13 +292,18 @@ class RecursionView extends HTMLElement {
 	 * @param tableData - The data to show in the table.
 	 */
 	private _updateTable(tableData: number[]) {
-		// Add the data to the table.
 		const rowsData: RowData[][] = tableData.map((value, index) => [
-			{ column: "1", value: `Factorial(${value})`, row: `${index + 1}` },
+			{
+				column: "1",
+				value: `Factorial(${value})<br>n: ${value}`,
+				row: `${index + 1}`,
+			},
 		]);
+		const highlight: TableHighlight[] =
+			tableData.length > 0 ? [{ row: "1", column: "1" }] : [];
 
 		// Update the table.
-		this._tableDisplay.updateRows(rowsData);
+		this._tableDisplay.updateRows(rowsData, highlight);
 	}
 
 	/**
