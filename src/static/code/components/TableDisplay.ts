@@ -1,10 +1,5 @@
 import { Selection, select } from "d3";
-import { ColumnData, RowData } from "../types";
-
-interface Highlight {
-	row: string;
-	column: string;
-}
+import { ColumnData, RowData, TableHighlight } from "../types";
 
 export class TableDisplay extends HTMLElement {
 	private _shadow: ShadowRoot;
@@ -72,7 +67,7 @@ export class TableDisplay extends HTMLElement {
 	 * @param rowsData - The new rows data.
 	 * @param highlights - The highlights to be applied to the rows.
 	 */
-	public updateRows(rowsData: RowData[][], highlights?: Highlight[]) {
+	public updateRows(rowsData: RowData[][], highlights?: TableHighlight[]) {
 		if (!this._tbody) {
 			throw new Error("Tbody is null.");
 		}

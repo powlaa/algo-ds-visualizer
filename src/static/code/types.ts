@@ -30,3 +30,10 @@ export interface RowData {
 	value: string;
 	row: string;
 }
+/**
+ * Specifies the highlighted section of a table.
+ */
+export interface TableHighlight {
+	row: string;
+	column: string;
+}
