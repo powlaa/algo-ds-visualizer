@@ -3,18 +3,19 @@ import heapSort from "../../img/heapsort.png";
 import quickSort from "../../img/quicksort.png";
 import dijkstra from "../../img/dijkstra.png";
 import aStar from "../../img/astar.png";
+import recursion from "../../img/recursion.png";
 
 class HomeView extends HTMLElement {
-  private _shadow: ShadowRoot;
+	private _shadow: ShadowRoot;
 
-  constructor() {
-    super();
-    this._shadow = this.attachShadow({ mode: "open" });
-    this._render();
-  }
+	constructor() {
+		super();
+		this._shadow = this.attachShadow({ mode: "open" });
+		this._render();
+	}
 
-  _render() {
-    this._shadow.innerHTML = `
+	_render() {
+		this._shadow.innerHTML = `
             <style>
                 .layout {
                     --split-layout-justify-content-left: none;
@@ -65,10 +66,18 @@ class HomeView extends HTMLElement {
                     >
                         <nav-item class="ds-item" title="Linked List" img=${linkedList} link="/linkedlist"></nav-item>
                     </category-card>
+					<category-card
+						class="category"
+						title="Call Stack in Memory"
+						description="The call stack is a stack data structure that stores information about the active subroutines of a computer program."
+					>
+						<nav-item class="ds-item" title="Recursion" img=${recursion} link="/recursion"></nav-item>
+						<nav-item class="ds-item" title="Methods" link="/methods"></nav-item>
+					</category-card>
                 </div>
             </split-layout>
         `;
-  }
+	}
 }
 
 customElements.define("home-view", HomeView);
