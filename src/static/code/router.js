@@ -10,8 +10,8 @@ const router = () => {
         case "/":
             template = document.querySelector(`template#home-view`);
             break;
-        case "/sample":
-            template = document.querySelector(`template#sample-view`);
+        case "/methods":
+            template = document.querySelector(`template#methods-view`);
             break;
         case "/recursion":
             template = document.querySelector(`template#recursion-view`);
