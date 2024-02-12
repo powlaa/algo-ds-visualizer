@@ -23,6 +23,9 @@ interface Step {
 // Define constants to avoid using the BigInt constructor for recurring numbers.
 const ZERO = BigInt(0);
 const ONE = BigInt(1);
+const THREE = BigInt(3);
+
+const UPPER_LIMIT = 5000;
 
 /**
  * View to visualize recursion.
@@ -134,7 +137,7 @@ class RecursionView extends HTMLElement {
 	private _runRecursion(e?: CustomEvent<{ array: number[] }>): void {
 		// Get the input from the event if one was triggered.
 		if (e) {
-			this._n = BigInt(e.detail.array[0]);
+			this._n = this._processInput(e.detail.array[0]);
 
 			// Adjust pseudocode in the first line to match the input.
 			this._PSEUDOCODE[0].code = `n = ${this._n.toString()}`;
@@ -148,6 +151,17 @@ class RecursionView extends HTMLElement {
 		this._visContainer.updateSteps(this._recursiveFactorial(), {
 			currentStep: 0,
 		});
+	}
+
+	/**
+	 * Validates the user input and returns it if it meets the acceptance criteria.
+	 * @param input - Input to validate and process.
+	 */
+	private _processInput(input: any): bigint {
+		if (typeof input !== "number" || input < 0 || input > UPPER_LIMIT) {
+			alert("The input must be a number between 0 and 5000.");
+			return THREE;
+		} else return BigInt(input);
 	}
 
 	/**
