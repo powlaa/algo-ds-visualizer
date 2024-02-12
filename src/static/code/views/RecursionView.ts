@@ -7,7 +7,7 @@ import { VisContainer } from "../components/VisContainer";
  * Represents a step in the visualization.
  */
 interface Step {
-	data: number[];
+	data: bigint[];
 	heading: string;
 	description: string;
 	/**
@@ -19,6 +19,10 @@ interface Step {
 	 */
 	animation: (step: Step) => void;
 }
+
+// Define constants to avoid using the BigInt constructor for recurring numbers.
+const ZERO = BigInt(0);
+const ONE = BigInt(1);
 
 /**
  * View to visualize recursion.
@@ -74,8 +78,8 @@ class RecursionView extends HTMLElement {
 			label: "recursive-call",
 		},
 	];
-	// The number to calculate the factorial of.
-	private _n = 3;
+	// The number to calculate the factorial of, it defaults to 3.
+	private _n: bigint = BigInt(3);
 
 	constructor() {
 		super();
@@ -116,7 +120,7 @@ class RecursionView extends HTMLElement {
 
 	/**
 	 * Shows a specific step in the visualization.
-	 * @param e - The event.
+	 * @param e - The event that contains the step.
 	 */
 	private _showStep(e: CustomEvent<{ step: Step }>) {
 		const step = e.detail.step;
@@ -124,32 +128,33 @@ class RecursionView extends HTMLElement {
 	}
 
 	/**
-	 * Starts the visualization.
-	 * @param e - This event is triggered when the start button is clicked.
+	 * Prepares the order of steps, runs the recursion and starts the visualization.
+	 * @param e - Triggered when the start button is clicked, will include the number to find the factorial for.
 	 */
 	private _runRecursion(e?: CustomEvent<{ array: number[] }>): void {
-		// Get the input from the event if it was triggered.
+		// Get the input from the event if one was triggered.
 		if (e) {
-			this._n = e.detail.array[0];
+			this._n = BigInt(e.detail.array[0]);
 
-			// Adjust pseudocode in first line to match the input.
-			this._PSEUDOCODE[0].code = `n = ${this._n}`;
+			// Adjust pseudocode in the first line to match the input.
+			this._PSEUDOCODE[0].code = `n = ${this._n.toString()}`;
 			this._pseudocodeDisplay.code = this._PSEUDOCODE;
 		}
 
-		// Show the table.
+		// Show the call stack table.
 		this._showTable();
 
+		// Start the visualization at the first step and pass the order of steps.
 		this._visContainer.updateSteps(this._recursiveFactorial(), {
 			currentStep: 0,
 		});
 	}
 
 	/**
-	 * Starts the visualization.
+	 * Prepares the order of steps for the visualization.
 	 */
 	private _recursiveFactorial(): Step[] {
-		// The order of steps.
+		// Initialize the order of steps with the first two steps.
 		let stepOrder: Step[] = [
 			{
 				data: [],
@@ -167,7 +172,7 @@ class RecursionView extends HTMLElement {
 			},
 		];
 
-		// First function call with n.
+		// Add the first function call step.
 		stepOrder.push({
 			data: [this._n],
 			heading: `Factorial(${this._n}) is invoked`,
@@ -176,81 +181,91 @@ class RecursionView extends HTMLElement {
 			animation: (step) => this._updateVis(step),
 		});
 
-		// Start the factorial recursion and build the order of steps.
-		const data: number[] = [this._n];
-		const buildSteps = (data: number[]): number => {
-			const n = data[0];
-			// Base case check.
-			const isBaseCase = n === 0;
+		// Loops are used to avoid stack overflow errors with large numbers.
+		const buildSteps = (): bigint => {
+			// Array to store which parameters are passed to the function at each step.
+			const data: bigint[] = [this._n];
 
-			stepOrder.push({
-				data: [...data],
-				heading: "Check if n is 0",
-				description: `n is currently ${n}, so the statement is ${isBaseCase}.`,
-				codeLabel: ["if"],
-				animation: (step) => this._updateVis(step),
-			});
+			// Build function call steps.
+			for (let n = this._n; n >= ZERO; n--) {
+				const isBaseCase = n === ZERO;
 
-			// Base case.
-			if (n === 0) {
+				// Base case check step.
 				stepOrder.push({
 					data: [...data],
-					heading: "Return 1 because the base case is reached",
-					description: "",
-					codeLabel: ["last-return"],
+					heading: "Check if n is 0",
+					description: `n is currently ${n}, so the statement is ${isBaseCase}.`,
+					codeLabel: ["if"],
 					animation: (step) => this._updateVis(step),
 				});
-				data.shift();
-				// Pop the call stack.
+				if (isBaseCase) continue;
+
+				// Recursive call step.
 				stepOrder.push({
 					data: [...data],
-					heading:
-						"Factorial(0) returns 1 and is popped from the call stack.",
-					description: "The result can be multiplied by 1 now.",
+					heading: `Recursively call Factorial(${n - ONE})`,
+					description: `The result will be multiplied by ${n}.`,
 					codeLabel: ["recursive-call"],
 					animation: (step) => this._updateVis(step),
 				});
 
-				return 1;
+				// Prepare data for the next function call.
+				data.unshift(n - ONE);
+
+				// Function call step.
+				stepOrder.push({
+					data: [...data],
+					heading: `Invoke Factorial(${n - ONE})`,
+					description: `Add Factorial(${n - ONE}) to the call stack.`,
+					codeLabel: ["function"],
+					animation: (step) => this._updateVis(step),
+				});
 			}
-			// Recursive case.
+
+			// Base case return step.
 			stepOrder.push({
 				data: [...data],
-				heading: `Recursively call Factorial(${n - 1})`,
-				description: `The result will be multiplied by ${n}.`,
-				codeLabel: ["recursive-call"],
+				heading: "Return 1 because the base case is reached",
+				description: "",
+				codeLabel: ["last-return"],
 				animation: (step) => this._updateVis(step),
 			});
 
-			data.unshift(n - 1);
-			stepOrder.push({
-				data: [...data],
-				heading: `Invoke Factorial(${n - 1})`,
-				description: `Add Factorial(${n - 1}) to the call stack.`,
-				codeLabel: ["function"],
-				animation: (step) => this._updateVis(step),
-			});
-
-			const result = n * buildSteps(data);
 			data.shift();
 
 			// Pop the call stack.
 			stepOrder.push({
 				data: [...data],
-				heading: `Factorial(${n}) returns ${result} and is popped from the call stack`,
-				description:
-					n === this._n
-						? ""
-						: `The result can be multiplied by ${n + 1} now.`,
+				heading:
+					"Factorial(0) returns 1 and is popped from the call stack.",
+				description: "The result can be multiplied by 1 now.",
 				codeLabel: ["recursive-call"],
 				animation: (step) => this._updateVis(step),
 			});
 
+			let result = ONE;
+			// Calculates the factorial and builds the popping steps.
+			for (let n = ONE; n <= this._n; n++) {
+				result *= n;
+
+				data.shift();
+				// Pop the call stack.
+				stepOrder.push({
+					data: [...data],
+					heading: `Factorial(${n}) returns ${result} and is popped from the call stack`,
+					description:
+						n === this._n
+							? ""
+							: `The result can be multiplied by ${n + ONE} now.`,
+					codeLabel: ["recursive-call"],
+					animation: (step) => this._updateVis(step),
+				});
+			}
 			return result;
 		};
 
-		// Start the factorial recursion and build the order of steps.
-		const factorial = buildSteps(data);
+		// Calculates the factorial of n and builds the last steps for the visualization.
+		const factorial = buildSteps();
 
 		// Last step.
 		stepOrder.push({
@@ -265,21 +280,21 @@ class RecursionView extends HTMLElement {
 	}
 
 	/**
-	 * Updates the visualization.
-	 * @param step - The step to show.
+	 * Updates the pseudo code and the call stack.
+	 * @param step - The step to update to.
 	 */
 	private _updateVis(step: Step) {
-		// Update the visualization.
+		// Update the pseudo code.
 		if (step.codeLabel)
 			this._pseudocodeDisplay.highlightLine(...step.codeLabel);
 		else this._pseudocodeDisplay.highlightLine();
 
-		// Update the table.
+		// Update the call stack.
 		this._updateTable(step.data);
 	}
 
 	/**
-	 * Shows the table.
+	 * Initializes the call stack table.
 	 */
 	private _showTable() {
 		// Add one column with the title "Call Stack".
@@ -288,17 +303,19 @@ class RecursionView extends HTMLElement {
 	}
 
 	/**
-	 * Updates the table, so a new row is added on top to show the most recent function call, e.g. Factorial(3)
-	 * @param tableData - The data to show in the table.
+	 * Updates the table, so a new row is added on top to show the most recent function call, e.g. "Factorial(3)".
+	 * @param tableData - The data to display in the table.
 	 */
-	private _updateTable(tableData: number[]) {
+	private _updateTable(tableData: bigint[]) {
+		// Format the data into rows.
 		const rowsData: RowData[][] = tableData.map((value, index) => [
 			{
 				column: "1",
-				value: `Factorial(${value})<br>n: ${value}`,
+				value: `Factorial(${value.toString()})<br>n: ${value.toString()}`,
 				row: `${index + 1}`,
 			},
 		]);
+		// Highlight the most recent function call.
 		const highlight: TableHighlight[] =
 			tableData.length > 0 ? [{ row: "1", column: "1" }] : [];
 
